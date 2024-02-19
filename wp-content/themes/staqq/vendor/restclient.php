@@ -80,7 +80,7 @@ class RestClient implements Iterator, ArrayAccess {
     }
     
     // ArrayAccess methods:
-    public function offsetExists($key){
+    public function offsetExists($key): bool{
         $this->decode_response();
         return is_array($this->decoded_response)?
             isset($this->decoded_response[$key]) : isset($this->decoded_response->{$key});
