@@ -1205,20 +1205,25 @@
                                             <?php echo $item->bewerbungen_von; ?> - <?php echo $item->bewerbungen_bis; ?>
                                         </td>
                                         <td>
-                                            <?php
-                                        
-                                                if (intval($item->dienstleister_vorgegeben)){
-                                                    if (intval($item->dienstleister_single)){
-                                                        echo "<a href='{$joborder->dienstleister_website}' target='_blank'>$joborder->dienstleister_firmenwortlaut</a>";
-                                                    }else{
-                                                        echo "mehrere vorgegeben (";
-                                                        echo implode(", ", $item->dienstleister_auswahl_firmenwortlaute);
-                                                        echo ")";
+                                        <?php
+                                                if (isset($joborder) && $joborder !== null) {
+                                                    if (intval($item->dienstleister_vorgegeben)) {
+                                                        if (intval($item->dienstleister_single)) {
+                                                            echo "<a href='{$joborder->dienstleister_website}' target='_blank'>{$joborder->dienstleister_firmenwortlaut}</a>";
+                                                        } else {
+                                                            echo "mehrere vorgegeben (";
+                                                            echo implode(", ", $item->dienstleister_auswahl_firmenwortlaute);
+                                                            echo ")";
+                                                        }
+                                                    } else {
+                                                        echo "keinen vorgegeben";
                                                     }
-                                                } else{
-                                                    echo "keinen vorgegeben";
+                                                } else {
+                                                    // Handhabung für den Fall, dass $joborder nicht definiert ist oder null ist
+                                                    echo "Joborder-Daten nicht verfügbar.";
                                                 }
-                                            ?>
+                                        ?>
+
                                         </td>
                                         <td>
                                             <a href="/app/joborders/details/?id=<?php echo hashId($item->id); ?>" class="button">Ansehen</a>
