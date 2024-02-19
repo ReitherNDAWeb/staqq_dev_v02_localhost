@@ -133,7 +133,7 @@
                             $homeUrl = "/app/joborders";
                     ?>
                         <h3 class="header__user-name"><?php echo $wpUser->display_name; ?></h3>
-                        <a href="<?php echo wp_logout_url(site_url().'/app/'); ?>" class="header__user-logout">Abmelden</a>  
+                        <a href="<?php echo wp_logout_url($_SERVER['REQUEST_URI'].'/app/'); ?>" class="header__user-logout">Abmelden</a>  
                     <?php 
                         }else{ 
                             $homeUrl = "site_url()";

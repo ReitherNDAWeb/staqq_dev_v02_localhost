@@ -88,8 +88,8 @@ define('WP_DEBUG', true);
 define('WP_DEBUG_DISPLAY', false);
 
 
-define( 'WP_HOME', 'http://localhost/staqq_dev_v02/' );
-define( 'WP_SITEURL', 'http://localhost/staqq_dev_v02/' );
+define( 'WP_HOME', 'http://localhost.staqq/' );
+define( 'WP_SITEURL', 'http://localhost.staqq/' );
 
 /* That's all, stop editing! Happy blogging. */
 
