@@ -127,18 +127,18 @@
     <header class="section section--full-width header header--pre">
         <div class="section__overlay">
             <div class="section__wrapper">
-                <div class="header__user">
+            <div class="header__user">
                     <?php 
                         if ($wpUserSTAQQUser && $wpUserState){
                             $homeUrl = "/app/joborders";
                     ?>
                         <h3 class="header__user-name"><?php echo $wpUser->display_name; ?></h3>
-                        <a href="<?php echo wp_logout_url($_SERVER['REQUEST_URI'].'/app/'); ?>" class="header__user-logout">Abmelden</a>  
+                        <a href="<?php echo wp_logout_url(site_url().'/app/'); ?>" class="header__user-logout">Abmelden</a>  
                     <?php 
                         }else{ 
-                            $homeUrl = "site_url()";
+                            $homeUrl = "/";
                     ?>
-                        <a href="<?php echo wp_logout_url(site_url().'/app/'); ?>" class="button button--white">Login</a>
+                        <a href="/app" class="button button--white">Login</a>
                     <?php
                         }
                     ?>
