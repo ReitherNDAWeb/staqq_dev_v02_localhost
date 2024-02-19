@@ -6,50 +6,52 @@
 
     require_once get_template_directory().'/vendor/restclient.php';
     
-    if ($_POST['action'] == "einsatz_bestaetigen"){
+    $action = $_POST['action'] ?? null;
 
-        $rid = $_POST['ressources_id'];
-        $bid = $_POST['bewerbung_id'];
+    if ($action == "einsatz_bestaetigen") {
+    
+        $rid = $_POST['ressources_id'] ?? null;
+        $bid = $_POST['bewerbung_id'] ?? null;
             
         $response = $api->put("ressources/$rid/bewerbungen/$bid/einsatzBestaetigen", [])->decode_response();
         
-        if ($response->status){
+        if ($response->status ?? false) {
             wp_redirect('app/joborders/');
             exit;
         }
         
-    } else if ($_POST['action'] == "einsatz_verify"){
+    } else if ($action == "einsatz_verify") {
         
         $response = $api->put("bewerbungen/einsatzVerify/ressource", [
-            'ressources_id' => $_POST['ressources_id'],
-            'joborders_id' => $_POST['joborders_id']
+            'ressources_id' => $_POST['ressources_id'] ?? null,
+            'joborders_id' => $_POST['joborders_id'] ?? null
         ])->decode_response();
         
-        if ($response->status){
+        if ($response->status ?? false) {
             wp_redirect('app/joborders/');
             exit;
         }
         
-    } else if ($_POST['action'] == "joborders_dienstleister_user_delegieren__post"){
+    } else if ($action == "joborders_dienstleister_user_delegieren__post") {
         
         $response = $api->post("dienstleister/{$_POST['dienstleister_id']}/delegationen", [
-            'joborders_id' => $_POST['joborders_id'],
-            'dienstleister_user_id' => $_POST['dienstleister_user_id']
+            'joborders_id' => $_POST['joborders_id'] ?? null,
+            'dienstleister_user_id' => $_POST['dienstleister_user_id'] ?? null
         ])->decode_response();
         
-        if ($response->status){
+        if ($response->status ?? false) {
             wp_redirect('app/joborders/');
             exit;
         }
         
-    } else if ($_POST['action'] == "joborders_dienstleister_user_delegieren__delete"){
+    } else if ($action == "joborders_dienstleister_user_delegieren__delete") {
         
         $response = $api->delete("dienstleister/{$_POST['dienstleister_id']}/delegationen", [
-            'joborders_id' => $_POST['joborders_id'],
-            'dienstleister_user_id' => $_POST['dienstleister_user_id']
+            'joborders_id' => $_POST['joborders_id'] ?? null,
+            'dienstleister_user_id' => $_POST['dienstleister_user_id'] ?? null
         ])->decode_response();
         
-        if ($response->status){
+        if ($response->status ?? false) {
             wp_redirect('app/joborders/');
             exit;
         }
