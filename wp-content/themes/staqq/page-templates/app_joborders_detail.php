@@ -131,16 +131,33 @@
                     <p><strong>Berufsgruppen:</strong> <?php echo implode("<span>&bull;</span>", $berufsgruppen); ?></p>
                 </article>
                 
-                <?php if (($bewerbungsCheck->bewerbung->status == "einsatz_bestaetigt" && $wpUserRole == "ressource") || $wpUserRole == "kunde" || $wpUserRole == "kunde_user"){ ?>
-                <article class="gd gd--12 joborder-detail__einsatz_adresse">
-                    <h2>Einsatzort</h2>
-                    <p>
-                    	<strong><?php echo $joborder->kunde_name; ?></strong><br />
-                    	<?php echo $joborder->adresse_strasse_hn; ?><br />
-                    	<?php echo $joborder->adresse_plz . " " . $joborder->adresse_ort; ?>
-                    </p>
-                </article>
-                <?php } ?>
+                <?php
+                // Überprüfe, ob $bewerbungsCheck->bewerbung existiert und nicht null ist, bevor du auf die Eigenschaft status zugreifst
+                if (isset($bewerbungsCheck->bewerbung) && $bewerbungsCheck->bewerbung !== null && $bewerbungsCheck->bewerbung->status == "einsatz_bestaetigt" && $wpUserRole == "ressource") {
+                ?>
+                    <article class="gd gd--12 joborder-detail__einsatz_adresse">
+                        <h2>Einsatzort</h2>
+                        <p>
+                            <strong><?php echo $joborder->kunde_name; ?></strong><br />
+                            <?php echo $joborder->adresse_strasse_hn; ?><br />
+                            <?php echo $joborder->adresse_plz . " " . $joborder->adresse_ort; ?>
+                        </p>
+                    </article>
+                <?php
+                } elseif ($wpUserRole == "kunde" || $wpUserRole == "kunde_user") {
+                ?>
+                    <article class="gd gd--12 joborder-detail__einsatz_adresse">
+                        <h2>Einsatzort</h2>
+                        <p>
+                            <strong><?php echo $joborder->kunde_name; ?></strong><br />
+                            <?php echo $joborder->adresse_strasse_hn; ?><br />
+                            <?php echo $joborder->adresse_plz . " " . $joborder->adresse_ort; ?>
+                        </p>
+                    </article>
+                <?php
+                }
+                ?>
+
                 
                 <article class="gd gd--8">
                     <?php if(($joborder->kunde_anzeigen && ($wpUserRole != "kunde" && $wpUserRole != "kunde_user")) || ($wpUserRole == "dienstleister")){ ?>
