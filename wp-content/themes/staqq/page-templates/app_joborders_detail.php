@@ -2,7 +2,11 @@
 
     require_once get_template_directory().'/vendor/restclient.php';
     
-    if ($_POST['action'] == "ressource_bewerben"){
+    $action = $_POST['action'] ?? null;
+    $info_dl_vorgegeben = false;
+    $info_dl_single = false;
+
+    if ($action === "ressource_bewerben") {
         
         $info_dl_vorgegeben = true;
 		$info_dl_single = true;
@@ -28,7 +32,7 @@
             
         }
         
-    } elseif ($_POST['action'] == "ressource_merken"){
+    } elseif ($action === "ressource_merken"){
         
         $id = $_POST['joborders_id'];
         $response = $api->post("joborders/$id/merken", [
@@ -37,7 +41,7 @@
         
         wp_redirect('app/joborders'); exit;
         
-    } elseif ($_POST['action'] == "ressource_ablehnen"){
+    } elseif ($action === "ressource_ablehnen"){
         
         $id = $_POST['joborders_id'];
         $response = $api->post("joborders/$id/ablehnen", [
