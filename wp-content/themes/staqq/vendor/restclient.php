@@ -80,26 +80,27 @@ class RestClient implements Iterator, ArrayAccess {
     }
     
     // ArrayAccess methods:
-    public function offsetExists($key): bool{
+    public function offsetExists(mixed $key): bool{
         $this->decode_response();
         return is_array($this->decoded_response)?
             isset($this->decoded_response[$key]) : isset($this->decoded_response->{$key});
     }
     
-    public function offsetGet($key){
+    public function offsetGet(mixed $key): mixed {
         $this->decode_response();
-        if(!$this->offsetExists($key))
-            return NULL;
-        
-        return is_array($this->decoded_response)?
+        if (!$this->offsetExists($key)) {
+            return null;
+        }
+    
+        return is_array($this->decoded_response) ?
             $this->decoded_response[$key] : $this->decoded_response->{$key};
     }
     
-    public function offsetSet($key, $value){
+    public function offsetSet(mixed $key, mixed $value): void {
         throw new RestClientException("Decoded response data is immutable.");
     }
     
-    public function offsetUnset($key){
+    public function offsetUnset(mixed $key): void {
         throw new RestClientException("Decoded response data is immutable.");
     }
     
