@@ -136,9 +136,9 @@
                         <a href="<?php echo wp_logout_url(site_url().'/app/'); ?>" class="header__user-logout">Abmelden</a>  
                     <?php 
                         }else{ 
-                            $homeUrl = "/";
+                            $homeUrl = "site_url()";
                     ?>
-                        <a href="/app" class="button button--white">Login</a>
+                        <a href="<?php echo wp_logout_url(site_url().'/app/'); ?>" class="button button--white">Login</a>
                     <?php
                         }
                     ?>
