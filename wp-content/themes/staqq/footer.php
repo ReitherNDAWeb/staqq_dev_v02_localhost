@@ -1,7 +1,7 @@
 <?php
 
     $wpUser = wp_get_current_user();
-    $wpUserSTAQQId = get_user_meta($wpUser->ID, 'staqq_id')[0];
+    $wpUserSTAQQId = get_user_meta($wpUser->ID, 'staqq_id')[0] ?? null;
 
  	if (in_array("ressource", $wpUser->roles)) {
 		$wpUserRole = "ressource";
