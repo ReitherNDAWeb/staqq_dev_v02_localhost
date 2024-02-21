@@ -6,7 +6,10 @@
 
     require_once get_template_directory().'/vendor/restclient.php';
     
-    if ($_POST['action'] == "save"){
+    $action = $_POST['action'] ?? null;
+    $template = $_GET['template'] ?? null;
+
+    if ($action === "save"){
 
         $post_skills = array();        
         if (isset($_POST['skills']) && is_array($_POST['skills'])){
@@ -77,7 +80,7 @@
         if ($response->status) wp_redirect('app/joborders'); exit;
     }
 
-	if ($_GET['template'] == "true" && isset($_GET['id'])){
+	if ($template === "true" && isset($_GET['id'])){
 		$id = $_GET['id'];
 		$template = true;
 		$template_data = $api->get("templates/$id", [])->decode_response();
@@ -159,8 +162,8 @@
                 </article>
                 <article class="gd gd--6">
                     <h2 class="form-headline">Grundinformationen</h2>
-                    <input type="text" name="jobtitel" id="jobtitel" placeholder="Jobtitel (pflicht)" value="<?php echo $template_data->jobtitel; ?>" required>
-                    <input type="text" name="arbeitszeitmodell" id="arbeitszeitmodell" placeholder="Arbeitszeitmodell (pflicht)" value="<?php echo $template_data->arbeitszeitmodell; ?>" required>
+                    <input type="text" name="jobtitel" id="jobtitel" placeholder="Jobtitel (pflicht)" value="<?php echo $template_data->jobtitel ?? ''; ?>" required>
+                    <input type="text" name="arbeitszeitmodell" id="arbeitszeitmodell" placeholder="Arbeitszeitmodell (pflicht)" value="<?php echo $template_data->arbeitszeitmodell ?? ''; ?>" required>
                     <input type="text" name="arbeitsbeginn" id="arbeitsbeginn" placeholder="Arbeitsbeginn (pflicht)" class="datepicker" required>
                     <input type="text" name="arbeitsende" id="arbeitsende" placeholder="Arbeitsende (pflicht)" class="datepicker" required>
                 </article>
@@ -170,10 +173,11 @@
                         <select name="bundeslaender" id="bundeslaender">
                         	<option value="" disabled selected>Bundesland (pflicht)</option>
 							<?php
-								foreach ($bundeslaender as $b){
-									$selected = ($template_data->bundeslaender_id == $b->id) ? "selected" : "";
-									echo '<option value="'.$b->id.'" '.$selected.'>'.$b->name.'</option>';
-								}
+                                foreach ($bundeslaender as $b){
+                                    // Überprüfe, ob die Eigenschaft bundeslaender_id existiert, und verwende sie, falls vorhanden. Andernfalls verwende null.
+                                    $selected = (isset($template_data->bundeslaender_id) && $template_data->bundeslaender_id == $b->id) ? "selected" : "";
+                                    echo '<option value="'.$b->id.'" '.$selected.'>'.$b->name.'</option>';
+                                }
 							?>
                         </select>
                     </div>
@@ -183,7 +187,7 @@
                         	<option value="" disabled selected>Bezirk (pflicht)</option>
 							<?php
 								foreach ($bezirke as $b){
-									$selected = ($template_data->bezirke_id == $b->id) ? "selected" : "";
+									$selected = (isset($template_data->bezirke_id) && $template_data->bezirke_id == $b->id) ? "selected" : "";
 									echo '<option data-bundesland="'.$b->bundeslaender_id.'" value="'.$b->id.'" '.$selected.'>'.$b->name.'</option>';
 								}
 							?>
@@ -192,9 +196,9 @@
                     
                     <br>
                     <h3>Detailinfo zu Einsatzort</h3>
-                    <input type="text" name="adresse_strasse_hn" id="adresse_strasse_hn" placeholder="Straße und Hausnummer (pflicht)" value="<?php echo $template_data->adresse_strasse_hn; ?>" required>
-                    <input type="text" name="adresse_plz" id="adresse_plz" placeholder="PLZ (pflicht)" value="<?php echo $template_data->adresse_plz; ?>" required>
-                    <input type="text" name="adresse_ort" id="adresse_ort" placeholder="Ort (pflicht)" value="<?php echo $template_data->adresse_ort; ?>" required>
+                    <input type="text" name="adresse_strasse_hn" id="adresse_strasse_hn" placeholder="Straße und Hausnummer (pflicht)" value="<?php echo $template_data->adresse_strasse_hn ?? ''; ?>" required>
+                    <input type="text" name="adresse_plz" id="adresse_plz" placeholder="PLZ (pflicht)" value="<?php echo $template_data->adresse_plz ?? ''; ?>" required>
+                    <input type="text" name="adresse_ort" id="adresse_ort" placeholder="Ort (pflicht)" value="<?php echo $template_data->adresse_ort ?? ''; ?>" required>
                     
                     <?php
                     	if ($wpUserRole == "kunde" || $wpUserRole == "kunde_user"){
@@ -219,8 +223,12 @@
 								foreach ($template_data->berufsfelder as $b){array_push($template_data->berufsfelder_ids, $b->id);}
 							}
 													   
-                            foreach ($berufsfelder as $f){
-								if ($template) $check = (in_array($f->id, $template_data->berufsfelder_ids)) ?  "checked" : "";
+                            foreach ($berufsfelder as $f) {
+                                // Initialisiere $check für jeden Durchlauf neu, um sicherzustellen, dass sie definiert ist.
+                                $check = '';
+                                if ($template && in_array($f->id, $template_data->berufsfelder_ids ?? [])) {
+                                    $check = "checked";
+                                }
                                 echo '<p><input class="berufsfelder" name="berufsfelder[]" type="checkbox" value="'.$f->id.'" '.$check.'><i class="icon icon--berufswahl icon--berufsfeld-'.$f->id.'"></i>'.$f->name.'</p>';
                             }
                         ?>
@@ -315,36 +323,39 @@
                     
                 </article>
                 <article class="gd gd--6">
-                    <input type="checkbox" name="skill_fuehrerschein" id="skill_fuehrerschein" class="switchable" data-label="Führerschein" <?php echo ($template_data->skill_fuehrerschein) ? "checked" : ""; ?>>
-                    <input type="checkbox" name="skill_pkw" id="skill_pkw" class="switchable" data-label="Eigener PKW" <?php echo ($template_data->skill_pkw) ? "checked" : ""; ?>>
-                    <input type="checkbox" name="skill_berufsabschluss" id="skill_berufsabschluss" class="switchable" data-label="Berufsabschluss im ausgewählten Berufsfeld" <?php echo ($template_data->skill_berufsabschluss) ? "checked" : ""; ?>>
+                    <input type="checkbox" name="skill_fuehrerschein" id="skill_fuehrerschein" class="switchable" data-label="Führerschein" <?php echo ($template_data->skill_fuehrerschein ?? false) ? "checked" : ""; ?>>
+                    <input type="checkbox" name="skill_pkw" id="skill_pkw" class="switchable" data-label="Eigener PKW" <?php echo ($template_data->skill_pkw ?? false) ? "checked" : ""; ?>>
+                    <input type="checkbox" name="skill_berufsabschluss" id="skill_berufsabschluss" class="switchable" data-label="Berufsabschluss im ausgewählten Berufsfeld" <?php echo ($template_data->skill_berufsabschluss ?? false) ? "checked" : ""; ?>>
                 </article>
                 <article class="gd gd--6">
-                    <textarea onkeypress="return event.keyCode;" name="taetigkeitsbeschreibung" id="taetigkeitsbeschreibung" cols="30" rows="10" placeholder="Tätigkeitbeschreibung (pflicht)" required><?php echo str_replace("<br />","\n", $template_data->taetigkeitsbeschreibung); ?></textarea>
+                    <textarea onkeypress="return event.keyCode != 13;" name="taetigkeitsbeschreibung" id="taetigkeitsbeschreibung" cols="30" rows="10" placeholder="Tätigkeitbeschreibung (pflicht)" required><?php echo str_replace("<br />", "\n", $template_data->taetigkeitsbeschreibung ?? ''); ?></textarea>
                 </article>
+
             </div>
             <div class="section__wrapper">
                 <article class="gd gd--6">
-                    <input type="text" name="kollektivvertrag" id="kollektivvertrag" placeholder="Kollektivvertrag (pflicht)" value="<?php echo $template_data->kollektivvertrag; ?>" required>
+                    <input type="text" name="kollektivvertrag" id="kollektivvertrag" placeholder="Kollektivvertrag (pflicht)" value="<?php echo $template_data->kollektivvertrag ?? ''; ?>" required>
                     <div  class="input-currency-wrapper">
-                        <input type="text" name="brutto_bezug" id="brutto_bezug" placeholder="Brutto-Bezug (pflicht)" value="<?php echo str_replace("€ ", "", $template_data->brutto_bezug); ?>" required>
+                        <?php if (isset($template_data->brutto_bezug)) { ?>
+                            <input type="text" name="brutto_bezug" id="brutto_bezug" placeholder="Brutto-Bezug (pflicht)" value="<?php echo str_replace("€ ", "", $template_data->brutto_bezug); ?>">
+                        <?php } ?>
                     </div>
                     <div class="select-wrapper">
                         <select name="brutto_bezug_einheit" id="brutto_bezug_einheit">
-                            <option value="Stunde" <?php if ($template_data->brutto_bezug_einheit == "Stunde") echo "selected"; ?>>Brutto-Bezug pro Stunde</option>
-                            <option value="Monat" <?php if ($template_data->brutto_bezug_einheit == "Monat") echo "selected"; ?>>Brutto-Bezug pro Monat</option>
-                            <option value="Jahr" <?php if ($template_data->brutto_bezug_einheit == "Jahr") echo "selected"; ?>>Brutto-Bezug pro Jahr</option>
+                            <option value="Stunde" <?php if (isset($template_data->brutto_bezug_einheit) && $template_data->brutto_bezug_einheit == "Stunde") echo "selected"; ?>>Brutto-Bezug pro Stunde</option>
+                            <option value="Monat" <?php if (isset($template_data->brutto_bezug_einheit) && $template_data->brutto_bezug_einheit == "Monat") echo "selected"; ?>>Brutto-Bezug pro Monat</option>
+                            <option value="Jahr" <?php if (isset($template_data->brutto_bezug_einheit) && $template_data->brutto_bezug_einheit == "Jahr") echo "selected"; ?>>Brutto-Bezug pro Jahr</option>
                         </select>
                     </div>
                     
                     
-                    <input type="checkbox" name="brutto_bezug_ueberzahlung" id="brutto_bezug_ueberzahlung" class="switchable" data-label="Überzahlung möglich" <?php echo ($template_data->brutto_bezug_ueberzahlung) ? "checked" : ""; ?>>
-                    
+                    <input type="checkbox" name="brutto_bezug_ueberzahlung" id="brutto_bezug_ueberzahlung" class="switchable" data-label="Überzahlung möglich" <?php echo ($template_data->brutto_bezug_ueberzahlung ?? false) ? "checked" : ""; ?>>
+
                     <div class="select-wrapper">
                         <select name="beschaeftigungsausmasse_id" id="beschaeftigungsausmasse_id" placeholder="Beschäftigungsausmaß">
                         <?php
                             foreach ($beschaeftigungsausmasse as $b){
-								$selected = ($template_data->beschaeftigungsausmasse_id == $b->id) ? "selected" : "";
+                                $selected = ($template_data->beschaeftigungsausmasse_id ?? "") == $b->id ? "selected" : "";
                                 echo '<option value="'.$b->id.'" '.$selected.'>'.$b->name.'</option>';
                             }
                         ?>
@@ -354,7 +365,7 @@
                         <select name="beschaeftigungsarten_id" id="beschaeftigungsarten_id" placeholder="Beschäftigungsart">
                         <?php
                             foreach ($beschaeftigungsarten as $b){
-								$selected = ($template_data->beschaeftigungsarten_id == $b->id) ? "selected" : "";
+                                $selected = (isset($template_data->beschaeftigungsarten_id) && $template_data->beschaeftigungsarten_id == $b->id) ? "selected" : "";
                                 echo '<option value="'.$b->id.'" '.$selected.'>'.$b->name.'</option>';
                             }
                         ?>
@@ -364,9 +375,11 @@
                 <article class="gd gd--6">
                     <input type="text" name="bewerbungen_von" id="bewerbungen_von" placeholder="Bewerbungen von (pflicht)" class="datepicker" value="<?php echo date('d.m.Y'); ?>" required>
                     <input type="text" name="bewerbungen_bis" id="bewerbungen_bis" placeholder="Bewerbungen bis (pflicht)" class="datepicker" required>
-                    <input type="text" name="anzahl_ressourcen" id="anzahl_ressourcen" value="1" placeholder="Anzahl der gesuchten Ressourcen (pflicht)" value="<?php echo $template_data->anzahl_ressourcen; ?>" required>
+                    <input type="text" name="anzahl_ressourcen" id="anzahl_ressourcen" value="1" placeholder="Anzahl der gesuchten Ressourcen (pflicht)" value="<?php echo isset($template_data->anzahl_ressourcen) ? $template_data->anzahl_ressourcen : ''; ?>" required>
                     
-                    <input type="checkbox" name="casting" class="switchable" id="casting" data-label="Kunde wünscht ein Vorstellungsgespräch vor dem Einsatz" <?php echo ($template_data->casting) ? "checked" : ""; ?>>
+                    <?php if (isset($template_data->casting)) { ?>
+                        <input type="checkbox" name="casting" class="switchable" id="casting" data-label="Kunde wünscht ein Vorstellungsgespräch vor dem Einsatz" <?php echo ($template_data->casting) ? "checked" : ""; ?>>
+                    <?php } ?>
                     <input type="checkbox" name="vorlage" id="vorlage" data-label="Joborder als Vorlage speichern">
                     <input type="text" name="vorlage_name" id="vorlage_name" value="" placeholder="Name der Vorlage" style="display:none;">
                 </article>
@@ -389,8 +402,8 @@
 						<article class="gd gd--4">
 							<div class="select-wrapper">
 								<select name="dienstleister_vorgegeben" id="dienstleister_vorgegeben">
-									<option value="1" <?php if ($template_data->dienstleister_vorgegeben == "1") echo "selected"; ?>>Dienstleister vorgeben</option>
-									<option value="0" <?php if ($template_data->dienstleister_vorgegeben == "0") echo "selected"; ?>>Dienstleister nicht vorgeben</option>
+                                <option value="1" <?php if (($template_data->dienstleister_vorgegeben ?? '') == "1") echo "selected"; ?>>Dienstleister vorgeben</option>
+                                <option value="0" <?php if (($template_data->dienstleister_vorgegeben ?? '') == "0") echo "selected"; ?>>Dienstleister nicht vorgeben</option>
 								</select>
 							</div>
 						</article>
@@ -403,8 +416,8 @@
 					   	<article class="gd gd--4">
 					   		<div class="select-wrapper">
                                 <select name="dienstleister_single" id="dienstleister_single">
-                                    <option value="1" <?php if ($template_data->dienstleister_single == "1") echo "selected"; ?>>Einen einzigen Dienstleister vorgeben</option>
-                                    <option value="0" <?php if ($template_data->dienstleister_single == "0") echo "selected"; ?>>Auswahl aus mehreren Dienstleistern vorgeben</option>
+                                <option value="1" <?php if (($template_data->dienstleister_single ?? "") == "1") echo "selected"; ?>>Einen einzigen Dienstleister vorgeben</option>
+                                <option value="0" <?php if (($template_data->dienstleister_single ?? "") == "0") echo "selected"; ?>>Auswahl aus mehreren Dienstleistern vorgeben</option>
                                 </select>
                             </div>
 						</article>
@@ -416,8 +429,8 @@
 					   	<article class="gd gd--4">
 					   		<div class="select-wrapper">
                                 <select name="dienstleister_auswahl_stamm" id="dienstleister_auswahl_stamm">
-                                    <option value="0" <?php if ($template_data->dienstleister_auswahl_stamm == "0") echo "selected"; ?>>Auswahl aus allen Dienstleistern</option>
-                                    <option value="1" <?php if ($template_data->dienstleister_auswahl_stamm == "1") echo "selected"; ?>>Auswahl aus Stammdaten</option>
+                                <option value="0" <?php if (($template_data->dienstleister_auswahl_stamm ?? "") == "0") echo "selected"; ?>>Auswahl aus allen Dienstleistern</option>
+                                <option value="1" <?php if (($template_data->dienstleister_auswahl_stamm ?? "") == "1") echo "selected"; ?>>Auswahl aus Stammdaten</option>
                                 </select>
                             </div>
 					   		<div class="select-wrapper" id="dienstleister_id-wrapper">
@@ -457,7 +470,7 @@
                    	<article class="gd gd--12 joborder-detail__dl-article">
 					   	<article class="gd gd--4">
                             <input type="hidden" name="kunde_name" id="kunde_name" value="">
-                            <input type="checkbox" name="kunde_anzeigen" class="switchable" id="kunde_anzeigen" data-label="Kunde anzeigen" <?php echo ($template_data->kunde_anzeigen) ? "checked" : ""; ?>>
+                            <input type="checkbox" name="kunde_anzeigen" class="switchable" id="kunde_anzeigen" data-label="Kunde anzeigen" <?php echo ($template_data->kunde_anzeigen ?? false) ? "checked" : ""; ?>>
 						</article>
 					   	<article class="gd gd--8">
 					   		<p>Sie haben die Möglichkeit Joborder für Bewerber anonym zu publizieren.</p>
