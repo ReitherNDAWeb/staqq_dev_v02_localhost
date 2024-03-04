@@ -1,0 +1,64 @@
+ /**/
+
+.iwd_errors { padding: 8px; border: 1px solid #f50; margin: 0 0 15px; }
+.iwd-wrapper{margin:50px auto;}
+.iwd-hidden {display: none !important;}
+.iwd-clear {clear: both;}
+#fe-success {border: 2px green solid; text-align: center; padding: 25px;font-size: 16px; margin-top: 80px;margin-bottom: 80px;}
+input.error {border: solid 1px red !important;}
+textarea { width: 100% }
+.iwd-10 {
+	width: 10%; 
+}
+.iwd-20 {
+	width: 20%; 
+}
+.iwd-30 {
+	width: 30%; 
+}
+.iwd-40 {
+	width: 40%; 
+}
+.iwd-50 {
+	width: 50%; 
+}
+.iwd-60 {
+	width: 60%; 
+}
+.iwd-70 {
+	width: 70%; 
+}
+.iwd-80 {
+	width: 80%; 
+}
+.iwd-90 {
+	width: 90%; 
+}
+.iwd-100 {
+	width: 100%; 
+}
+
+.iwd-calculator-row {
+	width: 100%; 
+	margin: 10px auto;
+	float: left; 
+}
+.iwd-form-group {
+	padding: 15px;
+	float: left; 
+}
+
+@media screen and (max-width: 900px) {
+	.iwd-10,
+	.iwd-20,
+	.iwd-30,
+	.iwd-40,
+	.iwd-50,
+	.iwd-60,
+	.iwd-70,
+	.iwd-80,
+	.iwd-90,
+	.iwd-100 {
+		width: 100%; 
+	}
+}
