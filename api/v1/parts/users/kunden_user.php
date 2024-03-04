@@ -1,14 +1,14 @@
 <?php
 
     $app->get('/kunden/{kunden_id}/user', function($request, $response, $args) {
-        
+
         try{
             $db = getDB();
             $sth = $db->prepare("SELECT kunden_user.*, DATE_FORMAT(kunden_user.aktiv_von,'%d.%m.%Y') AS aktiv_von, DATE_FORMAT(kunden_user.aktiv_bis,'%d.%m.%Y') AS aktiv_bis FROM kunden_user WHERE kunden_id=:kunden_id");
             $sth->bindParam(':kunden_id', $args['kunden_id'], PDO::PARAM_INT);
             $sth->execute();
             $users = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-			
+
 			for ($i=0;$i<count($users);$i++){
 				$users[$i]['arbeitsstaetten'] = array();
 				if ($users[$i]['einschraenkung_arbeitsstaetten'] == 1){
@@ -20,21 +20,21 @@
 					}
 				}
 			}
-            
+
             $body = json_encode($users);
-            
+
         } catch(PDOException $e){
             $response->withStatus(400);
             $body = json_encode(['status' => false, 'msg' => $e]);
         }
-        
+
         $response->write($body);
         return $response;
-        
+
     });
 
     $app->get('/kunden/{kunden_id}/user/{id}', function($request, $response, $args) {
-        
+
         try{
             $db = getDB();
             $sth = $db->prepare("SELECT kunden_user.*, DATE_FORMAT(kunden_user.aktiv_von,'%d.%m.%Y') AS aktiv_von, DATE_FORMAT(kunden_user.aktiv_bis,'%d.%m.%Y') AS aktiv_bis FROM kunden_user WHERE kunden_id=:kunden_id AND id=:id");
@@ -42,7 +42,7 @@
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
             $user = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0];			
-			
+
             $sth = $db->prepare("SELECT berufsfelder_id AS id, berufsfelder.name AS name FROM relation_kunden_user_berufsfelder LEFT JOIN berufsfelder ON berufsfelder.id = relation_kunden_user_berufsfelder.berufsfelder_id WHERE kunden_user_id=:kunden_user_id");
             $sth->bindParam(':kunden_user_id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
@@ -52,7 +52,7 @@
                 array_push($user['berufsfelder'], $b['id']);
                 array_push($user['berufsfelder_full'], $b);
             }
-            
+
             $sth = $db->prepare("SELECT berufsgruppen_id AS id, berufsgruppen.name AS name, berufsgruppen.berufsfelder_id AS berufsfelder_id FROM relation_kunden_user_suchgruppen LEFT JOIN berufsgruppen ON berufsgruppen.id = relation_kunden_user_suchgruppen.berufsgruppen_id WHERE kunden_user_id=:kunden_user_id");
             $sth->bindParam(':kunden_user_id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
@@ -62,7 +62,7 @@
                 array_push($user['suchgruppen'], $b['id']);
                 array_push($user['suchgruppen_full'], $b);
             }
-			
+
             $sth = $db->prepare("SELECT arbeitsstaetten_id FROM relation_kunden_user_arbeitsstaetten WHERE kunden_user_id=:kunden_user_id");
             $sth->bindParam(':kunden_user_id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
@@ -70,7 +70,7 @@
             foreach(utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC)) as $b){
                 array_push($user['arbeitsstaetten'], $b['arbeitsstaetten_id']);
             }
-			
+
 			$sth = $db->prepare("
 				SELECT 
 					dienstleister.id, 
@@ -87,25 +87,25 @@
 				GROUP BY 
 					dienstleister.id
 			");
-			
+
             $sth->bindParam(':kunden_user_id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
             $user['bevorzugte_dienstleister'] = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-            
+
             $body = json_encode($user);
-            
+
         } catch(PDOException $e){
             $response->withStatus(400);
             $body = json_encode(['status' => false, 'msg' => $e]);
         }
-        
+
         $response->write($body);
         return $response;
-        
+
     });
 
     $app->get('/kunden/user/{id}/berechtigungen', function($request, $response, $args) {
-        
+
         try{
             $db = getDB();
             $sth = $db->prepare("
@@ -128,23 +128,23 @@
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
             $body = json_encode(utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0]);
-            
+
         } catch(PDOException $e){
             $response->withStatus(400);
             $body = json_encode(['status' => false, 'msg' => $e]);
         }
-        
+
         $response->write($body);
         return $response;
-        
+
     });
 
     $app->post('/kunden/{kunden_id}/user', function($request, $response, $args) {
-        
+
         if(filter_var($request->getParsedBody()['debug'], FILTER_VALIDATE_BOOLEAN)){
             $body = json_encode(['status' => true, 'fields' => $request->getParsedBody()]);
         }else{
-            
+
             include("../../wp-load.php");
 
             $email = $request->getParsedBody()['email'];
@@ -160,19 +160,19 @@
                 "last_name"     => $request->getParsedBody()['nachname'],
                 "role"          => "kunde_u"
             );
-            
+
             if (!username_exists($email) && !email_exists($email)) {
-				
+
 				try{	
 
 					$insert_user_result = wp_insert_user($user_info);
-					
+
 					$db = getDB();
                     $sth = $db->prepare("SELECT * FROM kunden WHERE id=:id");
                     $sth->bindParam(':id', $args['kunden_id'], PDO::PARAM_INT);
 					$sth->execute();
 					$u = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0];
-					
+
 					update_user_meta($insert_user_result, 'billing_first_name', $u['ansprechpartner_vorname']);
 					update_user_meta($insert_user_result, 'billing_last_name', $u['ansprechpartner_nachname']);
 					update_user_meta($insert_user_result, 'billing_company', $u['firmenwortlaut']);
@@ -262,23 +262,23 @@
                 $body = json_encode(['status' => false, 'msg' => "Benutzer existiert bereits"]);
             }
         }
-        
+
         $response->write($body);
         return $response;
-        
+
     });
 
 
     $app->put('/kunden/user/{id}', function($request, $response, $args) {
-        
+
         if(filter_var($request->getParsedBody()['debug'], FILTER_VALIDATE_BOOLEAN)){
             $body = json_encode(['status' => true, 'fields' => $request->getParsedBody()]);
         }else{
             include("../../wp-load.php");
-            
+
             $email_old = $request->getParsedBody()['old_email'];
             $email = $request->getParsedBody()['email'];
-            
+
             if (($email_old == $email) || (!isset($request->getParsedBody()['old_email']))) {
                 $updateEmail = false;
                 $user_id = email_exists($email);
@@ -299,7 +299,7 @@
             if ((email_exists($email) && (!$updateEmail)) || ((!email_exists($email)) && $updateEmail)) {
 
                 $insert_user_result = wp_update_user($user_info);
-                
+
                 try{
                     $db = getDB();
                     $sth = $db->prepare("
@@ -348,7 +348,7 @@
                     $sth->execute();
 
                     if ($insert_user_result){
-                        
+
                         $sth = $db->prepare("DELETE FROM relation_kunden_user_berufsfelder WHERE kunden_user_id=:kunden_user_id");
                         $sth->bindParam(':kunden_user_id', $args['id'], PDO::PARAM_INT);
                         $sth->execute();
@@ -359,7 +359,7 @@
                             $sth->bindParam(':berufsfelder_id', $f, PDO::PARAM_INT);
                             $sth->execute();
                         }
-                        
+
                         $sth = $db->prepare("DELETE FROM relation_kunden_user_suchgruppen WHERE kunden_user_id=:kunden_user_id");
                         $sth->bindParam(':kunden_user_id', $args['id'], PDO::PARAM_INT);
                         $sth->execute();
@@ -370,7 +370,7 @@
                             $sth->bindParam(':berufsgruppen_id', $f, PDO::PARAM_INT);
                             $sth->execute();
                         }
-                        
+
                         $sth = $db->prepare("DELETE FROM relation_kunden_user_arbeitsstaetten WHERE kunden_user_id=:kunden_user_id");
                         $sth->bindParam(':kunden_user_id', $args['id'], PDO::PARAM_INT);
                         $sth->execute();
@@ -381,7 +381,7 @@
                             $sth->bindParam(':kunden_user_id', $args['id'], PDO::PARAM_INT);
                             $sth->execute();
                         }
-                        
+
                         $sth = $db->prepare("DELETE FROM relation_kunden_user_bevorzugte_dienstleister WHERE kunden_user_id=:kunden_user_id");
                         $sth->bindParam(':kunden_user_id', $args['id'], PDO::PARAM_INT);
                         $sth->execute();
@@ -392,7 +392,7 @@
                             $sth->bindParam(':kunden_user_id', $args['id'], PDO::PARAM_INT);
                             $sth->execute();
                         }
-                        
+
                         $body = json_encode(['status' => true]);
                     }
 
@@ -405,10 +405,10 @@
                 $body = json_encode(['status' => false, 'msg' => "Benutzer existiert bereits"]);
             }
         }
-        
+
         $response->write($body);
         return $response;
-        
+
     });
 
     $app->put('/kunden/user/{id}/notificationSettings', function($request, $response, $args) {
@@ -422,24 +422,24 @@
 				WHERE 
 					id=:id
 			");
-			
+
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->bindParam(':push_bool', $request->getParsedBody()['push_bool'], PDO::PARAM_INT);
 			$result = $sth->execute();
-			
+
             $body = json_encode(['status' => $result]);
 
         } catch(PDOException $e){
             $response->withStatus(400);
             $body = json_encode(['status' => false, 'msg' => $e]);
         }
-        
+
         $response->write($body);
         return $response;
     });
 
 	$app->get('/kunden/{kunden_id}/user/{id}/joborders', function($request, $response, $args) {
-        
+
         try{
             $db = getDB();
             $sth = $db->prepare("
@@ -464,43 +464,43 @@
 					AND creator_type='kunde_user' 
 					AND creator_id=:creator_id
             ");
-            
+
             $sth->bindParam(':kunden_id', $args['kunden_id'], PDO::PARAM_INT);
             $sth->bindParam(':creator_id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
             $joborders = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-            
+
             for($i=0;$i<count($joborders);$i++){
                 $sth = $db->prepare("SELECT COUNT(*) as anz FROM bewerbungen WHERE joborders_id=:id");
                 $sth->bindParam(':id', $joborders[$i]['id'], PDO::PARAM_INT);
                 $sth->execute();
                 $r = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
                 $joborders[$i]['anzahl_bewerbungen_gesamt'] = $r['anz'];
-				
+
                 $sth = $db->prepare("SELECT COUNT(*) as anz FROM bewerbungen WHERE joborders_id=:id AND status='vergeben'");
                 $sth->bindParam(':id', $joborders[$i]['id'], PDO::PARAM_INT);
                 $sth->execute();
                 $r = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
                 $joborders[$i]['anzahl_bewerbungen_vergeben'] = $r['anz'];
-				
+
                 $sth = $db->prepare("SELECT COUNT(*) as anz FROM bewerbungen WHERE joborders_id=:id AND status='einsatz_bestaetigt'");
                 $sth->bindParam(':id', $joborders[$i]['id'], PDO::PARAM_INT);
                 $sth->execute();
                 $r = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
                 $bewerbung_bestaetigt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
                 $joborders[$i]['anzahl_bewerbungen_einsatz_bestaetigt'] = $bewerbung_bestaetigt['anz'];
-				
+
                 $sth = $db->prepare("SELECT COUNT(*) as anz FROM bewerbungen WHERE joborders_id=:id AND status='einsatz_bestaetigt' AND dienstleister_einsatz_bestaetigt=1 AND ressource_einsatz_bestaetigt=1");
                 $sth->bindParam(':id', $joborders[$i]['id'], PDO::PARAM_INT);
                 $sth->execute();
                 $r = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
                 $joborders[$i]['anzahl_bewerbungen_erfolgter_einsatz_bestaetigt'] = $r['anz'];
-                
+
                 $sth = $db->prepare("SELECT berufsfelder.* FROM relation_joborders_berufsfelder LEFT JOIN berufsfelder ON berufsfelder.id = relation_joborders_berufsfelder.berufsfelder_id WHERE relation_joborders_berufsfelder.joborders_id=:id");
                 $sth->bindParam(':id', $joborders[$i]['id'], PDO::PARAM_INT);
                 $sth->execute();
                 $joborders[$i]['berufsfelder'] = $sth->fetchAll(PDO::FETCH_ASSOC);
-                
+
 				if ($joborders[$i]['dienstleister_vorgegeben'] == 1 && $joborders[$i]['dienstleister_single'] == 0){
 					$sth = $db->prepare("SELECT dienstleister.id, dienstleister.firmenwortlaut FROM relation_joborders_dienstleister_auswahl
  LEFT JOIN dienstleister ON dienstleister.id = relation_joborders_dienstleister_auswahl.dienstleister_id WHERE relation_joborders_dienstleister_auswahl.joborders_id=:id");
@@ -510,7 +510,7 @@
 					$joborders[$i]['dienstleister_auswahl_firmenwortlaute'] = array();
 					foreach($joborders[$i]['dienstleister_auswahl'] as $dl){array_push($joborders[$i]['dienstleister_auswahl_firmenwortlaute'], $dl['firmenwortlaut']);}
 				}
-				
+
 				if (intval($joborders[$i]['anzahl_bewerbungen_einsatz_bestaetigt']) > 0){
 					$sth = $db->prepare("SELECT dienstleister.id, dienstleister.firmenwortlaut, dienstleister.website, CONCAT(dienstleister.firmenwortlaut, ' (★ ', REPLACE(ROUND(IFNULL(AVG(bewertungen.bewertung), 0), 2), '.', ','), ')') AS firmenwortlaut_inkl_bewertung FROM dienstleister LEFT JOIN bewertungen ON dienstleister.id = bewertungen.bewertet_id AND bewertungen.bewertet_type = 'dienstleister' AND bewertungen.status = 1 WHERE id=:id GROUP BY dienstleister.id");
 					$sth->bindParam(':id', $bewerbung_bestaetigt['dienstleister_id'], PDO::PARAM_INT);
@@ -518,21 +518,21 @@
 					$joborders[$i]['eingesetzter_dienstleister'] = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC)[0]);
 				}
             }
-            
+
             $body = json_encode($joborders);
-            
+
         } catch(PDOException $e){
             $response->withStatus(400);
             $body = json_encode(['status' => false, 'msg' => $e]);
         }
-        
+
         $response->write($body);
         return $response;
     });
 
 
     $app->get('/kunden/user/{id}/zahlen', function($request, $response, $args) use($app) {
-        
+
         try{
 			$db = getDB();
 			$sth = $db->prepare("
@@ -546,7 +546,7 @@
 			$sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
 			$kd_id = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0]['kunden_id'];
-			
+
             $sth = $db->prepare("
                 SELECT 
                     COUNT(*) AS offen
@@ -559,14 +559,14 @@
                     von_id=:id AND 
 					status = 0
             ");
-            
+
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
-			
+
 			$anzahlen = array();
 			$res = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0];
             $anzahlen['bewertungen']['offen'] = $res['offen'];
-            
+
             $sth = $db->prepare("
                 SELECT 
                     anzahl_joborders, 
@@ -576,35 +576,35 @@
                 WHERE 
 					id=:id
             ");
-            
+
             $sth->bindParam(':id', $kd_id, PDO::PARAM_INT);
             $sth->execute();
-			
+
 			$res = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0];
-			
+
             $anzahlen['joborders'] = $res['anzahl_joborders'];
             $anzahlen['user'] = $res['anzahl_user'];
-			
+
             $body = json_encode($anzahlen);
-            
+
         } catch(PDOException $e){
             $response->withStatus(400);
             $body = json_encode(['status' => false, 'msg' => $e]);
         }
-        
+
         $response->write($body);
         return $response;
-        
+
    });
 /*
     $app->delete('/kunden/{kunden_id}/user/{id}', function($request, $response, $args) {
-        
+
         include("../../wp-load.php");
 		include("../../wp-admin/includes/user.php");
-        
+
         $email        = $request->getParsedBody()['email'];
         $user_id      = email_exists($email);
-        		
+
 		if (wp_delete_user($user_id)){
 			try{
 				$db = getDB();
@@ -617,7 +617,7 @@
 				$sth = $db->prepare("UPDATE kunden SET anzahl_user = anzahl_user + 1 WHERE id = :id");
 				$sth->bindParam(':id', $args['kunden_id'], PDO::PARAM_INT);
 				$sth->execute();
-				
+
 				$body = json_encode(['status' => true]);
 
 			} catch(PDOException $e){
@@ -627,7 +627,7 @@
 		}else{
         	$body = json_encode(['status' => false, 'msg' => 'WP-User konnte nicht gelöscht werden! (ID: '.$email.')']);
 		}
-		
+
         $response->write($body);
         return $response;
     });

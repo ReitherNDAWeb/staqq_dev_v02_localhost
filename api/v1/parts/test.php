@@ -97,9 +97,9 @@
     });
 
 	$app->post('/test/encoding', function($request, $response, $args) {
-		
+
 		include("../../wp-load.php");
-		
+
 		$test1 = nl2br(get_option('email_absage_anderwaertig_vergeben'));
 		$test2 = mb_detect_encoding($test1, 'UTF-8', true);
 		$test3 = utf8_decode($test1);
@@ -108,7 +108,7 @@
 		$test6 = utf8_decode($test4);
 
 		var_dump($test1, $test2, $test3, $test4, $test5, $test6);
-		
+
 		//$ret = sendMail($request->getParsedBody()['email'], , $html, '');
         
         

@@ -46,7 +46,7 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 	 * @param  $sActionLocKey @type string @optional The "View" button title, default
 	 *         empty string.
 	 */
-	public function setActionLocKey($sActionLocKey = '')
+	public function setActionLocKey($sActionLocKey = ''): void
 	{
 		$this->_sActionLocKey = $sActionLocKey;
 	}
@@ -70,7 +70,7 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 	 *
 	 * @param  $sLocKey @type string The alert-message string.
 	 */
-	public function setLocKey($sLocKey)
+	public function setLocKey($sLocKey): void
 	{
 		$this->_sLocKey = $sLocKey;
 	}
@@ -91,7 +91,7 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 	 *
 	 * @param  $aLocArgs @type array The variable string values.
 	 */
-	public function setLocArgs($aLocArgs)
+	public function setLocArgs($aLocArgs): void
 	{
 		$this->_aLocArgs = $aLocArgs;
 	}
@@ -119,7 +119,7 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 	 *
 	 * @param  $sLaunchImage @type string The filename of an image file.
 	 */
-	public function setLaunchImage($sLaunchImage)
+	public function setLaunchImage($sLaunchImage): void
 	{
 		$this->_sLaunchImage = $sLaunchImage;
 	}
@@ -142,7 +142,7 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 	 *
 	 * @param  $sTitle @type string The title displayed in the short look notification
 	 */
-	public function setTitle($sTitle)
+	public function setTitle($sTitle): void
 	{
 		$this->_sTitle = $sTitle;
 	}

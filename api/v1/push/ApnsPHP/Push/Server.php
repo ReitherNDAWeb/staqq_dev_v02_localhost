@@ -106,7 +106,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 * Waits until a forked process has exited and decreases the current running
 	 * process number.
 	 */
-	public function onChildExited()
+	public function onChildExited(): void
 	{
 		while (pcntl_waitpid(-1, $nStatus, WNOHANG) > 0) {
 			$this->_nRunningProcesses--;
@@ -119,7 +119,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 *
 	 * @param  $nSignal @type integer Signal number.
 	 */
-	public function onSignal($nSignal)
+	public function onSignal($nSignal): void
 	{
 		switch ($nSignal) {
 			case SIGTERM:
@@ -143,7 +143,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 * This is called using 'register_shutdown_function' pattern.
 	 * @see http://php.net/register_shutdown_function
 	 */
-	public function onShutdown()
+	public function onShutdown(): void
 	{
 		if (posix_getpid() == $this->_nParentPid) {
 			$this->_log('INFO: Parent shutdown, cleaning memory...');
@@ -157,7 +157,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 *
 	 * @param  $nProcesses @type integer Processes to start up.
 	 */
-	public function setProcesses($nProcesses)
+	public function setProcesses($nProcesses): void
 	{
 		$nProcesses = (int)$nProcesses;
 		if ($nProcesses <= 0) {
@@ -172,7 +172,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 * Every forked process is connected to Apple Push Notification Service on start
 	 * and enter on the main loop.
 	 */
-	public function start()
+	public function start(): void
 	{
 		for ($i = 0; $i < $this->_nProcesses; $i++) {
 			$this->_nCurrentProcess = $i;
@@ -206,7 +206,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 *
 	 * @param  $message @type ApnsPHP_Message The message.
 	 */
-	public function add(ApnsPHP_Message $message)
+	public function add(ApnsPHP_Message $message): void
 	{
 		static $n = 0;
 		if ($n >= $this->_nProcesses) {

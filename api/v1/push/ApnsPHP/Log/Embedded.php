@@ -35,7 +35,7 @@ class ApnsPHP_Log_Embedded implements ApnsPHP_Log_Interface
 	 *
 	 * @param  $sMessage @type string The message.
 	 */
-	public function log($sMessage)
+	public function log($sMessage): void
 	{
 		printf("%s ApnsPHP[%d]: %s\n",
 			date('r'), getmypid(), trim($sMessage)

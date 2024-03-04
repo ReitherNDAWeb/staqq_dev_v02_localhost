@@ -1,6 +1,9 @@
 {
     "require": {
-        "slim/slim": "^3.0",
+        "slim/slim": "*",
         "nategood/httpful": "*"
+    },
+    "require-dev": {
+        "rector/rector": "^1.0"
     }
 }

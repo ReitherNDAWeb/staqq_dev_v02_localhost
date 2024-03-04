@@ -70,7 +70,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 *
 	 * @param  $nRetryTimes @type integer Send retry times.
 	 */
-	public function setSendRetryTimes($nRetryTimes)
+	public function setSendRetryTimes($nRetryTimes): void
 	{
 		$this->_nSendRetryTimes = (int)$nRetryTimes;
 	}
@@ -90,7 +90,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 *
 	 * @param  $message @type ApnsPHP_Message The message.
 	 */
-	public function add(ApnsPHP_Message $message)
+	public function add(ApnsPHP_Message $message): void
 	{
 		$sMessagePayload = $message->getPayload();
 		$nRecipients = $message->getRecipientsNumber();
@@ -117,7 +117,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 * @throws ApnsPHP_Push_Exception if not connected to the
 	 *         service or no notification queued.
 	 */
-	public function send()
+	public function send(): void
 	{
 		if (!$this->_hSocket) {
 			throw new ApnsPHP_Push_Exception(

@@ -115,7 +115,7 @@ abstract class ApnsPHP_Abstract
 	 * @throws ApnsPHP_Exception if Logger is not an instance
 	 *         of ApnsPHP_Log_Interface.
 	 */
-	public function setLogger(ApnsPHP_Log_Interface $logger)
+	public function setLogger(ApnsPHP_Log_Interface $logger): void
 	{
 		if (!is_object($logger)) {
 			throw new ApnsPHP_Exception(
@@ -147,7 +147,7 @@ abstract class ApnsPHP_Abstract
 	 * @param  $sProviderCertificatePassphrase @type string Provider Certificate
 	 *         passphrase.
 	 */
-	public function setProviderCertificatePassphrase($sProviderCertificatePassphrase)
+	public function setProviderCertificatePassphrase($sProviderCertificatePassphrase): void
 	{
 		$this->_sProviderCertificatePassphrase = $sProviderCertificatePassphrase;
 	}
@@ -167,7 +167,7 @@ abstract class ApnsPHP_Abstract
 	 * @throws ApnsPHP_Exception if Root Certification Authority
 	 *         file is not readable.
 	 */
-	public function setRootCertificationAuthority($sRootCertificationAuthorityFile)
+	public function setRootCertificationAuthority($sRootCertificationAuthorityFile): void
 	{
 		if (!is_readable($sRootCertificationAuthorityFile)) {
 			throw new ApnsPHP_Exception(
@@ -196,7 +196,7 @@ abstract class ApnsPHP_Abstract
 	 *
 	 * @param  $nWriteInterval @type integer Write interval in micro seconds.
 	 */
-	public function setWriteInterval($nWriteInterval)
+	public function setWriteInterval($nWriteInterval): void
 	{
 		$this->_nWriteInterval = (int)$nWriteInterval;
 	}
@@ -219,7 +219,7 @@ abstract class ApnsPHP_Abstract
 	 *
 	 * @param  $nTimeout @type integer Connection timeout in seconds.
 	 */
-	public function setConnectTimeout($nTimeout)
+	public function setConnectTimeout($nTimeout): void
 	{
 		$this->_nConnectTimeout = (int)$nTimeout;
 	}
@@ -242,7 +242,7 @@ abstract class ApnsPHP_Abstract
 	 *
 	 * @param  $nRetryTimes @type integer Connect retry times.
 	 */
-	public function setConnectRetryTimes($nRetryTimes)
+	public function setConnectRetryTimes($nRetryTimes): void
 	{
 		$this->_nConnectRetryTimes = (int)$nRetryTimes;
 	}
@@ -267,7 +267,7 @@ abstract class ApnsPHP_Abstract
 	 *
 	 * @param  $nRetryInterval @type integer Connect retry interval in micro seconds.
 	 */
-	public function setConnectRetryInterval($nRetryInterval)
+	public function setConnectRetryInterval($nRetryInterval): void
 	{
 		$this->_nConnectRetryInterval = (int)$nRetryInterval;
 	}
@@ -299,7 +299,7 @@ abstract class ApnsPHP_Abstract
 	 *
 	 * @param  $nSelectTimeout @type integer Socket select timeout in micro seconds.
 	 */
-	public function setSocketSelectTimeout($nSelectTimeout)
+	public function setSocketSelectTimeout($nSelectTimeout): void
 	{
 		$this->_nSocketSelectTimeout = (int)$nSelectTimeout;
 	}
@@ -325,7 +325,7 @@ abstract class ApnsPHP_Abstract
 	 * @throws ApnsPHP_Exception if is unable to connect after
 	 *         ConnectRetryTimes.
 	 */
-	public function connect()
+	public function connect(): void
 	{
 		$bConnected = false;
 		$nRetry = 0;

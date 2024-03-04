@@ -39,7 +39,7 @@
 		}
 
 		// Sends Push notification for iOS users
-		public function iOS($data, $devicetoken) {
+		public function iOS($data, $devicetoken): void {
 			// Adjust to your timezone
 			date_default_timezone_set('Europe/Rome');
 			// Report all PHP errors

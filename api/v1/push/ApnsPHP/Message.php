@@ -71,7 +71,7 @@ class ApnsPHP_Message
 	 * @throws ApnsPHP_Message_Exception if the device token
 	 *         is not well formed.
 	 */
-	public function addRecipient($sDeviceToken)
+	public function addRecipient($sDeviceToken): void
 	{
 		if (!preg_match('~^[a-f0-9]{64}$~i', $sDeviceToken)) {
 			throw new ApnsPHP_Message_Exception(
@@ -124,7 +124,7 @@ class ApnsPHP_Message
 	 *
 	 * @param  $sText @type string An alert message to display to the user.
 	 */
-	public function setText($sText)
+	public function setText($sText): void
 	{
 		$this->_sText = $sText;
 	}
@@ -146,7 +146,7 @@ class ApnsPHP_Message
 	 * @throws ApnsPHP_Message_Exception if badge is not an
 	 *         integer.
 	 */
-	public function setBadge($nBadge)
+	public function setBadge($nBadge): void
 	{
 		if (!is_int($nBadge)) {
 			throw new ApnsPHP_Message_Exception(
@@ -172,7 +172,7 @@ class ApnsPHP_Message
 	 * @param  $sSound @type string @optional A sound to play ('default sound' is
 	 *         the default sound).
 	 */
-	public function setSound($sSound = 'default')
+	public function setSound($sSound = 'default'): void
 	{
 		$this->_sSound = $sSound;
 	}
@@ -192,7 +192,7 @@ class ApnsPHP_Message
 	 *
 	 * @param  $sCategory @type string @optional A category for ios8 notification actions.
 	 */
-	public function setCategory($sCategory = '')
+	public function setCategory($sCategory = ''): void
 	{
 		$this->_sCategory = $sCategory;
 	}
@@ -215,7 +215,7 @@ class ApnsPHP_Message
 	 * @throws ApnsPHP_Message_Exception if ContentAvailable is not a
 	 *         boolean.
 	 */
-	public function setContentAvailable($bContentAvailable = true)
+	public function setContentAvailable($bContentAvailable = true): void
 	{
 		if (!is_bool($bContentAvailable)) {
 			throw new ApnsPHP_Message_Exception(
@@ -243,7 +243,7 @@ class ApnsPHP_Message
 	 * @throws ApnsPHP_Message_Exception if custom property name is not outside
 	 *         the Apple-reserved 'aps' namespace.
 	 */
-	public function setCustomProperty($sName, $mValue)
+	public function setCustomProperty($sName, $mValue): void
 	{
 		if (trim($sName) == self::APPLE_RESERVED_NAMESPACE) {
 			throw new ApnsPHP_Message_Exception(
@@ -322,7 +322,7 @@ class ApnsPHP_Message
 	 * @param  $bAutoAdjust @type boolean If true a long payload is shorted cutting
 	 *         long text value.
 	 */
-	public function setAutoAdjustLongPayload($bAutoAdjust)
+	public function setAutoAdjustLongPayload($bAutoAdjust): void
 	{
 		$this->_bAutoAdjustLongPayload = (boolean)$bAutoAdjust;
 	}
@@ -440,7 +440,7 @@ class ApnsPHP_Message
 	 * @param  $nExpiryValue @type integer This message will expire in N seconds
 	 *         if not successful delivered.
 	 */
-	public function setExpiry($nExpiryValue)
+	public function setExpiry($nExpiryValue): void
 	{
 		if (!is_int($nExpiryValue)) {
 			throw new ApnsPHP_Message_Exception(
@@ -472,7 +472,7 @@ class ApnsPHP_Message
 	 *
 	 * @param  $mCustomIdentifier @type mixed The custom message identifier.
 	 */
-	public function setCustomIdentifier($mCustomIdentifier)
+	public function setCustomIdentifier($mCustomIdentifier): void
 	{
 		$this->_mCustomIdentifier = $mCustomIdentifier;
 	}
