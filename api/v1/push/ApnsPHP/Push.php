@@ -32,35 +32,25 @@
  */
 class ApnsPHP_Push extends ApnsPHP_Abstract
 {
-	const COMMAND_PUSH = 1; /**< @type integer Payload command. */
+	public const COMMAND_PUSH = 1; /**< @type integer Payload command. */
 
-	const ERROR_RESPONSE_SIZE = 6; /**< @type integer Error-response packet size. */
-	const ERROR_RESPONSE_COMMAND = 8; /**< @type integer Error-response command code. */
+	public const ERROR_RESPONSE_SIZE = 6; /**< @type integer Error-response packet size. */
+	public const ERROR_RESPONSE_COMMAND = 8; /**< @type integer Error-response command code. */
 
-	const STATUS_CODE_INTERNAL_ERROR = 999; /**< @type integer Status code for internal error (not Apple). */
+	public const STATUS_CODE_INTERNAL_ERROR = 999; /**< @type integer Status code for internal error (not Apple). */
 
-	protected $_aErrorResponseMessages = array(
-		0   => 'No errors encountered',
-		1   => 'Processing error',
-		2   => 'Missing device token',
-		3   => 'Missing topic',
-		4   => 'Missing payload',
-		5   => 'Invalid token size',
-		6   => 'Invalid topic size',
-		7   => 'Invalid payload size',
-		8   => 'Invalid token',
-		self::STATUS_CODE_INTERNAL_ERROR => 'Internal error'
-	); /**< @type array Error-response messages. */
+	protected $_aErrorResponseMessages = [0   => 'No errors encountered', 1   => 'Processing error', 2   => 'Missing device token', 3   => 'Missing topic', 4   => 'Missing payload', 5   => 'Invalid token size', 6   => 'Invalid topic size', 7   => 'Invalid payload size', 8   => 'Invalid token', self::STATUS_CODE_INTERNAL_ERROR => 'Internal error']; /**< @type array Error-response messages. */
 
 	protected $_nSendRetryTimes = 3; /**< @type integer Send retry times. */
 
-	protected $_aServiceURLs = array(
-		'tls://gateway.push.apple.com:2195', // Production environment
-		'tls://gateway.sandbox.push.apple.com:2195' // Sandbox environment
-	); /**< @type array Service URLs environments. */
+	protected $_aServiceURLs = [
+     'tls://gateway.push.apple.com:2195',
+     // Production environment
+     'tls://gateway.sandbox.push.apple.com:2195',
+ ]; /**< @type array Service URLs environments. */
 
-	protected $_aMessageQueue = array(); /**< @type array Message queue. */
-	protected $_aErrors = array(); /**< @type array Error container. */
+	protected $_aMessageQueue = []; /**< @type array Message queue. */
+	protected $_aErrors = []; /**< @type array Error container. */
 
 	/**
 	 * Set the send retry times value.
@@ -70,7 +60,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 *
 	 * @param  $nRetryTimes @type integer Send retry times.
 	 */
-	public function setSendRetryTimes($nRetryTimes)
+	public function setSendRetryTimes($nRetryTimes): void
 	{
 		$this->_nSendRetryTimes = (int)$nRetryTimes;
 	}
@@ -90,7 +80,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 *
 	 * @param  $message @type ApnsPHP_Message The message.
 	 */
-	public function add(ApnsPHP_Message $message)
+	public function add(ApnsPHP_Message $message): void
 	{
 		$sMessagePayload = $message->getPayload();
 		$nRecipients = $message->getRecipientsNumber();
@@ -98,16 +88,12 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 		$nMessageQueueLen = count($this->_aMessageQueue);
 		for ($i = 0; $i < $nRecipients; $i++) {
 			$nMessageID = $nMessageQueueLen + $i + 1;
-			$this->_aMessageQueue[$nMessageID] = array(
-				'MESSAGE' => $message,
-				'BINARY_NOTIFICATION' => $this->_getBinaryNotification(
+			$this->_aMessageQueue[$nMessageID] = ['MESSAGE' => $message, 'BINARY_NOTIFICATION' => $this->_getBinaryNotification(
 					$message->getRecipient($i),
 					$sMessagePayload,
 					$nMessageID,
 					$message->getExpiry()
-				),
-				'ERRORS' => array()
-			);
+				), 'ERRORS' => []];
 		}
 	}
 
@@ -117,7 +103,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 * @throws ApnsPHP_Push_Exception if not connected to the
 	 *         service or no notification queued.
 	 */
-	public function send()
+	public function send(): void
 	{
 		if (!$this->_hSocket) {
 			throw new ApnsPHP_Push_Exception(
@@ -131,7 +117,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 			);
 		}
 
-		$this->_aErrors = array();
+		$this->_aErrors = [];
 		$nRun = 1;
 		while (($nMessages = count($this->_aMessageQueue)) > 0) {
 			$this->_log("INFO: Sending messages queue, run #{$nRun}: $nMessages message(s) left in queue.");
@@ -168,18 +154,14 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 					}
 				}
 
-				$nLen = strlen($aMessage['BINARY_NOTIFICATION']);
+				$nLen = strlen((string) $aMessage['BINARY_NOTIFICATION']);
 				$this->_log("STATUS: Sending message ID {$k} {$sCustomIdentifier} (" . ($nErrors + 1) . "/{$this->_nSendRetryTimes}): {$nLen} bytes.");
 
 				$aErrorMessage = null;
-				if ($nLen !== ($nWritten = (int)@fwrite($this->_hSocket, $aMessage['BINARY_NOTIFICATION']))) {
-					$aErrorMessage = array(
-						'identifier' => $k,
-						'statusCode' => self::STATUS_CODE_INTERNAL_ERROR,
-						'statusMessage' => sprintf('%s (%d bytes written instead of %d bytes)',
+				if ($nLen !== ($nWritten = (int)@fwrite($this->_hSocket, (string) $aMessage['BINARY_NOTIFICATION']))) {
+					$aErrorMessage = ['identifier' => $k, 'statusCode' => self::STATUS_CODE_INTERNAL_ERROR, 'statusMessage' => sprintf('%s (%d bytes written instead of %d bytes)',
 							$this->_aErrorResponseMessages[self::STATUS_CODE_INTERNAL_ERROR], $nWritten, $nLen
-						)
-					);
+						)];
 				}
 				usleep($this->_nWriteInterval);
 
@@ -190,7 +172,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 			}
 
 			if (!$bError) {
-				$read = array($this->_hSocket);
+				$read = [$this->_hSocket];
 				$null = NULL;
 				$nChangedStreams = @stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
 				if ($nChangedStreams === false) {
@@ -199,10 +181,10 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 				} else if ($nChangedStreams > 0) {
 					$bError = $this->_updateQueue();
 					if (!$bError) {
-						$this->_aMessageQueue = array();
+						$this->_aMessageQueue = [];
 					}
 				} else {
-					$this->_aMessageQueue = array();
+					$this->_aMessageQueue = [];
 				}
 			}
 
@@ -224,7 +206,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	{
 		$aRet = $this->_aMessageQueue;
 		if ($bEmpty) {
-			$this->_aMessageQueue = array();
+			$this->_aMessageQueue = [];
 		}
 		return $aRet;
 	}
@@ -241,7 +223,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	{
 		$aRet = $this->_aErrors;
 		if ($bEmpty) {
-			$this->_aErrors = array();
+			$this->_aErrors = [];
 		}
 		return $aRet;
 	}
@@ -262,8 +244,8 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 */
 	protected function _getBinaryNotification($sDeviceToken, $sPayload, $nMessageID = 0, $nExpire = 604800)
 	{
-		$nTokenLength = strlen($sDeviceToken);
-		$nPayloadLength = strlen($sPayload);
+		$nTokenLength = strlen((string) $sDeviceToken);
+		$nPayloadLength = strlen((string) $sPayload);
 
 		$sRet  = pack('CNNnH*', self::COMMAND_PUSH, $nMessageID, $nExpire > 0 ? time() + $nExpire : 0, self::DEVICE_BINARY_SIZE, $sDeviceToken);
 		$sRet .= pack('n', $nPayloadLength);
@@ -280,7 +262,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 */
 	protected function _parseErrorMessage($sErrorMessage)
 	{
-		return unpack('Ccommand/CstatusCode/Nidentifier', $sErrorMessage);
+		return unpack('Ccommand/CstatusCode/Nidentifier', (string) $sErrorMessage);
 	}
 
 	/**

@@ -11,7 +11,10 @@
 
 	if ($wpUserSTAQQUser && $wpUserState){
 
-		if ($_POST['action'] == "save"){
+		$action = $_POST['action'] ?? null;
+		$id = $_GET['id'] ?? null;
+
+		if ($action == "save"){
 
 			if ($_POST['user_type'] == "ressource"){
 
@@ -98,7 +101,7 @@
 				$msg = $response->msg;
 			}
 			
-		} elseif ($_POST['action'] == "requestDelete"){
+		} elseif ($action == "requestDelete"){
 
 
 			if ($wpUserRole == "ressource"){
@@ -121,7 +124,7 @@
 				$msg = $response->msg;
 			}
 
-		} elseif ($_POST['action'] == "changePasswort"){
+		} elseif ($action == "changePasswort"){
 
 
 			if ($wpUserRole == "ressource"){
@@ -148,7 +151,7 @@
 				$msg = $response->msg;
 			}
 
-		}elseif ($_POST['action'] == "new_user"){
+		}elseif ($action == "new_user"){
 			
 			if ($wpUserRole == "dienstleister"){
 				
@@ -161,8 +164,8 @@
 					'telefon' => $_POST['telefon'],
 					'email' => $_POST['email'],
 					'passwort' => $_POST['passwort'],
-					'aktiv_von' => ($_POST['aktiv_von'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime($_POST['aktiv_von'])),
-					'aktiv_bis' => ($_POST['aktiv_bis'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime($_POST['aktiv_bis'])),
+					'aktiv_von' => ($_POST['aktiv_von'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime((string) $_POST['aktiv_von'])),
+					'aktiv_bis' => ($_POST['aktiv_bis'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime((string) $_POST['aktiv_bis'])),
 					'debug' => 0,
 					'berechtigung_joborders_schalten' => ($_POST['berechtigung_joborders_schalten'] == "on") ? 1 : 0,
 					'berechtigung_einkauf' => ($_POST['berechtigung_einkauf'] == "on") ? 1 : 0,
@@ -187,8 +190,8 @@
 					'telefon' => $_POST['telefon'],
 					'email' => $_POST['email'],
 					'passwort' => $_POST['passwort'],
-					'aktiv_von' => ($_POST['aktiv_von'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime($_POST['aktiv_von'])),
-					'aktiv_bis' => ($_POST['aktiv_bis'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime($_POST['aktiv_bis'])),
+					'aktiv_von' => ($_POST['aktiv_von'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime((string) $_POST['aktiv_von'])),
+					'aktiv_bis' => ($_POST['aktiv_bis'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime((string) $_POST['aktiv_bis'])),
 					'debug' => 0,
 					'berechtigung_joborders_schalten' => ($_POST['berechtigung_joborders_schalten'] == "on") ? 1 : 0,
 					'berechtigung_einkauf' => ($_POST['berechtigung_einkauf'] == "on") ? 1 : 0,
@@ -204,7 +207,7 @@
 				])->decode_response();
 			}
 			
-        }elseif ($_POST['action'] == "update_user"){
+        }elseif ($action == "update_user"){
 			
 			if ($wpUserRole == "dienstleister"){
 				
@@ -218,8 +221,8 @@
 					'telefon' => $_POST['telefon'],
 					'email' => $_POST['email'],
 					'old_email' => $_POST['old_email'],
-					'aktiv_von' => date('Y-m-d', strtotime($_POST['aktiv_von'])),
-					'aktiv_bis' => date('Y-m-d', strtotime($_POST['aktiv_bis'])),
+					'aktiv_von' => date('Y-m-d', strtotime((string) $_POST['aktiv_von'])),
+					'aktiv_bis' => date('Y-m-d', strtotime((string) $_POST['aktiv_bis'])),
 					'debug' => 0,
 					'berechtigung_joborders_schalten' => ($_POST['berechtigung_joborders_schalten'] == "on") ? 1 : 0,
 					'berechtigung_einkauf' => ($_POST['berechtigung_einkauf'] == "on") ? 1 : 0,
@@ -245,8 +248,8 @@
 					'telefon' => $_POST['telefon'],
 					'email' => $_POST['email'],
 					'old_email' => $_POST['old_email'],
-					'aktiv_von' => date('Y-m-d', strtotime($_POST['aktiv_von'])),
-					'aktiv_bis' => date('Y-m-d', strtotime($_POST['aktiv_bis'])),
+					'aktiv_von' => date('Y-m-d', strtotime((string) $_POST['aktiv_von'])),
+					'aktiv_bis' => date('Y-m-d', strtotime((string) $_POST['aktiv_bis'])),
 					'debug' => 0,
 					'berechtigung_joborders_schalten' => ($_POST['berechtigung_joborders_schalten'] == "on") ? 1 : 0,
 					'berechtigung_einkauf' => ($_POST['berechtigung_einkauf'] == "on") ? 1 : 0,
@@ -263,7 +266,7 @@
 				
 			}
 			
-        }else if ($_POST['action'] == "dienstleisterEinladen"){
+        }else if ($action == "dienstleisterEinladen"){
 				
 			$res = $api->post("kunden/".$_POST['id']."/dienstleisterEinladen", [
 				'dl_anforderung_name' => $_POST['dl_anforderung_name'],
@@ -570,7 +573,7 @@
 
 				jQuery('.tab--benutzer-pakete #filialen').multipleSelect({placeholder: "Filialen wählen", selectAllText: "Alle auswählen", allSelected: "Alle ausgewählt", countSelected: "# von % ausgewählt"});
 
-				<?php if ($_GET['id'] == "new") echo "jQuery('.tab--benutzer-pakete #berufsfelder, .tab--benutzer-pakete #suchgruppen, .tab--benutzer-pakete #arbeitsstaetten, .tab--benutzer-pakete #filialen').multipleSelect('uncheckAll');"; ?>
+				<?php if ($id == "new") echo "jQuery('.tab--benutzer-pakete #berufsfelder, .tab--benutzer-pakete #suchgruppen, .tab--benutzer-pakete #arbeitsstaetten, .tab--benutzer-pakete #filialen').multipleSelect('uncheckAll');"; ?>
 			});
 
 		</script>

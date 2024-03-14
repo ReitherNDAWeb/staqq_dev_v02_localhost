@@ -10,8 +10,10 @@
 	$showInfo = false;
 
 	if ($wpUserSTAQQUser && $wpUserState){
+
+		$action = $_POST['action'] ?? null;
 		
-		if ($_POST['action'] == "update"){
+		if ($action == "update"){
 
 			$response = $api->put("bewertungen", [
 				'bewertet_type' => $_POST['bewertet_type'],
@@ -28,14 +30,14 @@
 		
 		
 		$offen = new stdClass();
-		$offen->dienstleister = array();
-		$offen->kunden = array();
-		$offen->ressources = array();
+		$offen->dienstleister = [];
+		$offen->kunden = [];
+		$offen->ressources = [];
 		
 		$bewertet = new stdClass();
-		$bewertet->dienstleister = array();
-		$bewertet->kunden = array();
-		$bewertet->ressources = array();
+		$bewertet->dienstleister = [];
+		$bewertet->kunden = [];
+		$bewertet->ressources = [];
 		
 		for ($i=0;$i<count($bw->bewertungen->dienstleister);$i++){
 			

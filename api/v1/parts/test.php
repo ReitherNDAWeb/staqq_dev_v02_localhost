@@ -66,18 +66,18 @@
 
 				if (intval($b['email_benachrichtigungen'])) {
 					
-					$ab = date("d.m.Y", strtotime($j['arbeitsbeginn']));
-					$ae = date("d.m.Y", strtotime($j['arbeitsende']));
+					$ab = date("d.m.Y", strtotime((string) $j['arbeitsbeginn']));
+					$ae = date("d.m.Y", strtotime((string) $j['arbeitsende']));
 					
 					$html =  "Sehr geehrte(r) {$b['anrede']} {$b['vorname']} {$b['nachname']}!";
 					$html .= "<br><br>";
-					$html .= nl2br(utf8_decode(get_option('email_absage_anderwaertig_vergeben')));
+					$html .= nl2br(mb_convert_encoding(get_option('email_absage_anderwaertig_vergeben'), 'ISO-8859-1'));
 					$html .= "<br><br>";
 					$html .= "Job: {$j['jobtitel']} ($ab - $ae)";
 					$html .= "<br><br>";
-					$html .= nl2br(utf8_decode(get_option('grusszeile')));
+					$html .= nl2br(mb_convert_encoding(get_option('grusszeile'), 'ISO-8859-1'));
 
-					$betreff = utf8_decode(get_option('email_absage_anderwaertig_vergeben_betreff'));
+					$betreff = mb_convert_encoding(get_option('email_absage_anderwaertig_vergeben_betreff'), 'ISO-8859-1');
 
 					$ret = sendMail($request->getParsedBody()['email'], $betreff, $html, '');
 				}
@@ -97,18 +97,18 @@
     });
 
 	$app->post('/test/encoding', function($request, $response, $args) {
-		
+
 		include("../../wp-load.php");
-		
+
 		$test1 = nl2br(get_option('email_absage_anderwaertig_vergeben'));
 		$test2 = mb_detect_encoding($test1, 'UTF-8', true);
-		$test3 = utf8_decode($test1);
+		$test3 = mb_convert_encoding($test1, 'ISO-8859-1');
 		$test4 = "Job wurde leider anderwärtig vergeben";
 		$test5 = mb_detect_encoding($test4, 'UTF-8', true);
-		$test6 = utf8_decode($test4);
+		$test6 = mb_convert_encoding($test4, 'ISO-8859-1');
 
 		var_dump($test1, $test2, $test3, $test4, $test5, $test6);
-		
+
 		//$ret = sendMail($request->getParsedBody()['email'], , $html, '');
         
         
@@ -118,19 +118,7 @@
 
 	$app->post('/test/testNotification', function($request, $response, $args) {
 		
-		$set = array(
-			'receiver_type'	=> $request->getParsedBody()['receiver_type'], 
-			'receiver_id' 	=> $request->getParsedBody()['receiver_id'], 
-			'titel' 		=> $request->getParsedBody()['titel'], 
-			'nachricht' 	=> $request->getParsedBody()['nachricht'], 
-			'subtitle' 		=> $request->getParsedBody()['subtitle'], 
-			'kategorie' 	=> 'egal', 
-			'link_web' 		=> '/app/', 
-			'link_mobile' 	=> '/'.$request->getParsedBody()['receiver_type'].'/notifications', 
-			'send_web' 		=> true, 
-			'send_mobile' 	=> true,
-			'force' 		=> true
-		);
+		$set = ['receiver_type'	=> $request->getParsedBody()['receiver_type'], 'receiver_id' 	=> $request->getParsedBody()['receiver_id'], 'titel' 		=> $request->getParsedBody()['titel'], 'nachricht' 	=> $request->getParsedBody()['nachricht'], 'subtitle' 		=> $request->getParsedBody()['subtitle'], 'kategorie' 	=> 'egal', 'link_web' 		=> '/app/', 'link_mobile' 	=> '/'.$request->getParsedBody()['receiver_type'].'/notifications', 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true];
         
 		fireNotification ($set);
 		
@@ -150,7 +138,7 @@
 
 	$app->get('/test/verrechnung', function($request, $response, $args) {
 		
-		echo "<a href='".verrechneJoboorder(array(14), 'dienstleister', 1)."'>Link</a>";
+		echo "<a href='".verrechneJoboorder([14], 'dienstleister', 1)."'>Link</a>";
         
     });
 
@@ -158,7 +146,7 @@
 		
 		include("../../wp-load.php");
 		
-		var_dump(wp_signon(array('user_login' => $request->getParsedBody()['email'], 'user_password' => $request->getParsedBody()['password'], 'remember' => true)));
+		var_dump(wp_signon(['user_login' => $request->getParsedBody()['email'], 'user_password' => $request->getParsedBody()['password'], 'remember' => true]));
         
     });
 

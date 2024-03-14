@@ -100,12 +100,7 @@
 			$bewerbung_bestaetigt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 			$joborder['anzahl_bewerbungen_einsatz_bestaetigt'] = $bewerbung_bestaetigt['anz'];
             
-			$joborder['kunde_rating'] = array(
-				'bool' => false,
-				'durchschnitt' => 0.0,
-				'anzahl_bewertungen' => 0,
-				'summe_punkte' => 0
-			);
+			$joborder['kunde_rating'] = ['bool' => false, 'durchschnitt' => 0.0, 'anzahl_bewertungen' => 0, 'summe_punkte' => 0];
 			
 			if ($joborder['publisher_type'] == "kunde"){
 				$joborder['kunde_rating']['bool'] = true;
@@ -113,7 +108,7 @@
 				$sth = $db->prepare("SELECT COUNT(*) AS anzahl, COALESCE(SUM(bewertung), 0) AS punkte FROM bewertungen WHERE bewertet_id = ".$joborder['publisher_id']." AND bewertet_type='kunde' AND status=1");
 				$sth->execute();
 				$gesamt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
-				$durchschnitt = ($gesamt['punkte']/$gesamt['anzahl']) ? ($gesamt['punkte']/$gesamt['anzahl']) : 0;
+				$durchschnitt = $gesamt['punkte']/$gesamt['anzahl'] ?: 0;
 				$joborder['kunde_rating']['anzahl_bewertungen'] = $gesamt['anzahl'];
 				$joborder['kunde_rating']['summe_punkte'] = $gesamt['punkte'];
 				$joborder['kunde_rating']['durchschnitt'] = number_format($durchschnitt, 2, ",", "");
@@ -137,7 +132,7 @@
 
 				$gesamt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 				$joborder['dienstleister_firmenwortlaut_inkl_bewertung'] = 
-				($gesamt['punkte']/$gesamt['anzahl']) ? ($gesamt['punkte']/$gesamt['anzahl']) : 0;
+				$gesamt['punkte']/$gesamt['anzahl'] ?: 0;
 
 				$rating = number_format($joborder['dienstleister_firmenwortlaut_inkl_bewertung'], 2, ",", "");
 
@@ -228,7 +223,7 @@
             $sth->execute();
             $ressources = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
             
-			$ressources_push = array();
+			$ressources_push = [];
 			
             for ($i=0;$i<count($ressources);$i++){
                 $ressources[$i]['score'] = getSTAQQScore($ressources[$i]['id'], $ressources[$i]['joborders_id']);
@@ -252,25 +247,25 @@
 				$sth = $db->prepare("SELECT berufsfelder.id, berufsfelder.name FROM relation_ressources_berufsfelder LEFT JOIN berufsfelder ON berufsfelder.id = relation_ressources_berufsfelder.berufsfelder_id WHERE relation_ressources_berufsfelder.ressources_id=:id");
 				$sth->bindParam(':id', $ressources[$i]['ressources_id'], PDO::PARAM_INT);
 				$sth->execute();
-				$ressources[$i]['berufsfelder'] = array();
+				$ressources[$i]['berufsfelder'] = [];
 				foreach(utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC)) as $b){array_push($ressources[$i]['berufsfelder'], $b['name']);}
 
 				$sth = $db->prepare("SELECT berufsgruppen.id, berufsgruppen.name FROM relation_ressources_berufsgruppen LEFT JOIN berufsgruppen ON berufsgruppen.id = relation_ressources_berufsgruppen.berufsgruppen_id WHERE relation_ressources_berufsgruppen.ressources_id=:id");
 				$sth->bindParam(':id', $ressources[$i]['ressources_id'], PDO::PARAM_INT);
 				$sth->execute();
-				$ressources[$i]['berufsgruppen'] = array();
+				$ressources[$i]['berufsgruppen'] = [];
 				foreach(utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC)) as $b){array_push($ressources[$i]['berufsgruppen'], $b['name']);}
 
 				$sth = $db->prepare("SELECT berufsbezeichnungen.id, berufsbezeichnungen.name FROM relation_ressources_berufsbezeichnungen LEFT JOIN berufsbezeichnungen ON berufsbezeichnungen.id = relation_ressources_berufsbezeichnungen.berufsbezeichnungen_id WHERE relation_ressources_berufsbezeichnungen.ressources_id=:id");
 				$sth->bindParam(':id', $ressources[$i]['ressources_id'], PDO::PARAM_INT);
 				$sth->execute();
-				$ressources[$i]['berufsbezeichnungen'] = array();
+				$ressources[$i]['berufsbezeichnungen'] = [];
 				foreach(utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC)) as $b){array_push($ressources[$i]['berufsbezeichnungen'], $b['name']);}
 
 				$sth = $db->prepare("SELECT skills_items.id, skills_items.name FROM relation_ressources_skills LEFT JOIN skills_items ON skills_items.id = relation_ressources_skills.skills_items_id WHERE relation_ressources_skills.ressources_id=:id");
 				$sth->bindParam(':id', $ressources[$i]['ressources_id'], PDO::PARAM_INT);
 				$sth->execute();
-				$ressources[$i]['skills'] = array();
+				$ressources[$i]['skills'] = [];
 				foreach(utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC)) as $b){array_push($ressources[$i]['skills'], $b['name']);}
 				
 				$sth = $db->prepare("SELECT dienstleister.firmenwortlaut, dienstleister.id, castings.empfehlung FROM castings LEFT JOIN dienstleister ON dienstleister.id = castings.dienstleister_id WHERE castings.ressources_id=:id AND ressources_verify=1 AND dienstleister_verify=1");
@@ -282,7 +277,7 @@
 				$sth->bindParam(':id', $ressources[$i]['ressources_id'], PDO::PARAM_INT);
 				$sth->execute();
 				$ressources[$i]['einsatzorte'] = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-				$ressources[$i]['einsatzorte_namen'] = array();
+				$ressources[$i]['einsatzorte_namen'] = [];
 				foreach($ressources[$i]['einsatzorte'] as $e){array_push($ressources[$i]['einsatzorte_namen'], ($e['bezirke_name'] . " (".$e['bundeslaender_name'].")"));}
 				
 				$sth = $db->prepare("SELECT * FROM joborders WHERE id=:id");
@@ -314,12 +309,8 @@
 				$sth->execute();
 				$gesamt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 
-				$durchschnitt = ($gesamt['punkte']/$gesamt['anzahl']) ? ($gesamt['punkte']/$gesamt['anzahl']) : 0;
-				$ressources[$i]['bewertung'] = array(
-					'anzahl_bewertungen' => $gesamt['anzahl'],
-					'summe_punkte' => $gesamt['punkte'],
-					'durchschnitt' => number_format($durchschnitt, 2, ",", "")
-				);
+				$durchschnitt = $gesamt['punkte']/$gesamt['anzahl'] ?: 0;
+				$ressources[$i]['bewertung'] = ['anzahl_bewertungen' => $gesamt['anzahl'], 'summe_punkte' => $gesamt['punkte'], 'durchschnitt' => number_format($durchschnitt, 2, ",", "")];
 				
 				if ($anz == 0){
 					array_push ($ressources_push, $ressources[$i]);
@@ -355,8 +346,8 @@
             $sth->execute();
             $joborder = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 			
-			$tag1 = strtotime($joborder['arbeitsbeginn']);
-			$tag2 = strtotime($joborder['arbeitsende']);
+			$tag1 = strtotime((string) $joborder['arbeitsbeginn']);
+			$tag2 = strtotime((string) $joborder['arbeitsende']);
 			$diff = $tag2 - $tag1;
 			
 			$tage = floor($diff / (60 * 60 * 24)) + 1;
@@ -396,13 +387,13 @@
 			
         	$db = getDB();
 			
-			$tag1 = strtotime($request->getQueryParams()['arbeitsbeginn']);
-			$tag2 = strtotime($request->getQueryParams()['arbeitsende']);
+			$tag1 = strtotime((string) $request->getQueryParams()['arbeitsbeginn']);
+			$tag2 = strtotime((string) $request->getQueryParams()['arbeitsende']);
 			$diff = $tag2 - $tag1;
 			
 			$tage = floor($diff / (60 * 60 * 24)) + 1;
 			if ($tage > 183) $tage = 183;
-            $berufsbezeichnungen = json_decode($request->getQueryParams()['berufsbezeichnungen']);
+            $berufsbezeichnungen = json_decode((string) $request->getQueryParams()['berufsbezeichnungen']);
 			
 			if (count($berufsbezeichnungen) > 0){
 				$k = implode(",", $berufsbezeichnungen);
@@ -410,7 +401,7 @@
 				$sth = $db->prepare("SELECT verrechnungs_kategorien.* FROM berufsbezeichnungen LEFT JOIN 
 				verrechnungs_kategorien ON berufsbezeichnungen.verrechnungs_kategorien_id = verrechnungs_kategorien.id WHERE berufsbezeichnungen.id IN ($k) ORDER BY berufsbezeichnungen.verrechnungs_kategorien_id DESC");
 			}else{
-				$k = implode(",", json_decode($request->getQueryParams()['berufsgruppen']));
+				$k = implode(",", json_decode((string) $request->getQueryParams()['berufsgruppen']));
 				$sth = $db->prepare("SELECT verrechnungs_kategorien.* FROM berufsgruppen LEFT JOIN 
 				verrechnungs_kategorien ON berufsgruppen.verrechnungs_kategorien_id = verrechnungs_kategorien.id WHERE berufsgruppen.id IN ($k) ORDER BY berufsgruppen.verrechnungs_kategorien_id DESC");
 			}
@@ -465,19 +456,7 @@
 			$sth->execute();
 			$dienstleister = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0];
 			
-			fireNotification (array(
-				'receiver_type'	=> 'ressource', 
-				'receiver_id' 	=> $args['ressources_id'], 
-				'titel' 		=> 'Job erhalten',
-				'subtitle'		=> 'Job ' . $j['jobtitel'] . ' erhalten',
-				'nachricht' 	=> "<strong>{$dienstleister['firmenwortlaut']}</strong> hat Sie für den Job <strong>{$j['jobtitel']}</strong> ausgewählt!", 
-				'kategorie' 	=> 'joborder', 
-				'link_web' 		=> "/app/joborders/#erhalten", 
-				'link_mobile' 	=> "/ressource/joborders/{$args['joborders_id']}", 
-				'send_web' 		=> true, 
-				'send_mobile' 	=> true,
-				'force' 		=> true
-			));
+			fireNotification (['receiver_type'	=> 'ressource', 'receiver_id' 	=> $args['ressources_id'], 'titel' 		=> 'Job erhalten', 'subtitle'		=> 'Job ' . $j['jobtitel'] . ' erhalten', 'nachricht' 	=> "<strong>{$dienstleister['firmenwortlaut']}</strong> hat Sie für den Job <strong>{$j['jobtitel']}</strong> ausgewählt!", 'kategorie' 	=> 'joborder', 'link_web' 		=> "/app/joborders/#erhalten", 'link_mobile' 	=> "/ressource/joborders/{$args['joborders_id']}", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);
 			
 			// wenn alle ressourcen besetzt
 			if ($j['anzahl_ressourcen'] <= $r['anz']){
@@ -491,37 +470,25 @@
 
 					if (intval($b['email_benachrichtigungen']) && ($b['status'] == "beworben")) {
 
-						$ab = date("d.m.Y", strtotime($j['arbeitsbeginn']));
-						$ae = date("d.m.Y", strtotime($j['arbeitsende']));
+						$ab = date("d.m.Y", strtotime((string) $j['arbeitsbeginn']));
+						$ae = date("d.m.Y", strtotime((string) $j['arbeitsende']));
 
 						$html =  "Sehr geehrte(r) {$b['anrede']} {$b['vorname']} {$b['nachname']}!";
 						$html .= "<br><br>";
-						$html .= nl2br(utf8_decode(get_option('email_absage_anderwaertig_vergeben')));
+						$html .= nl2br(mb_convert_encoding(get_option('email_absage_anderwaertig_vergeben'), 'ISO-8859-1'));
 						$html .= "<br><br>";
 						$html .= "Job: {$j['jobtitel']} ($ab - $ae)";
 						$html .= "<br><br>";
-						$html .= nl2br(utf8_decode(get_option('grusszeile')));
+						$html .= nl2br(mb_convert_encoding(get_option('grusszeile'), 'ISO-8859-1'));
 
-						$betreff = utf8_decode(get_option('email_absage_anderwaertig_vergeben_betreff'));
+						$betreff = mb_convert_encoding(get_option('email_absage_anderwaertig_vergeben_betreff'), 'ISO-8859-1');
 
 						$ret = sendMail($b['email'], $betreff, $html, '');
 					
 					
 						// SEND PUSH
 					
-						fireNotification (array(
-							'receiver_type'	=> 'ressource', 
-							'receiver_id' 	=> $b['id'], 
-							'titel' 		=> $betreff,
-							'subtitle'		=> 'Job ' . $j['jobtitel'] . ' wurde leider anderwärtig vergeben!',
-							'nachricht' 	=> "Job <strong>{$j['jobtitel']}</strong> wurde leider anderwärtig vergeben!", 
-							'kategorie' 	=> 'joborder', 
-							'link_web' 		=> "/app/joborders/", 
-							'link_mobile' 	=> "/ressource/joborders", 
-							'send_web' 		=> true, 
-							'send_mobile' 	=> true,
-							'force' 		=> true
-						));
+						fireNotification (['receiver_type'	=> 'ressource', 'receiver_id' 	=> $b['id'], 'titel' 		=> $betreff, 'subtitle'		=> 'Job ' . $j['jobtitel'] . ' wurde leider anderwärtig vergeben!', 'nachricht' 	=> "Job <strong>{$j['jobtitel']}</strong> wurde leider anderwärtig vergeben!", 'kategorie' 	=> 'joborder', 'link_web' 		=> "/app/joborders/", 'link_mobile' 	=> "/ressource/joborders", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);
 						
 					}
 
@@ -572,37 +539,25 @@
 
 			if (intval($b['email_benachrichtigungen'])) {
 
-				$ab = date("d.m.Y", strtotime($j['arbeitsbeginn']));
-				$ae = date("d.m.Y", strtotime($j['arbeitsende']));
+				$ab = date("d.m.Y", strtotime((string) $j['arbeitsbeginn']));
+				$ae = date("d.m.Y", strtotime((string) $j['arbeitsende']));
 
 				$html =  "Sehr geehrte(r) {$b['anrede']} {$b['vorname']} {$b['nachname']}!";
 				$html .= "<br><br>";
-				$html .= nl2br(utf8_decode(get_option('email_absage_anderwaertig_vergeben')));
+				$html .= nl2br(mb_convert_encoding(get_option('email_absage_anderwaertig_vergeben'), 'ISO-8859-1'));
 				$html .= "<br><br>";
 				$html .= "Job: {$j['jobtitel']} ($ab - $ae)";
 				$html .= "<br><br>";
-				$html .= nl2br(utf8_decode(get_option('grusszeile')));
+				$html .= nl2br(mb_convert_encoding(get_option('grusszeile'), 'ISO-8859-1'));
 
-				$betreff = utf8_decode(get_option('email_absage_anderwaertig_vergeben_betreff'));
+				$betreff = mb_convert_encoding(get_option('email_absage_anderwaertig_vergeben_betreff'), 'ISO-8859-1');
 
 				$ret = sendMail($b['email'], $betreff, $html, '');
 					
 					
 				// SEND PUSH
 					
-				fireNotification (array(
-					'receiver_type'	=> 'ressource', 
-					'receiver_id' 	=> $b['id'], 
-					'titel' 		=> $betreff,
-					'subtitle'		=> 'Job ' . $j['jobtitel'] . ' wurde leider anderwärtig vergeben!',
-					'nachricht' 	=> "Job <strong>{$j['jobtitel']}</strong> wurde leider anderwärtig vergeben!", 
-					'kategorie' 	=> 'joborder', 
-					'link_web' 		=> "/app/joborders/", 
-					'link_mobile' 	=> "/ressource/joborders", 
-					'send_web' 		=> true, 
-					'send_mobile' 	=> true,
-					'force' 		=> true
-				));
+				fireNotification (['receiver_type'	=> 'ressource', 'receiver_id' 	=> $b['id'], 'titel' 		=> $betreff, 'subtitle'		=> 'Job ' . $j['jobtitel'] . ' wurde leider anderwärtig vergeben!', 'nachricht' 	=> "Job <strong>{$j['jobtitel']}</strong> wurde leider anderwärtig vergeben!", 'kategorie' 	=> 'joborder', 'link_web' 		=> "/app/joborders/", 'link_mobile' 	=> "/ressource/joborders", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);
 				
 			}
 
@@ -631,15 +586,15 @@
 			if ($publisher['anzahl_joborders'] > 0){
 
 				// Kosten errechnen
-				$tag1 = strtotime($request->getParsedBody()['arbeitsbeginn']);
-				$tag2 = strtotime($request->getParsedBody()['arbeitsende']);
+				$tag1 = strtotime((string) $request->getParsedBody()['arbeitsbeginn']);
+				$tag2 = strtotime((string) $request->getParsedBody()['arbeitsende']);
 				$diff = $tag2 - $tag1;
 
 				$tage = floor($diff / (60 * 60 * 24)) + 1;
 				if ($tage > 183) $tage = 183;
 
-				$berufsbezeichnungen_decoded = json_decode($request->getParsedBody()['berufsbezeichnungen']);
-				$berufsgruppen_decoded = json_decode($request->getParsedBody()['berufsgruppen']);
+				$berufsbezeichnungen_decoded = json_decode((string) $request->getParsedBody()['berufsbezeichnungen']);
+				$berufsgruppen_decoded = json_decode((string) $request->getParsedBody()['berufsgruppen']);
 				$bb = implode(",", $berufsbezeichnungen_decoded);
 
 				if(count($berufsbezeichnungen_decoded) > 0){
@@ -711,7 +666,7 @@
 				$sth->bindParam(':joborders_id', $joborders_id, PDO::PARAM_INT);
 				$sth->execute();
 
-				foreach (json_decode($request->getParsedBody()['berufsfelder']) as $f){
+				foreach (json_decode((string) $request->getParsedBody()['berufsfelder']) as $f){
 					$sth = $db->prepare("INSERT INTO relation_joborders_berufsfelder (joborders_id, berufsfelder_id) VALUES (:joborders_id, :berufsfelder_id)");
 					$sth->bindParam(':joborders_id', $joborders_id, PDO::PARAM_INT);
 					$sth->bindParam(':berufsfelder_id', $f, PDO::PARAM_INT);
@@ -722,7 +677,7 @@
 				$sth->bindParam(':joborders_id', $joborders_id, PDO::PARAM_INT);
 				$sth->execute();
 
-				foreach (json_decode($request->getParsedBody()['berufsgruppen']) as $b){
+				foreach (json_decode((string) $request->getParsedBody()['berufsgruppen']) as $b){
 					$sth = $db->prepare("INSERT INTO relation_joborders_berufsgruppen (joborders_id, berufsgruppen_id) VALUES (:joborders_id, :berufsgruppen_id)");
 					$sth->bindParam(':joborders_id', $joborders_id, PDO::PARAM_INT);
 					$sth->bindParam(':berufsgruppen_id', $b, PDO::PARAM_INT);
@@ -733,7 +688,7 @@
 				$sth->bindParam(':joborders_id', $joborders_id, PDO::PARAM_INT);
 				$sth->execute();
 
-				foreach (json_decode($request->getParsedBody()['berufsbezeichnungen']) as $b){
+				foreach (json_decode((string) $request->getParsedBody()['berufsbezeichnungen']) as $b){
 					$sth = $db->prepare("INSERT INTO relation_joborders_berufsbezeichnungen (joborders_id, berufsbezeichnungen_id) VALUES (:joborders_id, :berufsbezeichnungen_id)");
 					$sth->bindParam(':joborders_id', $joborders_id, PDO::PARAM_INT);
 					$sth->bindParam(':berufsbezeichnungen_id', $b, PDO::PARAM_INT);
@@ -744,7 +699,7 @@
 				$sth->bindParam(':joborders_id', $joborders_id, PDO::PARAM_INT);
 				$sth->execute();
 
-				foreach (json_decode($request->getParsedBody()['dienstleister_auswahl']) as $d){
+				foreach (json_decode((string) $request->getParsedBody()['dienstleister_auswahl']) as $d){
 					$sth = $db->prepare("INSERT INTO relation_joborders_dienstleister_auswahl (joborders_id, dienstleister_id) VALUES (:joborders_id, :dienstleister_id)");
 					$sth->bindParam(':joborders_id', $joborders_id, PDO::PARAM_INT);
 					$sth->bindParam(':dienstleister_id', $d, PDO::PARAM_INT);
@@ -755,7 +710,7 @@
 				$sth->bindParam(':joborders_id', $joborders_id, PDO::PARAM_INT);
 				$sth->execute();
 
-				foreach (json_decode($request->getParsedBody()['skills']) as $b){
+				foreach (json_decode((string) $request->getParsedBody()['skills']) as $b){
 					$sth = $db->prepare("INSERT INTO relation_joborders_skills (joborders_id, skills_items_id, praedikat) VALUES (:joborders_id, :skills_items_id, :praedikat)");
 					$sth->bindParam(':joborders_id', $joborders_id, PDO::PARAM_INT);
 					$sth->bindParam(':skills_items_id', $b->id, PDO::PARAM_INT);
@@ -808,7 +763,7 @@
 					$sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
 					$sth->execute();
 
-					foreach (json_decode($request->getParsedBody()['berufsfelder']) as $f){
+					foreach (json_decode((string) $request->getParsedBody()['berufsfelder']) as $f){
 						$sth = $db->prepare("INSERT INTO relation_templates_berufsfelder (templates_id, berufsfelder_id) VALUES (:templates_id, :berufsfelder_id)");
 						$sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
 						$sth->bindParam(':berufsfelder_id', $f, PDO::PARAM_INT);
@@ -819,7 +774,7 @@
 					$sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
 					$sth->execute();
 
-					foreach (json_decode($request->getParsedBody()['berufsgruppen']) as $b){
+					foreach (json_decode((string) $request->getParsedBody()['berufsgruppen']) as $b){
 						$sth = $db->prepare("INSERT INTO relation_templates_berufsgruppen (templates_id, berufsgruppen_id) VALUES (:templates_id, :berufsgruppen_id)");
 						$sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
 						$sth->bindParam(':berufsgruppen_id', $b, PDO::PARAM_INT);
@@ -830,7 +785,7 @@
 					$sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
 					$sth->execute();
 
-					foreach (json_decode($request->getParsedBody()['berufsbezeichnungen']) as $b){
+					foreach (json_decode((string) $request->getParsedBody()['berufsbezeichnungen']) as $b){
 						$sth = $db->prepare("INSERT INTO relation_templates_berufsbezeichnungen (templates_id, berufsbezeichnungen_id) VALUES (:templates_id, :berufsbezeichnungen_id)");
 						$sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
 						$sth->bindParam(':berufsbezeichnungen_id', $b, PDO::PARAM_INT);
@@ -841,7 +796,7 @@
 					$sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
 					$sth->execute();
 
-					foreach (json_decode($request->getParsedBody()['dienstleister_auswahl']) as $d){
+					foreach (json_decode((string) $request->getParsedBody()['dienstleister_auswahl']) as $d){
 						$sth = $db->prepare("INSERT INTO relation_templates_dienstleister_auswahl (templates_id, dienstleister_id) VALUES (:templates_id, :dienstleister_id)");
 						$sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
 						$sth->bindParam(':dienstleister_id', $d, PDO::PARAM_INT);
@@ -852,7 +807,7 @@
 					$sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
 					$sth->execute();
 
-					foreach (json_decode($request->getParsedBody()['skills']) as $b){
+					foreach (json_decode((string) $request->getParsedBody()['skills']) as $b){
 						$sth = $db->prepare("INSERT INTO relation_templates_skills (templates_id, skills_items_id, praedikat) VALUES (:templates_id, :skills_items_id, :praedikat)");
 						$sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
 						$sth->bindParam(':skills_items_id', $b->id, PDO::PARAM_INT);

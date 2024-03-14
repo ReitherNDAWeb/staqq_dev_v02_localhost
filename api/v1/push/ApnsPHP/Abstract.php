@@ -39,16 +39,16 @@
  */
 abstract class ApnsPHP_Abstract
 {
-	const ENVIRONMENT_PRODUCTION = 0; /**< @type integer Production environment. */
-	const ENVIRONMENT_SANDBOX = 1; /**< @type integer Sandbox environment. */
+	public const ENVIRONMENT_PRODUCTION = 0; /**< @type integer Production environment. */
+	public const ENVIRONMENT_SANDBOX = 1; /**< @type integer Sandbox environment. */
 
-	const DEVICE_BINARY_SIZE = 32; /**< @type integer Device token length. */
+	public const DEVICE_BINARY_SIZE = 32; /**< @type integer Device token length. */
 
-	const WRITE_INTERVAL = 10000; /**< @type integer Default write interval in micro seconds. */
-	const CONNECT_RETRY_INTERVAL = 1000000; /**< @type integer Default connect retry interval in micro seconds. */
-	const SOCKET_SELECT_TIMEOUT = 1000000; /**< @type integer Default socket select timeout in micro seconds. */
+	public const WRITE_INTERVAL = 10000; /**< @type integer Default write interval in micro seconds. */
+	public const CONNECT_RETRY_INTERVAL = 1000000; /**< @type integer Default connect retry interval in micro seconds. */
+	public const SOCKET_SELECT_TIMEOUT = 1000000; /**< @type integer Default socket select timeout in micro seconds. */
 
-	protected $_aServiceURLs = array(); /**< @type array Container for service URLs environments. */
+	protected $_aServiceURLs = []; /**< @type array Container for service URLs environments. */
 
 	protected $_nEnvironment; /**< @type integer Active environment. */
 
@@ -115,7 +115,7 @@ abstract class ApnsPHP_Abstract
 	 * @throws ApnsPHP_Exception if Logger is not an instance
 	 *         of ApnsPHP_Log_Interface.
 	 */
-	public function setLogger(ApnsPHP_Log_Interface $logger)
+	public function setLogger(ApnsPHP_Log_Interface $logger): void
 	{
 		if (!is_object($logger)) {
 			throw new ApnsPHP_Exception(
@@ -124,7 +124,7 @@ abstract class ApnsPHP_Abstract
 		}
 		if (!($logger instanceof ApnsPHP_Log_Interface)) {
 			throw new ApnsPHP_Exception(
-				"Unable to use an instance of '" . get_class($logger) . "' as logger: " .
+				"Unable to use an instance of '" . $logger::class . "' as logger: " .
 				"a logger must implements ApnsPHP_Log_Interface."
 			);
 		}
@@ -147,7 +147,7 @@ abstract class ApnsPHP_Abstract
 	 * @param  $sProviderCertificatePassphrase @type string Provider Certificate
 	 *         passphrase.
 	 */
-	public function setProviderCertificatePassphrase($sProviderCertificatePassphrase)
+	public function setProviderCertificatePassphrase($sProviderCertificatePassphrase): void
 	{
 		$this->_sProviderCertificatePassphrase = $sProviderCertificatePassphrase;
 	}
@@ -167,7 +167,7 @@ abstract class ApnsPHP_Abstract
 	 * @throws ApnsPHP_Exception if Root Certification Authority
 	 *         file is not readable.
 	 */
-	public function setRootCertificationAuthority($sRootCertificationAuthorityFile)
+	public function setRootCertificationAuthority($sRootCertificationAuthorityFile): void
 	{
 		if (!is_readable($sRootCertificationAuthorityFile)) {
 			throw new ApnsPHP_Exception(
@@ -196,7 +196,7 @@ abstract class ApnsPHP_Abstract
 	 *
 	 * @param  $nWriteInterval @type integer Write interval in micro seconds.
 	 */
-	public function setWriteInterval($nWriteInterval)
+	public function setWriteInterval($nWriteInterval): void
 	{
 		$this->_nWriteInterval = (int)$nWriteInterval;
 	}
@@ -219,7 +219,7 @@ abstract class ApnsPHP_Abstract
 	 *
 	 * @param  $nTimeout @type integer Connection timeout in seconds.
 	 */
-	public function setConnectTimeout($nTimeout)
+	public function setConnectTimeout($nTimeout): void
 	{
 		$this->_nConnectTimeout = (int)$nTimeout;
 	}
@@ -242,7 +242,7 @@ abstract class ApnsPHP_Abstract
 	 *
 	 * @param  $nRetryTimes @type integer Connect retry times.
 	 */
-	public function setConnectRetryTimes($nRetryTimes)
+	public function setConnectRetryTimes($nRetryTimes): void
 	{
 		$this->_nConnectRetryTimes = (int)$nRetryTimes;
 	}
@@ -267,7 +267,7 @@ abstract class ApnsPHP_Abstract
 	 *
 	 * @param  $nRetryInterval @type integer Connect retry interval in micro seconds.
 	 */
-	public function setConnectRetryInterval($nRetryInterval)
+	public function setConnectRetryInterval($nRetryInterval): void
 	{
 		$this->_nConnectRetryInterval = (int)$nRetryInterval;
 	}
@@ -299,7 +299,7 @@ abstract class ApnsPHP_Abstract
 	 *
 	 * @param  $nSelectTimeout @type integer Socket select timeout in micro seconds.
 	 */
-	public function setSocketSelectTimeout($nSelectTimeout)
+	public function setSocketSelectTimeout($nSelectTimeout): void
 	{
 		$this->_nSocketSelectTimeout = (int)$nSelectTimeout;
 	}
@@ -325,7 +325,7 @@ abstract class ApnsPHP_Abstract
 	 * @throws ApnsPHP_Exception if is unable to connect after
 	 *         ConnectRetryTimes.
 	 */
-	public function connect()
+	public function connect(): void
 	{
 		$bConnected = false;
 		$nRetry = 0;
@@ -378,11 +378,7 @@ abstract class ApnsPHP_Abstract
 		/**
 		 * @see http://php.net/manual/en/context.ssl.php
 		 */
-		$streamContext = stream_context_create(array('ssl' => array(
-			'verify_peer' => isset($this->_sRootCertificationAuthorityFile),
-			'cafile' => $this->_sRootCertificationAuthorityFile,
-			'local_cert' => $this->_sProviderCertificateFile
-		)));
+		$streamContext = stream_context_create(['ssl' => ['verify_peer' => isset($this->_sRootCertificationAuthorityFile), 'cafile' => $this->_sRootCertificationAuthorityFile, 'local_cert' => $this->_sProviderCertificateFile]]);
 
 		if (!empty($this->_sProviderCertificatePassphrase)) {
 			stream_context_set_option($streamContext, 'ssl',

@@ -5,17 +5,10 @@
 		define('DEFINED_JO_VERRECHNUNG_PRODUCT_ID', 231);	
 		include("../../wp-load.php");
 
-		$filter = array(
-			'meta_key'    => '_customer_user',
-			'meta_value'  => $args['wpid'], 
-			'post_type' => 'shop_order',
-			'orderby'       =>  'post_date',
-			'order'         =>  'ASC',
-			'posts_per_page' => -1 // no limit
-		);
+		$filter = ['meta_key'    => '_customer_user', 'meta_value'  => $args['wpid'], 'post_type' => 'shop_order', 'orderby'       =>  'post_date', 'order'         =>  'ASC', 'posts_per_page' => -1];
 
 		$posts = get_posts($filter);
-		$elements = array();
+		$elements = [];
 
 		foreach($posts as $p){
 
@@ -27,8 +20,8 @@
 			$elem->payment_url = $order->get_checkout_payment_url();
 			$elem->summe = "€ " . number_format($order->get_total(), 2, ',', '.');
 			$elem->type = "Paket Ordering";
-			$elem->content = array();
-			$elem->contentNames = array();
+			$elem->content = [];
+			$elem->contentNames = [];
 
 			foreach($items as $id => $item){
 				

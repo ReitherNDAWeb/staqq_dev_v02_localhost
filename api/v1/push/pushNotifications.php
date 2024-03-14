@@ -15,31 +15,17 @@
 		// Sends Push notification for Android users
 		public function android($data, $reg_ids) {
 			$url = 'https://android.googleapis.com/gcm/send';
-			$message = array(
-				'title' => $data['mtitle'],
-				'message' => $data['mdesc'],
-				'subtitle' => json_encode($data['msub']),
-				'tickerText' => '',
-				'msgcnt' => 1,
-				'vibrate' => 1,
-				'image' => "icon"
-			);
+			$message = ['title' => $data['mtitle'], 'message' => $data['mdesc'], 'subtitle' => json_encode($data['msub']), 'tickerText' => '', 'msgcnt' => 1, 'vibrate' => 1, 'image' => "icon"];
 
-			$headers = array(
-				'Authorization: key=' .self::$API_ACCESS_KEY,
-				'Content-Type: application/json'
-			);
+			$headers = ['Authorization: key=' .self::$API_ACCESS_KEY, 'Content-Type: application/json'];
 
-			$fields = array(
-				'registration_ids' => $reg_ids,
-				'data' => $message,
-			);
+			$fields = ['registration_ids' => $reg_ids, 'data' => $message];
 
 			return $this->useCurl($url, $headers, json_encode($fields));
 		}
 
 		// Sends Push notification for iOS users
-		public function iOS($data, $devicetoken) {
+		public function iOS($data, $devicetoken): void {
 			// Adjust to your timezone
 			date_default_timezone_set('Europe/Rome');
 			// Report all PHP errors
@@ -53,7 +39,7 @@
 					//ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
 					ApnsPHP_Abstract::ENVIRONMENT_PRODUCTION,
 					//realpath(dirname(__FILE__))."/ck_dev.pem"
-					realpath(dirname(__FILE__))."/ck.pem"
+					realpath(__DIR__)."/ck.pem"
 				);
 			}catch(ApnsPHP_Exception $e){
 				var_dump($e);

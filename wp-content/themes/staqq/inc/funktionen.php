@@ -17,14 +17,14 @@
 
 	function decodeId($hash){
 		
-		if (strlen($hash) < 5) $hash = intval($hash);
+		if (strlen((string) $hash) < 5) $hash = intval($hash);
 		
 		if (is_int($hash)){
 			return $hash;
 		}else{
 			$key = hash( 'sha256', SECRET_KEY );
 			$iv = substr( hash( 'sha256', SECRET_IV ), 0, 16 );
-			return intval(openssl_decrypt( base64_decode( $hash ), ENCRYPT_METHOD, $key, 0, $iv ));
+			return intval(openssl_decrypt( base64_decode( (string) $hash ), ENCRYPT_METHOD, $key, 0, $iv ));
 		}
 	}
 

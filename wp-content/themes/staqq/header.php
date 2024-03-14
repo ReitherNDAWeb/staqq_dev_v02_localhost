@@ -1,7 +1,7 @@
 <?php
 
 	function currentMenuItem($uri){
-		if (strpos($_SERVER['REQUEST_URI'], $uri) !== false){
+		if (str_contains((string) $_SERVER['REQUEST_URI'], (string) $uri)){
 			return 'current';
 		}else{
 			return '';
@@ -63,7 +63,7 @@
             $userBerechtigungen->aktiv_bis = $b->aktiv_bis;
             $wpUserSTAQQKundeId = $b->kunden_id;
             
-            if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', $userBerechtigungen->aktiv_bis)))){
+            if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_bis)))){
                 if ($_SERVER['REQUEST_URI'] != "/app/fehler/?e=1") {wp_redirect('app/fehler/?e=1'); exit;}
             }
         } else if (in_array("dienstleister_u", $wpUser->roles)) {
@@ -79,7 +79,7 @@
             $userBerechtigungen->aktiv_bis = $b->aktiv_bis;
             $wpUserSTAQQDienstleisterId = $b->dienstleister_id;
             
-            if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', $userBerechtigungen->aktiv_bis)))){
+            if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_bis)))){
                 if ($_SERVER['REQUEST_URI'] != "/app/fehler/?e=1") {wp_redirect('app/fehler/?e=1'); exit;}
             }
         } else{
@@ -146,7 +146,7 @@
                 
                 <?php 
                     if ($wpUserSTAQQUser && $wpUserState){
-                        if (strpos($_SERVER['REQUEST_URI'], "/app") !== false){
+                        if (str_contains((string) $_SERVER['REQUEST_URI'], "/app")){
 							echo '<a href="/" class="header__zahlen header__zahlen--joborders"><h2>Home & Vorteile</h2><p>zur Startseite wechseln</p></a>';
 						}else{
 							echo '<a href="/app/joborders/" class="header__zahlen header__zahlen--joborders"><h2>STAQQ-App</h2><p>zur Anwendung wechseln</p></a>';
@@ -202,7 +202,7 @@
                    <div id="header__navigation-rwd-close"><svg height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg"><path d="M38 12.83l-2.83-2.83-11.17 11.17-11.17-11.17-2.83 2.83 11.17 11.17-11.17 11.17 2.83 2.83 11.17-11.17 11.17 11.17 2.83-2.83-11.17-11.17z"/></svg></div>
                    
                     <?php 
-                        if ($wpUserSTAQQUser && $wpUserState && (strpos($_SERVER['REQUEST_URI'], "/app") !== false)){    
+                        if ($wpUserSTAQQUser && $wpUserState && (str_contains((string) $_SERVER['REQUEST_URI'], "/app"))){    
                     ?>
 							<ul class="menu menu--primary">
 								<?php 
@@ -217,10 +217,7 @@
 							</ul>
 					<?php       
 						}else{
-							wp_nav_menu(array(
-								'menu_class' => 'menu menu--primary',
-								'slug' => 'primary'
-							));
+							wp_nav_menu(['menu_class' => 'menu menu--primary', 'slug' => 'primary']);
 						}
 					?>
                 </nav>

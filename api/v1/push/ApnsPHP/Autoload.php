@@ -36,14 +36,14 @@ function ApnsPHP_Autoload($sClassName)
 		throw new Exception('Class name is empty');
 	}
 
-	$sPath = dirname(dirname(__FILE__));
+	$sPath = dirname(__FILE__, 2);
 	if (empty($sPath)) {
 		throw new Exception('Current path is empty');
 	}
 
 	$sFile = sprintf('%s%s%s.php',
 		$sPath, DIRECTORY_SEPARATOR,
-		str_replace('_', DIRECTORY_SEPARATOR, $sClassName)
+		str_replace('_', DIRECTORY_SEPARATOR, (string) $sClassName)
 	);
 	if (is_file($sFile) && is_readable($sFile)) {
 		require_once $sFile;

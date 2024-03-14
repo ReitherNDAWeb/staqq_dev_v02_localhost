@@ -36,9 +36,9 @@
             $sth->execute();
 			$bewertungen = $sth->fetchAll(PDO::FETCH_ASSOC);
 			
-			$ressources = array();
-			$dienstleister = array();
-			$kunden = array();
+			$ressources = [];
+			$dienstleister = [];
+			$kunden = [];
 			
 			for($i=0;$i<count($bewertungen);$i++){
 				
@@ -59,7 +59,7 @@
 				$bewertungen[$i]['bewertet_name'] = $sth->fetchAll(PDO::FETCH_ASSOC)[0]['name'];
 				
 				// Ressourcen
-				$bewertungen[$i]['ressources'] = array();
+				$bewertungen[$i]['ressources'] = [];
 				
 				if ($bewertungen[$i]['von_type'] != 'ressource' && $bewertungen[$i]['bewertet_type'] != 'ressource'){
 					
@@ -128,11 +128,7 @@
 				
 				
 				// Kunde
-				$bewertungen[$i]['kunde'] = array(
-					'id' => null,
-					'firmenwortlaut' => $bewertungen[$i]['kunde_name'],
-					'staqq_database' => false
-				);
+				$bewertungen[$i]['kunde'] = ['id' => null, 'firmenwortlaut' => $bewertungen[$i]['kunde_name'], 'staqq_database' => false];
 				
 				if ($bewertungen[$i]['publisher_type'] == 'kunde'){
 					$sth = $db->prepare("SELECT firmenwortlaut FROM kunden WHERE id=".$bewertungen[$i]['publisher_id']);
@@ -160,7 +156,7 @@
             $sth->execute();
 			
 			$gesamt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
-			$durchschnitt = ($gesamt['punkte']/$gesamt['anzahl']) ? ($gesamt['punkte']/$gesamt['anzahl']) : 0;
+			$durchschnitt = $gesamt['punkte']/$gesamt['anzahl'] ?: 0;
 			
 			$body = json_encode(['anzahl_bewertungen' => $gesamt['anzahl'], 'summe_punkte' => $gesamt['punkte'], 'durchschnitt' => $durchschnitt, 'bewertungen' => ['alle' => $bewertungen, 'ressources' => $ressources, 'dienstleister' => $dienstleister, 'kunden' => $kunden]]);
             
@@ -210,9 +206,9 @@
             $sth->execute();
 			$bewertungen = $sth->fetchAll(PDO::FETCH_ASSOC);
 			
-			$ressources = array();
-			$dienstleister = array();
-			$kunden = array();
+			$ressources = [];
+			$dienstleister = [];
+			$kunden = [];
 			
 			for($i=0;$i<count($bewertungen);$i++){
 				
@@ -233,7 +229,7 @@
 				$bewertungen[$i]['von_name'] = $sth->fetchAll(PDO::FETCH_ASSOC)[0]['name'];
 				
 				// Ressourcen
-				$bewertungen[$i]['ressources'] = array();
+				$bewertungen[$i]['ressources'] = [];
 				
 				if ($bewertungen[$i]['von_type'] != 'ressource' && $bewertungen[$i]['bewertet_type'] != 'ressource'){
 					
@@ -302,11 +298,7 @@
 				
 				
 				// Kunde
-				$bewertungen[$i]['kunde'] = array(
-					'id' => null,
-					'firmenwortlaut' => $bewertungen[$i]['kunde_name'],
-					'staqq_database' => false
-				);
+				$bewertungen[$i]['kunde'] = ['id' => null, 'firmenwortlaut' => $bewertungen[$i]['kunde_name'], 'staqq_database' => false];
 				
 				if ($bewertungen[$i]['publisher_type'] == 'kunde'){
 					$sth = $db->prepare("SELECT firmenwortlaut FROM kunden WHERE id=".$bewertungen[$i]['publisher_id']);

@@ -54,7 +54,7 @@
 		$dienstleister = $api->get("dienstleister/$wpUserSTAQQId", [])->decode_response();
 		$berufsfelder = $dienstleister->berufsfelder;
 
-		$berufsfelder_ids = array();
+		$berufsfelder_ids = [];
 		foreach ($berufsfelder as $b){array_push($berufsfelder_ids, $b->id);}
 ?>
 

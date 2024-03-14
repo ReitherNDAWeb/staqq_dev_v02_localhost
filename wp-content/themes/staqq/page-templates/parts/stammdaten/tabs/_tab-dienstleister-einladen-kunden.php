@@ -18,10 +18,10 @@
 	</article>
 	<article class="gd gd--12">
 		<h3>Nachricht an den Dienstleister:</h3>
-		<p class="dl_anforderung_placeholder dl_anforderung_placeholder--betreff">Betreff: <?php echo utf8_decode(get_option('dienstleister_einladen_betreff')); ?></p>
+		<p class="dl_anforderung_placeholder dl_anforderung_placeholder--betreff">Betreff: <?php echo mb_convert_encoding((string) get_option('dienstleister_einladen_betreff'), 'ISO-8859-1'); ?></p>
 		<p class="dl_anforderung_placeholder dl_anforderung_placeholder--betreff">Nachricht:</p>
 		<p class="dl_anforderung_placeholder">Sehr geehrte(r) Vorname Nachname!</p>
-		<textarea name="dl_anforderung_infotext" id="dl_anforderung_infotext" cols="30" rows="10"><?php echo utf8_decode(get_option('dienstleister_einladen_text')); ?></textarea>
+		<textarea name="dl_anforderung_infotext" id="dl_anforderung_infotext" cols="30" rows="10"><?php echo mb_convert_encoding((string) get_option('dienstleister_einladen_text'), 'ISO-8859-1'); ?></textarea>
 	</article>
 	<article class="gd gd--12">
 		<button class="button" type="submit">Einladung senden</button>

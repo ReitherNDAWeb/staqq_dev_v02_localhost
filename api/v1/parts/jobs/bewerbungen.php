@@ -114,19 +114,7 @@
 				$link_mobile = "/dienstleister/joborders/{$request->getParsedBody()['joborders_id']}/ressources";
 			}
 			
-			fireNotification (array(
-				'receiver_type'	=> $receiver_type, 
-				'receiver_id' 	=> $receiver_id, 
-				'titel' 		=> 'Neue Bewerbung',
-				'subtitle'		=> 'Neue Bewerbung beim Job ' . $joborder['jobtitel'],
-				'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> sich auf den Job <strong>{$joborder['jobtitel']}</strong> beworben!", 
-				'kategorie' 	=> 'joborder', 
-				'link_web' 		=> $link_web, 
-				'link_mobile' 	=> $link_mobile, 
-				'send_web' 		=> true, 
-				'send_mobile' 	=> true,
-				'force' 		=> true
-			));
+			fireNotification (['receiver_type'	=> $receiver_type, 'receiver_id' 	=> $receiver_id, 'titel' 		=> 'Neue Bewerbung', 'subtitle'		=> 'Neue Bewerbung beim Job ' . $joborder['jobtitel'], 'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> sich auf den Job <strong>{$joborder['jobtitel']}</strong> beworben!", 'kategorie' 	=> 'joborder', 'link_web' 		=> $link_web, 'link_mobile' 	=> $link_mobile, 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);
             
             $body = json_encode(['status' => true, 'id' => $id]);
             
@@ -193,35 +181,11 @@
 			
 			if ($args['type'] == "ressource"){
 				
-				fireNotification (array(
-					'receiver_type'	=> $receiver_type, 
-					'receiver_id' 	=> $receiver_id,
-					'titel' 		=> 'Arbeitsbeginn bestätigt',
-					'subtitle'		=> 'Arbeitsbeginn bestätigt beim Job ' . $bewerbung['jobtitel'],
-					'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> hat den Arbeitsbeginn für den Job <strong>{$bewerbung['jobtitel']}</strong> bestätigt!", 
-					'kategorie' 	=> 'joborder', 
-					'link_web' 		=> "/app/joborders/ressourcen/?id=" . hashId($request->getParsedBody()['joborders_id']), 
-					'link_mobile' 	=> "/dienstleister/joborders/{$request->getParsedBody()['joborders_id']}/ressources", 
-					'send_web' 		=> true, 
-					'send_mobile' 	=> true,
-					'force' 		=> true
-				));
+				fireNotification (['receiver_type'	=> $receiver_type, 'receiver_id' 	=> $receiver_id, 'titel' 		=> 'Arbeitsbeginn bestätigt', 'subtitle'		=> 'Arbeitsbeginn bestätigt beim Job ' . $bewerbung['jobtitel'], 'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> hat den Arbeitsbeginn für den Job <strong>{$bewerbung['jobtitel']}</strong> bestätigt!", 'kategorie' 	=> 'joborder', 'link_web' 		=> "/app/joborders/ressourcen/?id=" . hashId($request->getParsedBody()['joborders_id']), 'link_mobile' 	=> "/dienstleister/joborders/{$request->getParsedBody()['joborders_id']}/ressources", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);
 			
 			
 				if ($bewerbung['publisher_type'] == "kunde"){
-					fireNotification (array(
-						'receiver_type'	=> $bewerbung['creator_type'], 
-						'receiver_id' 	=> $bewerbung['creator_id'], 
-						'titel' 		=> 'Arbeitsbeginn bestätigt',
-						'subtitle'		=> 'Arbeitsbeginn bestätigt beim Job ' . $bewerbung['jobtitel'],
-						'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> hat den Arbeitsbeginn für den Job <strong>{$bewerbung['jobtitel']}</strong> bestätigt!", 
-						'kategorie' 	=> 'joborder', 
-						'link_web' 		=> "/app/joborders/ressourcen/?id=" . hashId($request->getParsedBody()['joborders_id']), 
-						'link_mobile' 	=> "/dienstleister/joborders/{$request->getParsedBody()['joborders_id']}/ressources", 
-						'send_web' 		=> true, 
-						'send_mobile' 	=> true,
-						'force' 		=> true
-					));
+					fireNotification (['receiver_type'	=> $bewerbung['creator_type'], 'receiver_id' 	=> $bewerbung['creator_id'], 'titel' 		=> 'Arbeitsbeginn bestätigt', 'subtitle'		=> 'Arbeitsbeginn bestätigt beim Job ' . $bewerbung['jobtitel'], 'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> hat den Arbeitsbeginn für den Job <strong>{$bewerbung['jobtitel']}</strong> bestätigt!", 'kategorie' 	=> 'joborder', 'link_web' 		=> "/app/joborders/ressourcen/?id=" . hashId($request->getParsedBody()['joborders_id']), 'link_mobile' 	=> "/dienstleister/joborders/{$request->getParsedBody()['joborders_id']}/ressources", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);
 				}
 				
 			} elseif ($args['type'] == "dienstleister"){
@@ -233,24 +197,12 @@
 				
 				$rechnung = (filter_var($dienstleister['sammelrechnungen'], FILTER_VALIDATE_BOOLEAN) == false) && ($dienstleister['rechnungs_empfaenger_user'] == NULL);
 				
-				fireNotification (array(
-					'receiver_type'	=> 'ressource', 
-					'receiver_id' 	=> $request->getParsedBody()['ressources_id'], 
-					'titel' 		=> 'Arbeitsbeginn bestätigt',
-					'subtitle'		=> 'Arbeitsbeginn bestätigt beim Job ' . $bewerbung['jobtitel'],
-					'nachricht' 	=> "<strong>{$dienstleister['firmenwortlaut']}</strong> hat den Arbeitsbeginn für den Job <strong>{$bewerbung['jobtitel']}</strong> bestätigt!", 
-					'kategorie' 	=> 'joborder', 
-					'link_web' 		=> "/app/joborders/#erhalten", 
-					'link_mobile' 	=> "/ressource/joborders/{$request->getParsedBody()['joborders_id']}", 
-					'send_web' 		=> true, 
-					'send_mobile' 	=> true,
-					'force' 		=> true
-				));
+				fireNotification (['receiver_type'	=> 'ressource', 'receiver_id' 	=> $request->getParsedBody()['ressources_id'], 'titel' 		=> 'Arbeitsbeginn bestätigt', 'subtitle'		=> 'Arbeitsbeginn bestätigt beim Job ' . $bewerbung['jobtitel'], 'nachricht' 	=> "<strong>{$dienstleister['firmenwortlaut']}</strong> hat den Arbeitsbeginn für den Job <strong>{$bewerbung['jobtitel']}</strong> bestätigt!", 'kategorie' 	=> 'joborder', 'link_web' 		=> "/app/joborders/#erhalten", 'link_mobile' 	=> "/ressource/joborders/{$request->getParsedBody()['joborders_id']}", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);
 				
 				ob_clean();
 			
 				if ($rechnung){
-					$rechnungslink = verrechneJoboorder(array($request->getParsedBody()['joborders_id']), 'dienstleister', $dlid);
+					$rechnungslink = verrechneJoboorder([$request->getParsedBody()['joborders_id']], 'dienstleister', $dlid);
 				}
 			}
 			

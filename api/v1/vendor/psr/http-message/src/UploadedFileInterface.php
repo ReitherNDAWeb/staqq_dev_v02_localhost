@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Psr\Http\Message;
 
 /**
@@ -58,11 +60,11 @@ interface UploadedFileInterface
      * @see http://php.net/is_uploaded_file
      * @see http://php.net/move_uploaded_file
      * @param string $targetPath Path to which to move the uploaded file.
-     * @throws \InvalidArgumentException if the $path specified is invalid.
+     * @throws \InvalidArgumentException if the $targetPath specified is invalid.
      * @throws \RuntimeException on any error during the move operation, or on
      *     the second or subsequent call to the method.
      */
-    public function moveTo($targetPath);
+    public function moveTo(string $targetPath);
     
     /**
      * Retrieve the file size.

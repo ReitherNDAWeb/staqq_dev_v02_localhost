@@ -41,7 +41,7 @@
 		$userBerechtigungen->aktiv_bis = $b->aktiv_bis;
 		$wpUserSTAQQKundeId = $b->kunden_id;
 
-		if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', $userBerechtigungen->aktiv_bis)))){
+		if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_bis)))){
 			if ($_SERVER['REQUEST_URI'] != "/app/fehler/?e=1") {wp_redirect('app/fehler/?e=1'); exit;}
 		}
 	} else if (in_array("dienstleister_u", $wpUser->roles)) {
@@ -57,7 +57,7 @@
 		$userBerechtigungen->aktiv_bis = $b->aktiv_bis;
 		$wpUserSTAQQDienstleisterId = $b->dienstleister_id;
 
-		if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', $userBerechtigungen->aktiv_bis)))){
+		if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_bis)))){
 			if ($_SERVER['REQUEST_URI'] != "/app/fehler/?e=1") {wp_redirect('app/fehler/?e=1'); exit;}
 		}
 	} else{
@@ -141,7 +141,7 @@
         $headers .= "X-Mailer: PHP ". phpversion();
 
         $message  = '<html><body>';
-        $message .= nl2br($_POST['content']);
+        $message .= nl2br((string) $_POST['content']);
 		
 		$message .= "<br><br><br>";
 		$message .= "<strong>Die Anfrage kommt von:</strong>";

@@ -135,7 +135,7 @@
             $sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
             $sth->execute();
 
-            foreach (json_decode($request->getParsedBody()['berufsfelder']) as $f){
+            foreach (json_decode((string) $request->getParsedBody()['berufsfelder']) as $f){
                 $sth = $db->prepare("INSERT INTO relation_templates_berufsfelder (templates_id, berufsfelder_id) VALUES (:templates_id, :berufsfelder_id)");
                 $sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
                 $sth->bindParam(':berufsfelder_id', $f, PDO::PARAM_INT);
@@ -146,7 +146,7 @@
             $sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
             $sth->execute();
 
-            foreach (json_decode($request->getParsedBody()['berufsgruppen']) as $b){
+            foreach (json_decode((string) $request->getParsedBody()['berufsgruppen']) as $b){
                 $sth = $db->prepare("INSERT INTO relation_templates_berufsgruppen (templates_id, berufsgruppen_id) VALUES (:templates_id, :berufsgruppen_id)");
                 $sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
                 $sth->bindParam(':berufsgruppen_id', $b, PDO::PARAM_INT);
@@ -157,7 +157,7 @@
             $sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
             $sth->execute();
 
-            foreach (json_decode($request->getParsedBody()['berufsbezeichnungen']) as $b){
+            foreach (json_decode((string) $request->getParsedBody()['berufsbezeichnungen']) as $b){
                 $sth = $db->prepare("INSERT INTO relation_templates_berufsbezeichnungen (templates_id, berufsbezeichnungen_id) VALUES (:templates_id, :berufsbezeichnungen_id)");
                 $sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
                 $sth->bindParam(':berufsbezeichnungen_id', $b, PDO::PARAM_INT);
@@ -168,7 +168,7 @@
             $sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
             $sth->execute();
 
-            foreach (json_decode($request->getParsedBody()['dienstleister_auswahl']) as $d){
+            foreach (json_decode((string) $request->getParsedBody()['dienstleister_auswahl']) as $d){
                 $sth = $db->prepare("INSERT INTO relation_templates_dienstleister_auswahl (templates_id, dienstleister_id) VALUES (:templates_id, :dienstleister_id)");
                 $sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
                 $sth->bindParam(':dienstleister_id', $d, PDO::PARAM_INT);
@@ -179,7 +179,7 @@
             $sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
             $sth->execute();
 
-            foreach (json_decode($request->getParsedBody()['skills']) as $b){
+            foreach (json_decode((string) $request->getParsedBody()['skills']) as $b){
                 $sth = $db->prepare("INSERT INTO relation_templates_skills (templates_id, skills_items_id, praedikat) VALUES (:templates_id, :skills_items_id, :praedikat)");
                 $sth->bindParam(':templates_id', $templates_id, PDO::PARAM_INT);
                 $sth->bindParam(':skills_items_id', $b->id, PDO::PARAM_INT);

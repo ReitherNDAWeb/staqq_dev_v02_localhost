@@ -8,7 +8,7 @@
             
             include("../../wp-load.php");
             
-            $res = wp_signon(array('user_login' => $args['email'], 'user_password' => $args['passwort'], 'remember' => false));
+            $res = wp_signon(['user_login' => $args['email'], 'user_password' => $args['passwort'], 'remember' => false]);
             
             if (gettype($res->data) == "object"){
                 $ret = true;
@@ -53,7 +53,7 @@
             
             include("../../wp-load.php");
             
-            $res = wp_signon(array('user_login' => $request->getParsedBody()['email'], 'user_password' => $request->getParsedBody()['passwort'], 'remember' => false));
+            $res = wp_signon(['user_login' => $request->getParsedBody()['email'], 'user_password' => $request->getParsedBody()['passwort'], 'remember' => false]);
             
             if (gettype($res->data) == "object"){
                 $ret = true;
@@ -188,7 +188,7 @@
 						$berechtigungen->aktiv_von = $result['aktiv_von'];
 						$berechtigungen->aktiv_bis = $result['aktiv_bis'];
 
-					} catch(PDOException $e){
+					} catch(PDOException){
 						$response->withStatus(400);
 					}
 				} else if (in_array("dienstleister_u", $wpUser->roles)) {
@@ -248,7 +248,7 @@
 						$berechtigungen->aktiv_von = $result['aktiv_von'];
 						$berechtigungen->aktiv_bis = $result['aktiv_bis'];
 
-					} catch(PDOException $e){
+					} catch(PDOException){
 						$response->withStatus(400);
 					}
 				}

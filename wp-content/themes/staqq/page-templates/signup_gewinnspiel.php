@@ -25,14 +25,14 @@
     $skills = $api->get("skills/nested", [])->decode_response();
     $bezirke = $api->get("bezirke", [])->decode_response();
     $dienstleister = $api->get("dienstleister", [])->decode_response();
-		
+
 	$skills_items = $api->get("skills/items", [])->decode_response();
 	$skills_kategorien = $api->get("skills/kategorien", [])->decode_response();
     $bezirke = $api->get("bezirke", [])->decode_response();
     $bundeslaender = $api->get("bundeslaender", [])->decode_response();
-    
+
     $berufe = $api->get("berufe", [])->decode_response();
-        
+
 ?>
 
 <link rel="stylesheet" type="text/css" href="<?php echo get_stylesheet_directory_uri();?>/css/gewinnspiel_main.css">
@@ -69,7 +69,7 @@
         <button class="modal-close"></button>
       </div>
     </nav>
-    
+
     <div class="container mainCont">
       <div class="signup-step signup-step--step-user-type signup-step--active">
         <section id="header">
@@ -91,7 +91,7 @@
         </section>
       </div>
 
-    
+
       <div class="signup-step signup-step--step-tel">
         <section class="register halfSquare middle">
           <div class="square isGray"></div>
@@ -141,7 +141,7 @@
                           </div>
                           <input type="text" name="telefon" id="telefon" class="input-tel__nummer" placeholder="Telefonnummer" required>
                       </div>
-                     
+
                   </form>
                    <a href="#aktivierung" class="pill" onclick="nextStepNew('tel', 'aktivierung');">Fortfahren</a>
                 </div>
@@ -169,13 +169,13 @@
                     <h3 id="aktivierung" class="title is-1">
                       Bestätigen & losstarten
                     </h3>
-                    
+
                       <p>Wir senden Ihnen in Kürze eine SMS an die von Ihnen angegebene Rufnummer. Bitte bestätigen Sie diese zur Verifizierung Ihres Accounts innerhalb der nächsten 5 Minuten – andernfalls verfällt Ihre Anmeldung.</p>
                       <form>
                         <input type="text" name="code" id="code" value="" placeholder="Aktivierungscode" required>
                       </form>
                       <a href="#passwordAnchor" class="pill" onclick="nextStepNew('aktivierung', 'passwort');">Fortfahren</a>
-                    
+
                   </div>
                 </div>
               </div>
@@ -201,7 +201,7 @@
                     <h3 id="passwordAnchor" class="title is-1">
                       Benutzerkonto anlegen
                     </h3>
-                    
+
                       <input type="password" name="password" id="password" placeholder="Passwort" required>
                       <input type="password" name="password2" id="password2" placeholder="Passwort Wiederholung" required>
                       <ul class="helper-text">
@@ -211,7 +211,7 @@
                           <li class="special">Beinhaltet eine Zahl oder ein Sonderzeichen.</li>
                       </ul>
                       <button id="lastbutton" class="pill" onclick="nextStepNew('passwort', 'informationen');">Fortfahren</button>
-                    
+
                   </div>
                 </div>
               </div>
@@ -243,28 +243,28 @@
     </div>
 
 
-    
-    
-    
 
-   
-   
-   
-  
-    
+
+
+
+
+
+
+
+
     <script type="text/javascript" src="//platform.linkedin.com/in.js">api_key: 86ckqkwnbdfrvn</script>
     <script>
-		
+
 		function dlNichtInAuswahl(){
 			jQuery('#dl_anforderung_bool').val(1);
 			jQuery('#dl_anforderung').show();
 		}
-		
-		
+
+
 		// Social Logins
-		
+
 		function setSocialInformation(network, id, first_name, last_name, email, gender){
-			
+
 			jQuery('input[name=vorname]').val(first_name);
 			jQuery('input[name=nachname]').val(last_name);
 			jQuery('input[name=email]').val(email);
@@ -282,10 +282,10 @@
 			jQuery('input[name=ansprechpartner_vorname]').val(ansprechpartner_vorname);
 			jQuery('input[name=ansprechpartner_nachname]').val(ansprechpartner_nachname);
 		}
-		
-		
+
+
 		// Linkedin
-		
+
 		var connectLinkedin = function() {
 			IN.UI.Authorize().params({"scope":["r_basicprofile", "r_emailaddress"]}).place();
 			IN.Event.on(IN, 'auth', getProfileData);
@@ -298,10 +298,10 @@
 			});
 		}
 
-		
-		
+
+
 		// Xing
-		
+
 		function onXingAuthLogin(response) {
 			console.log(response);
 
@@ -311,20 +311,20 @@
 				//output = 'Error: ' + response.error;
 			}
 		}
-		
+
 		(function(d) {
 			var js, id='lwx';
 			if (d.getElementById(id)) return;
 			js = d.createElement('script'); js.id = id; js.src = "https://www.xing-share.com/plugins/login.js";
 			d.getElementsByTagName('head')[0].appendChild(js)
 		}(document));
-		
-		
-		
+
+
+
 		// Facebook
-		
+
 		function connectFacebook(){
-			
+
 			FB.login(function(response) {
 				if (response.authResponse) {
 					FB.api('/me', {fields: 'id, first_name, last_name, email, gender'}, function(response) {
@@ -335,14 +335,14 @@
 				}
 			}, {scope: 'email'});
 		}
-		
+
 		window.fbAsyncInit = function() {
 			FB.init({
 				appId      : '454143068255402',
 				xfbml      : true,
 				version    : 'v2.8'
 			});
-		
+
 			FB.AppEvents.logPageView();
 		};
 
@@ -374,14 +374,14 @@
           if(jQuery('.signup-step--step-'+f).hasClass('signup-step--active')){
 
               if (f == "user-type"){
-              
+
                   user_type = jQuery('.signup-step--step-user-type [name=user_type]:checked').val();
                   jQuery('.signup-step--user-'+user_type).css('display', 'block');
                   if(user_type == "dienstleister" || user_type == "kunde") jQuery('.signup-step--step-tel #firmenwortlaut').show();
                   goToNew(n);
-                  
+
               } else if (f == "tel"){
-                  
+
                   user = {
                       user_type: user_type,
                       firmenwortlaut: jQuery('.signup-step--step-tel #firmenwortlaut').val(),
@@ -391,10 +391,10 @@
                       nachname: jQuery('.signup-step--step-tel #nachname').val(),
                       debug: DEBUG
                   };
-                  
-                  
+
+
                   if ((user.email != "") && (jQuery('.signup-step--step-tel #telefon').val() != "") && (user.vorname != "") && (user.nachname != "") && ((user.user_type == "ressource") || (user.firmenwortlaut != ""))){
-                      
+
                       if (jQuery.isNumeric(jQuery('.signup-step--step-tel #telefon').val())){
 
                           jQuery(".signup-step--step-user-type .form-center").validate({
@@ -422,7 +422,7 @@
               } else if (f == "aktivierung") {
                   showSpinner();
                   signUpActivation(function(d){
-                      
+
                       hideSpinner();
                       if (d.status){
                           ressource.registrations_id = d.id;
@@ -434,10 +434,10 @@
                       }
                   });
               } else if (f == "passwort") {
-                  
+
                   var p1 = jQuery('.signup-step--step-passwort #password').val();
                   var p2 = jQuery('.signup-step--step-passwort #password2').val();
-                  
+
                   if (p1 == ""){
                       error("Es muss ein Passwort gewählt werden!");
                   } else if(!jQuery('.signup-step--step-passwort #password').hasClass('valid')){
@@ -447,9 +447,9 @@
                   }else{
                       showSpinner();
                       passwort = p1;
-                  
+
                       signUpPassword(function(d){
-                      
+
                           hideSpinner();
                           if (d.status){
                               jQuery('#thankYou').addClass('is-active');
@@ -458,9 +458,9 @@
                           }
                       });
                   }
-                      
+
               } else if (f == "informationen") {
-                  
+
                   showSpinner();
                   signUpInformationen(function(d){
 
@@ -471,11 +471,11 @@
                           error(d.msg);
                       }
                   });
-                  
+
               } else {
                   goToNew(n);
               }
-              
+
           }
       }
 
@@ -483,11 +483,11 @@
   function goToNew(n){
       jQuery('.signup-step').removeClass('signup-step--active');
       jQuery('.signup-step--step-'+n).addClass('signup-step--active');
-      
+
       if (n == "aktivierung"){
           jQuery('#code').focus();
       }
-      
+
       if (n == "informationen"){
           target = jQuery('.signup-step--user-'+user_type+'.signup-step--step-'+n);
       }else{

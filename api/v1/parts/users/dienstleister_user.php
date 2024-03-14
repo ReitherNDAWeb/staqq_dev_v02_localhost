@@ -10,7 +10,7 @@
             $users = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
 			
 			for ($i=0;$i<count($users);$i++){
-				$users[$i]['filialen'] = array();
+				$users[$i]['filialen'] = [];
 				if ($users[$i]['einschraenkung_filialen'] == 1){
 					$sth = $db->prepare("SELECT filialen.name FROM relation_dienstleister_user_filialen LEFT JOIN filialen ON filialen.id = relation_dienstleister_user_filialen.filialen_id WHERE dienstleister_user_id=:dienstleister_user_id");
 					$sth->bindParam(':dienstleister_user_id', $users[$i]['id'], PDO::PARAM_INT);
@@ -46,8 +46,8 @@
             $sth = $db->prepare("SELECT berufsfelder_id AS id, berufsfelder.name AS name FROM relation_dienstleister_user_berufsfelder LEFT JOIN berufsfelder ON berufsfelder.id = relation_dienstleister_user_berufsfelder.berufsfelder_id WHERE dienstleister_user_id=:dienstleister_user_id");
             $sth->bindParam(':dienstleister_user_id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
-            $user['berufsfelder'] = array();
-            $user['berufsfelder_full'] = array();
+            $user['berufsfelder'] = [];
+            $user['berufsfelder_full'] = [];
             foreach(utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC)) as $b){
                 array_push($user['berufsfelder'], $b['id']);
                 array_push($user['berufsfelder_full'], $b);
@@ -56,8 +56,8 @@
             $sth = $db->prepare("SELECT berufsgruppen_id AS id, berufsgruppen.name AS name, berufsgruppen.berufsfelder_id AS berufsfelder_id FROM relation_dienstleister_user_suchgruppen LEFT JOIN berufsgruppen ON berufsgruppen.id = relation_dienstleister_user_suchgruppen.berufsgruppen_id WHERE dienstleister_user_id=:dienstleister_user_id");
             $sth->bindParam(':dienstleister_user_id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
-            $user['suchgruppen'] = array();
-            $user['suchgruppen_full'] = array();
+            $user['suchgruppen'] = [];
+            $user['suchgruppen_full'] = [];
             foreach(utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC)) as $b){
                 array_push($user['suchgruppen'], $b['id']);
                 array_push($user['suchgruppen_full'], $b);
@@ -66,7 +66,7 @@
             $sth = $db->prepare("SELECT filialen_id FROM relation_dienstleister_user_filialen WHERE dienstleister_user_id=:dienstleister_user_id");
             $sth->bindParam(':dienstleister_user_id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
-            $user['filialen'] = array();
+            $user['filialen'] = [];
             foreach(utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC)) as $b){
                 array_push($user['filialen'], $b['filialen_id']);
             }
@@ -129,16 +129,7 @@
             $email = $request->getParsedBody()['email'];
             $passwort = $request->getParsedBody()['passwort'];
 
-            $user_info = array(
-                "user_pass"     => $passwort,
-                "user_login"    => 'dienstleister_u_'.$request->getParsedBody()['vorname'].'_'.$request->getParsedBody()['nachname'].'_'.time(),
-                "user_nicename" => "",
-                "user_email"    => $email,
-                "display_name"  => $request->getParsedBody()['titel'].' '.$request->getParsedBody()['vorname'].' '.$request->getParsedBody()['nachname'],
-                "first_name"    => $request->getParsedBody()['vorname'],
-                "last_name"     => $request->getParsedBody()['nachname'],
-                "role"          => "dienstleister_u"
-            );
+            $user_info = ["user_pass"     => $passwort, "user_login"    => 'dienstleister_u_'.$request->getParsedBody()['vorname'].'_'.$request->getParsedBody()['nachname'].'_'.time(), "user_nicename" => "", "user_email"    => $email, "display_name"  => $request->getParsedBody()['titel'].' '.$request->getParsedBody()['vorname'].' '.$request->getParsedBody()['nachname'], "first_name"    => $request->getParsedBody()['vorname'], "last_name"     => $request->getParsedBody()['nachname'], "role"          => "dienstleister_u"];
             
             if (!username_exists($email) && !email_exists($email)) {
 				
@@ -197,21 +188,21 @@
 							$sth->bindParam(':id', $args['dienstleister_id'], PDO::PARAM_INT);
 							$sth->execute();
 
-							foreach (json_decode($request->getParsedBody()['berufsfelder']) as $f){
+							foreach (json_decode((string) $request->getParsedBody()['berufsfelder']) as $f){
 								$sth = $db->prepare("INSERT INTO relation_dienstleister_user_berufsfelder (dienstleister_user_id, berufsfelder_id) VALUES (:dienstleister_user_id, :berufsfelder_id)");
 								$sth->bindParam(':dienstleister_user_id', $user_id, PDO::PARAM_INT);
 								$sth->bindParam(':berufsfelder_id', $f, PDO::PARAM_INT);
 								$sth->execute();
 							}
 
-							foreach (json_decode($request->getParsedBody()['suchgruppen']) as $f){
+							foreach (json_decode((string) $request->getParsedBody()['suchgruppen']) as $f){
 								$sth = $db->prepare("INSERT INTO relation_dienstleister_user_suchgruppen (dienstleister_user_id, berufsgruppen_id) VALUES (:dienstleister_user_id, :berufsgruppen_id)");
 								$sth->bindParam(':dienstleister_user_id', $user_id, PDO::PARAM_INT);
 								$sth->bindParam(':berufsgruppen_id', $f, PDO::PARAM_INT);
 								$sth->execute();
 							}
 
-							foreach (json_decode($request->getParsedBody()['filialen']) as $f){
+							foreach (json_decode((string) $request->getParsedBody()['filialen']) as $f){
 								$sth = $db->prepare("INSERT INTO relation_dienstleister_user_filialen (filialen_id, dienstleister_user_id) VALUES (:filialen_id, :dienstleister_user_id)");
 								$sth->bindParam(':filialen_id', $f, PDO::PARAM_INT);
 								$sth->bindParam(':dienstleister_user_id', $user_id, PDO::PARAM_INT);
@@ -261,14 +252,7 @@
                 $user_id = email_exists($email_old);
             }
 
-            $user_info = array(
-                "ID"            => $user_id,
-                "user_email"    => $email,
-                "display_name"  => $request->getParsedBody()['titel'].' '.$request->getParsedBody()['vorname'].' '.$request->getParsedBody()['nachname'],
-                "first_name"    => $request->getParsedBody()['vorname'],
-                "last_name"     => $request->getParsedBody()['nachname'],
-                "role"          => "dienstleister_u"
-            );
+            $user_info = ["ID"            => $user_id, "user_email"    => $email, "display_name"  => $request->getParsedBody()['titel'].' '.$request->getParsedBody()['vorname'].' '.$request->getParsedBody()['nachname'], "first_name"    => $request->getParsedBody()['vorname'], "last_name"     => $request->getParsedBody()['nachname'], "role"          => "dienstleister_u"];
 
             if ((email_exists($email) && (!$updateEmail)) || ((!email_exists($email)) && $updateEmail)) {
 
@@ -327,7 +311,7 @@
                         $sth->bindParam(':dienstleister_user_id', $args['id'], PDO::PARAM_INT);
                         $sth->execute();
 
-                        foreach (json_decode($request->getParsedBody()['berufsfelder']) as $f){
+                        foreach (json_decode((string) $request->getParsedBody()['berufsfelder']) as $f){
                             $sth = $db->prepare("INSERT INTO relation_dienstleister_user_berufsfelder (dienstleister_user_id, berufsfelder_id) VALUES (:dienstleister_user_id, :berufsfelder_id)");
                             $sth->bindParam(':dienstleister_user_id', $args['id'], PDO::PARAM_INT);
                             $sth->bindParam(':berufsfelder_id', $f, PDO::PARAM_INT);
@@ -338,7 +322,7 @@
                         $sth->bindParam(':dienstleister_user_id', $args['id'], PDO::PARAM_INT);
                         $sth->execute();
 
-                        foreach (json_decode($request->getParsedBody()['suchgruppen']) as $f){
+                        foreach (json_decode((string) $request->getParsedBody()['suchgruppen']) as $f){
                             $sth = $db->prepare("INSERT INTO relation_dienstleister_user_suchgruppen (dienstleister_user_id, berufsgruppen_id) VALUES (:dienstleister_user_id, :berufsgruppen_id)");
                             $sth->bindParam(':dienstleister_user_id', $args['id'], PDO::PARAM_INT);
                             $sth->bindParam(':berufsgruppen_id', $f, PDO::PARAM_INT);
@@ -349,7 +333,7 @@
                         $sth->bindParam(':dienstleister_user_id', $args['id'], PDO::PARAM_INT);
                         $sth->execute();
 
-                        foreach (json_decode($request->getParsedBody()['filialen']) as $f){
+                        foreach (json_decode((string) $request->getParsedBody()['filialen']) as $f){
                             $sth = $db->prepare("INSERT INTO relation_dienstleister_user_filialen (filialen_id, dienstleister_user_id) VALUES (:filialen_id, :dienstleister_user_id)");
                             $sth->bindParam(':filialen_id', $f, PDO::PARAM_INT);
                             $sth->bindParam(':dienstleister_user_id', $args['id'], PDO::PARAM_INT);
@@ -592,7 +576,7 @@
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
 			
-			$anzahlen = array();
+			$anzahlen = [];
 			$res = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0];
             $anzahlen['bewertungen']['offen'] = $res['offen'];
             

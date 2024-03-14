@@ -58,7 +58,7 @@
 		    <div class="section__overlay">
 		        <div class="section__wrapper">
 		            <article class="gd gd--12">
-		                <p><?php echo utf8_decode(get_option('fusszeile')); ?></p>
+		                <p><?php echo mb_convert_encoding((string) get_option('fusszeile'), 'ISO-8859-1'); ?></p>
 		            </article>
 		        </div>
 		    </div>

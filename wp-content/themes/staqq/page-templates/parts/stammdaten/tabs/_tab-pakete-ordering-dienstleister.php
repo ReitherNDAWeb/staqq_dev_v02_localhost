@@ -167,7 +167,7 @@
 	<table class="table pricing-table pricing-table--no-width">
 		<tbody>
 			<?php
-				$args = array( 'post_type' => 'product', 'posts_per_page' => 10, 'product_cat' => 'joborders', 'orderby' => 'name', 'order' => 'ASC');
+				$args = ['post_type' => 'product', 'posts_per_page' => 10, 'product_cat' => 'joborders', 'orderby' => 'name', 'order' => 'ASC'];
 				$loop = new WP_Query( $args );
 				while ( $loop->have_posts() ) : $loop->the_post(); global $product; ?>
 
@@ -187,7 +187,7 @@
 	<table class="table pricing-table pricing-table--no-width">
 		<tbody>
 			<?php
-				$args = array( 'post_type' => 'product', 'posts_per_page' => 10, 'product_cat' => 'benutzer', 'orderby' => 'name', 'order' => 'ASC');
+				$args = ['post_type' => 'product', 'posts_per_page' => 10, 'product_cat' => 'benutzer', 'orderby' => 'name', 'order' => 'ASC'];
 				$loop = new WP_Query( $args );
 				while ( $loop->have_posts() ) : $loop->the_post(); global $product; ?>
 
@@ -222,7 +222,7 @@
 	<form method="post" action="/app/actions/" class="step step--2 step--gold-monatlich" style="display: none;">
 		<input type="hidden" name="action" value="paket_anfrage_senden">
 		<h3>Nehmen Sie mit uns Kontakt auf</h3>
-		<textarea name="content" id="content" cols="30" rows="10"><?php echo utf8_decode(get_option('paket_anfrage_gold_monatlich')); ?></textarea>
+		<textarea name="content" id="content" cols="30" rows="10"><?php echo mb_convert_encoding((string) get_option('paket_anfrage_gold_monatlich'), 'ISO-8859-1'); ?></textarea>
 		
 		<button type="submit" class="button">Senden</button>
 	</form>
@@ -230,7 +230,7 @@
 	<form method="post" action="/app/actions/" class="step step--2 step--gold-jaehrlich" style="display: none;">
 		<input type="hidden" name="action" value="paket_anfrage_senden">
 		<h3>Nehmen Sie mit uns Kontakt auf</h3>
-		<textarea name="content" id="content" cols="30" rows="10"><?php echo utf8_decode(get_option('paket_anfrage_gold_jaehrlich')); ?></textarea>
+		<textarea name="content" id="content" cols="30" rows="10"><?php echo mb_convert_encoding((string) get_option('paket_anfrage_gold_jaehrlich'), 'ISO-8859-1'); ?></textarea>
 		
 		<button type="submit" class="button">Senden</button>
 	</form>
@@ -238,7 +238,7 @@
 	<form method="post" action="/app/actions/" class="step step--2 step--platinum-monatlich" style="display: none;">
 		<input type="hidden" name="action" value="paket_anfrage_senden">
 		<h3>Nehmen Sie mit uns Kontakt auf</h3>
-		<textarea name="content" id="content" cols="30" rows="10"><?php echo utf8_decode(get_option('paket_anfrage_platinum_monatlich')); ?></textarea>
+		<textarea name="content" id="content" cols="30" rows="10"><?php echo mb_convert_encoding((string) get_option('paket_anfrage_platinum_monatlich'), 'ISO-8859-1'); ?></textarea>
 		
 		<button type="submit" class="button">Senden</button>
 	</form>
@@ -246,7 +246,7 @@
 	<form method="post" action="/app/actions/" class="step step--2 step--platinum-jaehrlich" style="display: none;">
 		<input type="hidden" name="action" value="paket_anfrage_senden">
 		<h3>Nehmen Sie mit uns Kontakt auf</h3>
-		<textarea name="content" id="content" cols="30" rows="10"><?php echo utf8_decode(get_option('paket_anfrage_platinum_jaehrlich')); ?></textarea>
+		<textarea name="content" id="content" cols="30" rows="10"><?php echo mb_convert_encoding((string) get_option('paket_anfrage_platinum_jaehrlich'), 'ISO-8859-1'); ?></textarea>
 		
 		<button type="submit" class="button">Senden</button>
 	</form>

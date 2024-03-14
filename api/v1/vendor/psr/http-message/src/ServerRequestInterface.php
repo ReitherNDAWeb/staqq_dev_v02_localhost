@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Psr\Http\Message;
 
 /**
@@ -80,7 +82,7 @@ interface ServerRequestInterface extends RequestInterface
      * updated cookie values.
      *
      * @param array $cookies Array of key/value pairs representing cookies.
-     * @return self
+     * @return static
      */
     public function withCookieParams(array $cookies);
 
@@ -118,7 +120,7 @@ interface ServerRequestInterface extends RequestInterface
      *
      * @param array $query Array of query string arguments, typically from
      *     $_GET.
-     * @return self
+     * @return static
      */
     public function withQueryParams(array $query);
 
@@ -143,8 +145,8 @@ interface ServerRequestInterface extends RequestInterface
      * immutability of the message, and MUST return an instance that has the
      * updated body parameters.
      *
-     * @param array An array tree of UploadedFileInterface instances.
-     * @return self
+     * @param array $uploadedFiles An array tree of UploadedFileInterface instances.
+     * @return static
      * @throws \InvalidArgumentException if an invalid structure is provided.
      */
     public function withUploadedFiles(array $uploadedFiles);
@@ -190,7 +192,7 @@ interface ServerRequestInterface extends RequestInterface
      *
      * @param null|array|object $data The deserialized body data. This will
      *     typically be in an array or object.
-     * @return self
+     * @return static
      * @throws \InvalidArgumentException if an unsupported argument type is
      *     provided.
      */
@@ -224,7 +226,7 @@ interface ServerRequestInterface extends RequestInterface
      * @param mixed $default Default value to return if the attribute does not exist.
      * @return mixed
      */
-    public function getAttribute($name, $default = null);
+    public function getAttribute(string $name, $default = null);
 
     /**
      * Return an instance with the specified derived request attribute.
@@ -239,9 +241,9 @@ interface ServerRequestInterface extends RequestInterface
      * @see getAttributes()
      * @param string $name The attribute name.
      * @param mixed $value The value of the attribute.
-     * @return self
+     * @return static
      */
-    public function withAttribute($name, $value);
+    public function withAttribute(string $name, $value);
 
     /**
      * Return an instance that removes the specified derived request attribute.
@@ -255,7 +257,7 @@ interface ServerRequestInterface extends RequestInterface
      *
      * @see getAttributes()
      * @param string $name The attribute name.
-     * @return self
+     * @return static
      */
-    public function withoutAttribute($name);
+    public function withoutAttribute(string $name);
 }

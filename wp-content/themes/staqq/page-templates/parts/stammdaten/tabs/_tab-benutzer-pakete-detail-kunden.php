@@ -32,10 +32,10 @@
 		$user->einschraenkung_suchgruppen = 0;
 		$user->einschraenkung_arbeitsstaetten = 0;
 
-		$user->arbeitsstaetten = array();
-		$user->berufsfelder = array();
-		$user->suchgruppen = array();
-		$user->bevorzugte_dienstleister = array();
+		$user->arbeitsstaetten = [];
+		$user->berufsfelder = [];
+		$user->suchgruppen = [];
+		$user->bevorzugte_dienstleister = [];
 
 		$a = str_split("abcdefghijklmnopqrstuvwxyABCDEFGHIJKLMNOPQRSTUVWXY0123456789"); 
 		$user->passwort = "";

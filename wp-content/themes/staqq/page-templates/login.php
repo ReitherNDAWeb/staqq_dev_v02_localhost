@@ -6,10 +6,10 @@
 
 if (!is_user_logged_in()){
 	//Set a cookie now to see if they are supported by the browser.
-$secure = ( 'https' === parse_url( wp_login_url(), PHP_URL_SCHEME ) );
-setcookie( TEST_COOKIE, 'WP Cookie check', 0, COOKIEPATH, COOKIE_DOMAIN, $secure );
+$secure = ( 'https' === parse_url( (string) wp_login_url(), PHP_URL_SCHEME ) );
+setcookie( TEST_COOKIE, 'WP Cookie check', ['expires' => 0, 'path' => (string) COOKIEPATH, 'domain' => (string) COOKIE_DOMAIN, 'secure' => $secure] );
 if ( SITECOOKIEPATH != COOKIEPATH )
-	setcookie( TEST_COOKIE, 'WP Cookie check', 0, SITECOOKIEPATH, COOKIE_DOMAIN, $secure );
+	setcookie( TEST_COOKIE, 'WP Cookie check', ['expires' => 0, 'path' => (string) SITECOOKIEPATH, 'domain' => (string) COOKIE_DOMAIN, 'secure' => $secure] );
 }
 
     get_header('pre');

@@ -36,42 +36,42 @@
 				$sth->bindParam(':id', $res_id, PDO::PARAM_INT);
 				$sth->execute();
 				$arr = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-				$res['berufsfelder'] = array();
+				$res['berufsfelder'] = [];
 				foreach($arr as $a){array_push($res['berufsfelder'], $a['id']);}
 
 				$sth = $db->prepare("SELECT berufsgruppen.id FROM relation_ressources_berufsgruppen LEFT JOIN berufsgruppen ON berufsgruppen.id = relation_ressources_berufsgruppen.berufsgruppen_id WHERE relation_ressources_berufsgruppen.ressources_id=:id");
 				$sth->bindParam(':id', $res_id, PDO::PARAM_INT);
 				$sth->execute();
 				$arr = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-				$res['berufsgruppen'] = array();
+				$res['berufsgruppen'] = [];
 				foreach($arr as $a){array_push($res['berufsgruppen'], $a['id']);}
 
 				$sth = $db->prepare("SELECT berufsbezeichnungen.id FROM relation_ressources_berufsbezeichnungen LEFT JOIN berufsbezeichnungen ON berufsbezeichnungen.id = relation_ressources_berufsbezeichnungen.berufsbezeichnungen_id WHERE relation_ressources_berufsbezeichnungen.ressources_id=:id");
 				$sth->bindParam(':id', $res_id, PDO::PARAM_INT);
 				$sth->execute();
 				$arr = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-				$res['berufsbezeichnungen'] = array();
+				$res['berufsbezeichnungen'] = [];
 				foreach($arr as $a){array_push($res['berufsbezeichnungen'], $a['id']);}
 
 				$sth = $db->prepare("SELECT skills_items.id FROM relation_ressources_skills LEFT JOIN skills_items ON skills_items.id = relation_ressources_skills.skills_items_id WHERE relation_ressources_skills.ressources_id=:id");
 				$sth->bindParam(':id', $res_id, PDO::PARAM_INT);
 				$sth->execute();
 				$arr = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-				$res['skills'] = array();
+				$res['skills'] = [];
 				foreach($arr as $a){array_push($res['skills'], $a['id']);}
 
 				$sth = $db->prepare("SELECT bezirke.id FROM relation_ressources_bezirke LEFT JOIN bezirke ON bezirke.id = relation_ressources_bezirke.bezirke_id WHERE relation_ressources_bezirke.ressources_id=:id");
 				$sth->bindParam(':id', $res_id, PDO::PARAM_INT);
 				$sth->execute();
 				$arr = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-				$res['bezirke'] = array();
+				$res['bezirke'] = [];
 				foreach($arr as $a){array_push($res['bezirke'], $a['id']);}
 
 				$sth = $db->prepare("SELECT dienstleister_id FROM relation_ressources_dienstleister_blacklist WHERE ressources_id=:id");
 				$sth->bindParam(':id', $res_id, PDO::PARAM_INT);
 				$sth->execute();
 				$arr = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-				$res['dl_blacklist'] = array();
+				$res['dl_blacklist'] = [];
 				foreach($arr as $a){array_push($res['dl_blacklist'], $a['dienstleister_id']);}
 
 				$bezirke_ids = '(' . implode(',', array_map('intval', $res['bezirke'])) . ')';
@@ -116,7 +116,7 @@
 						berufsfelder ON berufsfelder.id = relation_joborders_berufsfelder.berufsfelder_id WHERE relation_joborders_berufsfelder.joborders_id=:id");
 							$sth->bindParam(':id', $joborder['id'], PDO::PARAM_INT);
 							$sth->execute();
-							$joborder['berufsfelder'] = array();
+							$joborder['berufsfelder'] = [];
 							foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $a){array_push($joborder['berufsfelder'], $a['id']);}
 
 							$machtedBerufsfelder = 0;
@@ -137,7 +137,7 @@
 						berufsgruppen ON berufsgruppen.id = relation_joborders_berufsgruppen.berufsgruppen_id WHERE relation_joborders_berufsgruppen.joborders_id=:id");
 								$sth->bindParam(':id', $joborder['id'], PDO::PARAM_INT);
 								$sth->execute();
-								$joborder['berufsgruppen'] = array();
+								$joborder['berufsgruppen'] = [];
 								foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $a){array_push($joborder['berufsgruppen'], $a['id']);}
 
 								$machtedBerufsgruppen = 0;
@@ -159,26 +159,14 @@
 									$sth->bindParam(':id', $joborder['id'], PDO::PARAM_INT);
 									$sth->execute();
 
-									$joborder['skills_muss'] = array();
+									$joborder['skills_muss'] = [];
 									foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $a){array_push($joborder['skills_muss'], $a['id']);}
 
 									if (count(array_diff($joborder['skills_muss'], $res['skills'])) == 0){
 
 										$text = "Es sind Jobangebote für dich verfügbar!";
 
-										fireNotification(array(
-											'receiver_type'	=> 'ressource', 
-											'receiver_id' 	=> $res_id,
-											'titel' 		=> 'Jobangebote verfügbar', 
-											'subtitle'		=> $text,
-											'nachricht' 	=> $text, 
-											'kategorie' 	=> 'joborders', 
-											'link_web' 		=> "/app/joborders", 
-											'link_mobile' 	=> "/ressource/joborders", 
-											'send_web' 		=> true, 
-											'send_mobile' 	=> true,
-											'force' 		=> true
-										));
+										fireNotification(['receiver_type'	=> 'ressource', 'receiver_id' 	=> $res_id, 'titel' 		=> 'Jobangebote verfügbar', 'subtitle'		=> $text, 'nachricht' 	=> $text, 'kategorie' 	=> 'joborders', 'link_web' 		=> "/app/joborders", 'link_mobile' 	=> "/ressource/joborders", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);
 										
 										// End Loop if any Job found
 										break;

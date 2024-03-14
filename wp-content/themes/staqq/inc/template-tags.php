@@ -28,7 +28,7 @@ function twentysixteen_entry_meta() {
 		);
 	}
 
-	if ( in_array( get_post_type(), array( 'post', 'attachment' ) ) ) {
+	if ( in_array( get_post_type(), ['post', 'attachment'] ) ) {
 		twentysixteen_entry_date();
 	}
 
@@ -136,7 +136,7 @@ function twentysixteen_post_thumbnail() {
 	<?php else : ?>
 
 	<a class="post-thumbnail" href="<?php the_permalink(); ?>" aria-hidden="true">
-		<?php the_post_thumbnail( 'post-thumbnail', array( 'alt' => the_title_attribute( 'echo=0' ) ) ); ?>
+		<?php the_post_thumbnail( 'post-thumbnail', ['alt' => the_title_attribute( 'echo=0' )] ); ?>
 	</a>
 
 	<?php endif; // End is_singular()
@@ -200,11 +200,11 @@ endif;
 function twentysixteen_categorized_blog() {
 	if ( false === ( $all_the_cool_cats = get_transient( 'twentysixteen_categories' ) ) ) {
 		// Create an array of all the categories that are attached to posts.
-		$all_the_cool_cats = get_categories( array(
-			'fields'     => 'ids',
-			// We only need to know if there is more than one category.
-			'number'     => 2,
-		) );
+		$all_the_cool_cats = get_categories( [
+      'fields'     => 'ids',
+      // We only need to know if there is more than one category.
+      'number'     => 2,
+  ] );
 
 		// Count the number of categories that are attached to the posts.
 		$all_the_cool_cats = count( $all_the_cool_cats );

@@ -163,7 +163,7 @@
 					$wien_summe = 23;
 					$wien_id = 9;
 					$wien_count = 0;
-					$wien_selected = array();
+					$wien_selected = [];
 					$wien_print_all_as_one = false;
 					
 					foreach($ressource->bezirke as $s){

@@ -7,7 +7,7 @@
             $sth->execute();
             $body = json_encode(utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC)));
             
-        } catch(PDOException $e){
+        } catch(PDOException){
             $response->withStatus(400);
             echo json_encode(['msg' => "Unbekannter Fehler!"]);
         }
@@ -53,7 +53,7 @@
             $sth->execute();
             $body = json_encode(utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0]);
             
-        } catch(PDOException $e){
+        } catch(PDOException){
             $response->withStatus(400);
             $body = json_encode(['msg' => "Unbekannter Fehler!"]);
         }

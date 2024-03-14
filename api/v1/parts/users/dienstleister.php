@@ -256,16 +256,7 @@
             $email = $request->getParsedBody()['email'];
             $passwort = $request->getParsedBody()['passwort'];
 
-            $user_info = array(
-                "user_pass"     => $passwort,
-                "user_login"    => 'dienstleister_'.$request->getParsedBody()['ansprechpartner_vorname'].'_'.$request->getParsedBody()['ansprechpartner_nachname'].'_'.time(),
-                "user_nicename" => "",
-                "user_email"    => $email,
-                "display_name"  => $request->getParsedBody()['ansprechpartner_titel'].' '.$request->getParsedBody()['ansprechpartner_vorname'].' '.$request->getParsedBody()['ansprechpartner_nachname'],
-                "first_name"    => $request->getParsedBody()['ansprechpartner_vorname'],
-                "last_name"     => $request->getParsedBody()['ansprechpartner_nachname'],
-                "role"          => "dienstleister"
-            );
+            $user_info = ["user_pass"     => $passwort, "user_login"    => 'dienstleister_'.$request->getParsedBody()['ansprechpartner_vorname'].'_'.$request->getParsedBody()['ansprechpartner_nachname'].'_'.time(), "user_nicename" => "", "user_email"    => $email, "display_name"  => $request->getParsedBody()['ansprechpartner_titel'].' '.$request->getParsedBody()['ansprechpartner_vorname'].' '.$request->getParsedBody()['ansprechpartner_nachname'], "first_name"    => $request->getParsedBody()['ansprechpartner_vorname'], "last_name"     => $request->getParsedBody()['ansprechpartner_nachname'], "role"          => "dienstleister"];
             
             if (!username_exists($email) && !email_exists($email)) {
 
@@ -313,14 +304,14 @@
                         $user_id = $db->lastInsertId();
                         add_user_meta($insert_user_result, 'staqq_id', $user_id);
 
-                        foreach (json_decode($request->getParsedBody()['berufsfelder']) as $f){
+                        foreach (json_decode((string) $request->getParsedBody()['berufsfelder']) as $f){
                             $sth = $db->prepare("INSERT INTO relation_dienstleister_berufsfelder (dienstleister_id, berufsfelder_id) VALUES (:dienstleister_id, :berufsfelder_id)");
                             $sth->bindParam(':dienstleister_id', $user_id, PDO::PARAM_INT);
                             $sth->bindParam(':berufsfelder_id', $f, PDO::PARAM_INT);
                             $sth->execute();
                         }
 
-                        foreach (json_decode($request->getParsedBody()['filialen']) as $f){
+                        foreach (json_decode((string) $request->getParsedBody()['filialen']) as $f){
                             $sth = $db->prepare("INSERT INTO filialen (name, dienstleister_id) VALUES (:name, :dienstleister_id)");
                             $sth->bindParam(':name', $f, PDO::PARAM_STR);
                             $sth->bindParam(':dienstleister_id', $user_id, PDO::PARAM_INT);
@@ -363,15 +354,7 @@
                 $user_id = email_exists($email_old);
             }
 
-            $user_info = array(
-                "ID"            => $user_id,
-                "user_nicename" => "",
-                "user_email"    => $email,
-                "display_name"  => $request->getParsedBody()['ansprechpartner_titel'].' '.$request->getParsedBody()['ansprechpartner_vorname'].' '.$request->getParsedBody()['ansprechpartner_nachname'],
-                "first_name"    => $request->getParsedBody()['ansprechpartner_vorname'],
-                "last_name"     => $request->getParsedBody()['ansprechpartner_nachname'],
-                "role"          => "dienstleister"
-            );
+            $user_info = ["ID"            => $user_id, "user_nicename" => "", "user_email"    => $email, "display_name"  => $request->getParsedBody()['ansprechpartner_titel'].' '.$request->getParsedBody()['ansprechpartner_vorname'].' '.$request->getParsedBody()['ansprechpartner_nachname'], "first_name"    => $request->getParsedBody()['ansprechpartner_vorname'], "last_name"     => $request->getParsedBody()['ansprechpartner_nachname'], "role"          => "dienstleister"];
 
             if ((email_exists($email) && (!$updateEmail)) || ((!email_exists($email)) && $updateEmail)) {
 
@@ -416,7 +399,7 @@
                     $sth->bindParam(':dienstleister_id', $args['id'], PDO::PARAM_INT);
                     $sth->execute();
                     
-                    foreach (json_decode($request->getParsedBody()['berufsfelder']) as $f){
+                    foreach (json_decode((string) $request->getParsedBody()['berufsfelder']) as $f){
                         $sth = $db->prepare("INSERT INTO relation_dienstleister_berufsfelder (dienstleister_id, berufsfelder_id) VALUES (:dienstleister_id, :berufsfelder_id)");
                         $sth->bindParam(':dienstleister_id', $args['id'], PDO::PARAM_INT);
                         $sth->bindParam(':berufsfelder_id', $f, PDO::PARAM_INT);
@@ -428,7 +411,7 @@
                     $sth->bindParam(':dienstleister_id', $args['id'], PDO::PARAM_INT);
                     $sth->execute();
                     
-                    foreach (json_decode($request->getParsedBody()['filialen']) as $f){
+                    foreach (json_decode((string) $request->getParsedBody()['filialen']) as $f){
                         $sth = $db->prepare("INSERT INTO filialen (name, dienstleister_id) VALUES (:name, :dienstleister_id)");
                         $sth->bindParam(':name', $f, PDO::PARAM_STR);
                         $sth->bindParam(':dienstleister_id', $args['id'], PDO::PARAM_INT);
@@ -538,7 +521,7 @@
         $passwort_neu = $request->getParsedBody()['passwort_neu'];
         $passwort_alt = $request->getParsedBody()['passwort_alt'];
         
-        $res = wp_signon(array('user_login' => $email, 'user_password' => $passwort_alt, 'remember' => false));
+        $res = wp_signon(['user_login' => $email, 'user_password' => $passwort_alt, 'remember' => false]);
         
         if ($passwort_neu != "" && $passwort_alt != ""){
                         
@@ -629,7 +612,7 @@
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
 			
-			$anzahlen = array();
+			$anzahlen = [];
             $anzahlen['bewertungen']['offen'] = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0]['offen'];
 			
             $sth = $db->prepare("
@@ -970,36 +953,24 @@
 
 				if (intval($b['email_benachrichtigungen']) && ($b['status'] == "beworben")) {
 
-					$ab = date("d.m.Y", strtotime($j['arbeitsbeginn']));
-					$ae = date("d.m.Y", strtotime($j['arbeitsende']));
+					$ab = date("d.m.Y", strtotime((string) $j['arbeitsbeginn']));
+					$ae = date("d.m.Y", strtotime((string) $j['arbeitsende']));
 
 					$html =  "Sehr geehrte(r) {$b['anrede']} {$b['vorname']} {$b['nachname']}!";
 					$html .= "<br><br>";
-					$html .= nl2br(utf8_decode(get_option('email_absage_anderwaertig_vergeben')));
+					$html .= nl2br(mb_convert_encoding(get_option('email_absage_anderwaertig_vergeben'), 'ISO-8859-1'));
 					$html .= "<br><br>";
 					$html .= "Job: {$j['jobtitel']} ($ab - $ae)";
 					$html .= "<br><br>";
-					$html .= nl2br(utf8_decode(get_option('grusszeile')));
+					$html .= nl2br(mb_convert_encoding(get_option('grusszeile'), 'ISO-8859-1'));
 
-					$betreff = utf8_decode(get_option('email_absage_anderwaertig_vergeben_betreff'));
+					$betreff = mb_convert_encoding(get_option('email_absage_anderwaertig_vergeben_betreff'), 'ISO-8859-1');
 
 					$ret = sendMail($b['email'], $betreff, $html, '');
 					
 					// SEND PUSH
 					
-					fireNotification (array(
-						'receiver_type'	=> 'ressource', 
-						'receiver_id' 	=> $b['id'], 
-						'titel' 		=> $betreff,
-						'subtitle'		=> 'Job ' . $j['jobtitel'] . ' wurde leider anderwärtig vergeben!',
-						'nachricht' 	=> "Job <strong>{$j['jobtitel']}</strong> wurde leider anderwärtig vergeben!", 
-						'kategorie' 	=> 'joborder', 
-						'link_web' 		=> "/app/joborders/", 
-						'link_mobile' 	=> "/ressource/joborders", 
-						'send_web' 		=> true, 
-						'send_mobile' 	=> true,
-						'force' 		=> true
-					));
+					fireNotification (['receiver_type'	=> 'ressource', 'receiver_id' 	=> $b['id'], 'titel' 		=> $betreff, 'subtitle'		=> 'Job ' . $j['jobtitel'] . ' wurde leider anderwärtig vergeben!', 'nachricht' 	=> "Job <strong>{$j['jobtitel']}</strong> wurde leider anderwärtig vergeben!", 'kategorie' 	=> 'joborder', 'link_web' 		=> "/app/joborders/", 'link_mobile' 	=> "/ressource/joborders", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);
 					
 				}
 

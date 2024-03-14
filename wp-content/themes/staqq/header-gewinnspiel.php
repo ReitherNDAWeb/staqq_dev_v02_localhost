@@ -1,7 +1,7 @@
 <?php
 
 	function currentMenuItem($uri){
-		if (strpos($_SERVER['REQUEST_URI'], $uri) !== false){
+		if (str_contains((string) $_SERVER['REQUEST_URI'], (string) $uri)){
 			return 'current';
 		}else{
 			return '';
@@ -63,7 +63,7 @@
             $userBerechtigungen->aktiv_bis = $b->aktiv_bis;
             $wpUserSTAQQKundeId = $b->kunden_id;
             
-            if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', $userBerechtigungen->aktiv_bis)))){
+            if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_bis)))){
                 if ($_SERVER['REQUEST_URI'] != "/app/fehler/?e=1") {wp_redirect('app/fehler/?e=1'); exit;}
             }
         } else if (in_array("dienstleister_u", $wpUser->roles)) {
@@ -79,7 +79,7 @@
             $userBerechtigungen->aktiv_bis = $b->aktiv_bis;
             $wpUserSTAQQDienstleisterId = $b->dienstleister_id;
             
-            if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', $userBerechtigungen->aktiv_bis)))){
+            if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_bis)))){
                 if ($_SERVER['REQUEST_URI'] != "/app/fehler/?e=1") {wp_redirect('app/fehler/?e=1'); exit;}
             }
         } else{

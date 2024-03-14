@@ -23,8 +23,8 @@
         
             }
             
-            $offen = array();
-            $erledigt = array();
+            $offen = [];
+            $erledigt = [];
             
             $castings = $api->get("ressources/$wpUserSTAQQId/castings", [])->decode_response();
             
@@ -164,8 +164,8 @@
 				
             }
             
-            $offen = array();
-            $erledigt = array();
+            $offen = [];
+            $erledigt = [];
             
             if ($wpUserRole == "dienstleister"){
 				$castings = $api->get("dienstleister/$wpUserSTAQQId/castings", [])->decode_response();

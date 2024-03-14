@@ -14,7 +14,7 @@
         $dienstleister = $api->get("dienstleister/$wpUserSTAQQId", [])->decode_response();
         $berufsfelder = $dienstleister->berufsfelder;
 		
-		$berufsfelder_ids = array();
+		$berufsfelder_ids = [];
 		foreach ($berufsfelder as $b){array_push($berufsfelder_ids, $b->id);}
 		/*
 		$arr = $suchgruppen;
@@ -34,8 +34,8 @@
                 'telefon' => $_POST['telefon'],
                 'email' => $_POST['email'],
                 'passwort' => $_POST['passwort'],
-                'aktiv_von' => ($_POST['aktiv_von'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime($_POST['aktiv_von'])),
-                'aktiv_bis' => ($_POST['aktiv_bis'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime($_POST['aktiv_bis'])),
+                'aktiv_von' => ($_POST['aktiv_von'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime((string) $_POST['aktiv_von'])),
+                'aktiv_bis' => ($_POST['aktiv_bis'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime((string) $_POST['aktiv_bis'])),
                 'debug' => 0,
                 'berechtigung_joborders_schalten' => ($_POST['berechtigung_joborders_schalten'] == "on") ? 1 : 0,
                 'berechtigung_einkauf' => ($_POST['berechtigung_einkauf'] == "on") ? 1 : 0,
@@ -56,7 +56,7 @@
         }
         
         else if ($_POST['action'] == "update_user"){
-            
+
             $res = $api->put("dienstleister/user/".$_POST['id'], [
                 'dienstleister_id' => $wpUserSTAQQId,
                 'anrede' => $_POST['anrede'],
@@ -67,8 +67,8 @@
                 'telefon' => $_POST['telefon'],
                 'email' => $_POST['email'],
                 'old_email' => $_POST['old_email'],
-                'aktiv_von' => date('Y-m-d', strtotime($_POST['aktiv_von'])),
-                'aktiv_bis' => date('Y-m-d', strtotime($_POST['aktiv_bis'])),
+                'aktiv_von' => date('Y-m-d', strtotime((string) $_POST['aktiv_von'])),
+                'aktiv_bis' => date('Y-m-d', strtotime((string) $_POST['aktiv_bis'])),
                 'debug' => 0,
                 'berechtigung_joborders_schalten' => ($_POST['berechtigung_joborders_schalten'] == "on") ? 1 : 0,
                 'berechtigung_einkauf' => ($_POST['berechtigung_einkauf'] == "on") ? 1 : 0,
@@ -81,7 +81,7 @@
                 'suchgruppen' => isset($_POST['suchgruppen']) ? json_encode($_POST['suchgruppen']) : "[]",
                 'filialen' => isset($_POST['filialen']) ? json_encode($_POST['filialen']) : "[]"
             ])->decode_response();
-            
+
             //var_dump($res);
         }
         
@@ -291,8 +291,8 @@
                 'telefon' => $_POST['telefon'],
                 'email' => $_POST['email'],
                 'passwort' => $_POST['passwort'],
-                'aktiv_von' => ($_POST['aktiv_von'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime($_POST['aktiv_von'])),
-                'aktiv_bis' => ($_POST['aktiv_bis'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime($_POST['aktiv_bis'])),
+                'aktiv_von' => ($_POST['aktiv_von'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime((string) $_POST['aktiv_von'])),
+                'aktiv_bis' => ($_POST['aktiv_bis'] == "") ? date('Y-m-d', time()) : date('Y-m-d', strtotime((string) $_POST['aktiv_bis'])),
                 'debug' => 0,
                 'berechtigung_joborders_schalten' => ($_POST['berechtigung_joborders_schalten'] == "on") ? 1 : 0,
                 'berechtigung_einkauf' => ($_POST['berechtigung_einkauf'] == "on") ? 1 : 0,
@@ -312,7 +312,7 @@
         }
         
         else if ($_POST['action'] == "update_user"){
-            
+
             $res = $api->put("kunden/user/".$_POST['id'], [
                 'kunden_id' => $wpUserSTAQQId,
                 'anrede' => $_POST['anrede'],
@@ -323,8 +323,8 @@
                 'telefon' => $_POST['telefon'],
                 'email' => $_POST['email'],
                 'old_email' => $_POST['old_email'],
-                'aktiv_von' => date('Y-m-d', strtotime($_POST['aktiv_von'])),
-                'aktiv_bis' => date('Y-m-d', strtotime($_POST['aktiv_bis'])),
+                'aktiv_von' => date('Y-m-d', strtotime((string) $_POST['aktiv_von'])),
+                'aktiv_bis' => date('Y-m-d', strtotime((string) $_POST['aktiv_bis'])),
                 'debug' => 0,
                 'berechtigung_joborders_schalten' => ($_POST['berechtigung_joborders_schalten'] == "on") ? 1 : 0,
                 'berechtigung_einkauf' => ($_POST['berechtigung_einkauf'] == "on") ? 1 : 0,
@@ -338,7 +338,7 @@
                 'bevorzugte_dienstleister' => isset($_POST['bevorzugte_dienstleister']) ? json_encode($_POST['bevorzugte_dienstleister']) : "[]",
                 'arbeitsstaetten' => isset($_POST['arbeitsstaetten']) ? json_encode($_POST['arbeitsstaetten']) : "[]"
             ])->decode_response();
-            
+
             //var_dump($res);
         }
         
@@ -371,10 +371,10 @@
 			$user->einschraenkung_suchgruppen = 0;
 			$user->einschraenkung_arbeitsstaetten = 0;
             
-            $user->arbeitsstaetten = array();
-            $user->berufsfelder = array();
-            $user->suchgruppen = array();
-            $user->bevorzugte_dienstleister = array();
+            $user->arbeitsstaetten = [];
+            $user->berufsfelder = [];
+            $user->suchgruppen = [];
+            $user->bevorzugte_dienstleister = [];
             
             $a = str_split("abcdefghijklmnopqrstuvwxyABCDEFGHIJKLMNOPQRSTUVWXY0123456789"); 
             $user->passwort = "";//substr( implode($a), 0, 8 );

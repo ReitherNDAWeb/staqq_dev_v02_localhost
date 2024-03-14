@@ -24,10 +24,10 @@ $colour = imagecolorallocate($image, 183, 178, 152);
 $font = '../fonts/Anorexia.ttf';
 
 // Set a random integer for the rotation between -15 and 15 degrees
-$rotate = rand(-15, 15);
+$rotate = random_int(-15, 15);
 
 // Create an image using our original image and adding the detail
-imagettftext($image, 14, $rotate, 18, 30, $colour, $font, $str);
+imagettftext($image, 14, $rotate, 18, 30, $colour, $font, (string) $str);
 
 // Output the image as a png
 imagepng($image);

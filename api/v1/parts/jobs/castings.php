@@ -46,26 +46,14 @@
 			if ($request->getParsedBody()['ressources_verify'] == '1'){
 				
 				$receiver_type = ($dienstleister_user_id) ? "dienstleister_user" : "dienstleister";
-				$receiver_id = ($dienstleister_user_id) ? $dienstleister_user_id : $request->getParsedBody()['dienstleister_id'];
+				$receiver_id = $dienstleister_user_id ?: $request->getParsedBody()['dienstleister_id'];
 							
 				$sth = $db->prepare("SELECT * FROM ressources WHERE id=:id");
 				$sth->bindParam(':id', $request->getParsedBody()['ressources_id'], PDO::PARAM_INT);
 				$sth->execute();
 				$ressource = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0];
 				
-				fireNotification (array(
-					'receiver_type'	=> $receiver_type, 
-					'receiver_id' 	=> $receiver_id, 
-					'titel' 		=> 'Vorstellungsgespräch bestätigt',
-					'subtitle'		=> "{$ressource['vorname']} {$ressource['nachname']} hat das Vorstellungsgespräch bestätigt!",
-					'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> hat das Vorstellungsgespräch bestätigt!",
-					'kategorie' 	=> 'castings', 
-					'link_web' 		=> "/app/castings/$tabHash", 
-					'link_mobile' 	=> "/dienstleister/castings", 
-					'send_web' 		=> true, 
-					'send_mobile' 	=> true,
-					'force' 		=> true
-				));	
+				fireNotification (['receiver_type'	=> $receiver_type, 'receiver_id' 	=> $receiver_id, 'titel' 		=> 'Vorstellungsgespräch bestätigt', 'subtitle'		=> "{$ressource['vorname']} {$ressource['nachname']} hat das Vorstellungsgespräch bestätigt!", 'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> hat das Vorstellungsgespräch bestätigt!", 'kategorie' 	=> 'castings', 'link_web' 		=> "/app/castings/$tabHash", 'link_mobile' 	=> "/dienstleister/castings", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);	
 			}
 			
 			if ($request->getParsedBody()['dienstleister_verify'] == '1'){
@@ -75,19 +63,7 @@
 				$sth->execute();
 				$dienstleister = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0];
 				
-				fireNotification (array(
-					'receiver_type'	=> 'ressource', 
-					'receiver_id' 	=> $request->getParsedBody()['ressources_id'], 
-					'titel' 		=> 'Vorstellungsgespräch bestätigt',
-					'subtitle'		=> $dienstleister['firmenwortlaut'] . ' hat das Vorstellungsgespräch bestätigt!',
-					'nachricht' 	=> "<strong>{$dienstleister['firmenwortlaut']}</strong> hat das Vorstellungsgespräch bestätigt!",
-					'kategorie' 	=> 'castings', 
-					'link_web' 		=> "/app/castings/$tabHash", 
-					'link_mobile' 	=> "/ressource/castings", 
-					'send_web' 		=> true, 
-					'send_mobile' 	=> true,
-					'force' 		=> true
-				));	
+				fireNotification (['receiver_type'	=> 'ressource', 'receiver_id' 	=> $request->getParsedBody()['ressources_id'], 'titel' 		=> 'Vorstellungsgespräch bestätigt', 'subtitle'		=> $dienstleister['firmenwortlaut'] . ' hat das Vorstellungsgespräch bestätigt!', 'nachricht' 	=> "<strong>{$dienstleister['firmenwortlaut']}</strong> hat das Vorstellungsgespräch bestätigt!", 'kategorie' 	=> 'castings', 'link_web' 		=> "/app/castings/$tabHash", 'link_mobile' 	=> "/ressource/castings", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);	
 			}
             
             $body = json_encode(['status' => true]);
@@ -146,19 +122,7 @@
 				$creator_type = ($c['dienstleister_user_id'] == null) ? "dienstleister" : "dienstleister_user";
 				$creator_id = ($creator_type == "dienstleister") ? $c['dienstleister_id'] : $c['dienstleister_user_id'];
 
-				fireNotification(array(
-					'receiver_type'	=> $creator_type, 
-					'receiver_id' 	=> $creator_id, 
-					'titel' 		=> 'Vorstellungsgespräch bestätigt',
-					'subtitle'		=> "{$ressource['vorname']} {$ressource['nachname']} hat das Vorstellungsgespräch bestätigt!",
-					'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> hat das Vorstellungsgespräch bestätigt!",
-					'kategorie' 	=> 'castings', 
-					'link_web' 		=> "/app/castings/$tabHash", 
-					'link_mobile' 	=> "/dienstleister/castings", 
-					'send_web' 		=> true, 
-					'send_mobile' 	=> true,
-					'force' 		=> true
-				));
+				fireNotification(['receiver_type'	=> $creator_type, 'receiver_id' 	=> $creator_id, 'titel' 		=> 'Vorstellungsgespräch bestätigt', 'subtitle'		=> "{$ressource['vorname']} {$ressource['nachname']} hat das Vorstellungsgespräch bestätigt!", 'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> hat das Vorstellungsgespräch bestätigt!", 'kategorie' 	=> 'castings', 'link_web' 		=> "/app/castings/$tabHash", 'link_mobile' 	=> "/dienstleister/castings", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);
 				
 			}else{
 				
@@ -167,19 +131,7 @@
 				$sth->execute();
 				$dienstleister = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0];
 				
-				fireNotification (array(
-					'receiver_type'	=> 'ressource', 
-					'receiver_id' 	=> $request->getParsedBody()['ressources_id'], 
-					'titel' 		=> 'Vorstellungsgespräch bestätigt',
-					'subtitle'		=> $dienstleister['firmenwortlaut'] . ' hat das Vorstellungsgespräch bestätigt!',
-					'nachricht' 	=> "<strong>{$dienstleister['firmenwortlaut']}</strong> hat das Vorstellungsgespräch bestätigt!",
-					'kategorie' 	=> 'castings', 
-					'link_web' 		=> "/app/castings/$tabHash", 
-					'link_mobile' 	=> "/ressource/castings", 
-					'send_web' 		=> true, 
-					'send_mobile' 	=> true,
-					'force' 		=> true
-				));	
+				fireNotification (['receiver_type'	=> 'ressource', 'receiver_id' 	=> $request->getParsedBody()['ressources_id'], 'titel' 		=> 'Vorstellungsgespräch bestätigt', 'subtitle'		=> $dienstleister['firmenwortlaut'] . ' hat das Vorstellungsgespräch bestätigt!', 'nachricht' 	=> "<strong>{$dienstleister['firmenwortlaut']}</strong> hat das Vorstellungsgespräch bestätigt!", 'kategorie' 	=> 'castings', 'link_web' 		=> "/app/castings/$tabHash", 'link_mobile' 	=> "/ressource/castings", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);	
 			}
             
             $body = json_encode(['status' => true]);

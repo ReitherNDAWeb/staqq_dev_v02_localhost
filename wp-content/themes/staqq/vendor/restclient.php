@@ -47,11 +47,11 @@ class RestClient implements Iterator, ArrayAccess {
                 $default_options['decoders'], $options['decoders']);
     }
     
-    public function set_option($key, $value){
+    public function set_option($key, $value): void{
         $this->options[$key] = $value;
     }
     
-    public function register_decoder($format, $method){
+    public function register_decoder($format, $method): void{
         // Decoder callbacks must adhere to the following pattern:
         //   array my_decoder(string $data)
         $this->options['decoders'][$format] = $method;
@@ -158,21 +158,21 @@ class RestClient implements Iterator, ArrayAccess {
         else
             $parameters_string = (string) $parameters;
         
-        if(strtoupper($method) == 'POST'){
+        if(strtoupper((string) $method) == 'POST'){
             $curlopt[CURLOPT_POST] = TRUE;
             $curlopt[CURLOPT_POSTFIELDS] = $parameters_string;
         }
-        elseif(strtoupper($method) != 'GET'){
-            $curlopt[CURLOPT_CUSTOMREQUEST] = strtoupper($method);
+        elseif(strtoupper((string) $method) != 'GET'){
+            $curlopt[CURLOPT_CUSTOMREQUEST] = strtoupper((string) $method);
             $curlopt[CURLOPT_POSTFIELDS] = $parameters_string;
         }
         elseif($parameters_string){
-            $client->url .= strpos($client->url, '?')? '&' : '?';
+            $client->url .= strpos((string) $client->url, '?')? '&' : '?';
             $client->url .= $parameters_string;
         }
         
         if($client->options['base_url']){
-            if($client->url[0] != '/' && substr($client->options['base_url'], -1) != '/')
+            if($client->url[0] != '/' && !str_ends_with((string) $client->options['base_url'], '/'))
                 $client->url = '/' . $client->url;
             $client->url = $client->options['base_url'] . $client->url;
         }
@@ -198,14 +198,14 @@ class RestClient implements Iterator, ArrayAccess {
         $query = "";
         foreach($parameters as $key => $values){
             foreach(is_array($values)? $values : [$values] as $value){
-                $pair = [urlencode($key), urlencode($value)];
+                $pair = [urlencode((string) $key), urlencode((string) $value)];
                 $query .= implode($primary, $pair) . $secondary;
             }
         }
         return rtrim($query, $secondary);
     }
     
-    public function parse_response($response){
+    public function parse_response($response): void{
         $headers = [];
         $this->response_status_lines = [];
         $line = strtok($response, "\n");
@@ -214,13 +214,13 @@ class RestClient implements Iterator, ArrayAccess {
                 // Since we tokenize on \n, use the remaining \r to detect empty lines.
                 if(count($headers) > 0) break; // Must be the newline after headers, move on to response body
             }
-            elseif(strpos($line, 'HTTP') === 0){
+            elseif(str_starts_with($line, 'HTTP')){
                 // One or more HTTP status lines
                 $this->response_status_lines[] = trim($line);
             }
             else { 
                 // Has to be a header
-                list($key, $value) = explode(':', $line, 2);
+                [$key, $value] = explode(':', $line, 2);
                 $key = trim(strtolower(str_replace('-', '_', $key)));
                 $value = trim($value);
                 
@@ -248,7 +248,7 @@ class RestClient implements Iterator, ArrayAccess {
         
         // Extract format from response content-type header. 
         if(!empty($this->headers->content_type))
-        if(preg_match($this->options['format_regex'], $this->headers->content_type, $matches))
+        if(preg_match($this->options['format_regex'], (string) $this->headers->content_type, $matches))
             return $matches[2];
         
         throw new RestClientException(

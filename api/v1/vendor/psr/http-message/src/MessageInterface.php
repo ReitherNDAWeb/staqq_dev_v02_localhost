@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Psr\Http\Message;
 
 /**
@@ -36,9 +38,9 @@ interface MessageInterface
      * new protocol version.
      *
      * @param string $version HTTP protocol version
-     * @return self
+     * @return static
      */
-    public function withProtocolVersion($version);
+    public function withProtocolVersion(string $version);
 
     /**
      * Retrieves all message header values.
@@ -61,7 +63,7 @@ interface MessageInterface
      * While header names are not case-sensitive, getHeaders() will preserve the
      * exact case in which headers were originally specified.
      *
-     * @return array Returns an associative array of the message's headers. Each
+     * @return string[][] Returns an associative array of the message's headers. Each
      *     key MUST be a header name, and each value MUST be an array of strings
      *     for that header.
      */
@@ -75,7 +77,7 @@ interface MessageInterface
      *     name using a case-insensitive string comparison. Returns false if
      *     no matching header name is found in the message.
      */
-    public function hasHeader($name);
+    public function hasHeader(string $name);
 
     /**
      * Retrieves a message header value by the given case-insensitive name.
@@ -91,7 +93,7 @@ interface MessageInterface
      *    header. If the header does not appear in the message, this method MUST
      *    return an empty array.
      */
-    public function getHeader($name);
+    public function getHeader(string $name);
 
     /**
      * Retrieves a comma-separated string of the values for a single header.
@@ -112,7 +114,7 @@ interface MessageInterface
      *    concatenated together using a comma. If the header does not appear in
      *    the message, this method MUST return an empty string.
      */
-    public function getHeaderLine($name);
+    public function getHeaderLine(string $name);
 
     /**
      * Return an instance with the provided value replacing the specified header.
@@ -126,10 +128,10 @@ interface MessageInterface
      *
      * @param string $name Case-insensitive header field name.
      * @param string|string[] $value Header value(s).
-     * @return self
+     * @return static
      * @throws \InvalidArgumentException for invalid header names or values.
      */
-    public function withHeader($name, $value);
+    public function withHeader(string $name, $value);
 
     /**
      * Return an instance with the specified header appended with the given value.
@@ -144,10 +146,10 @@ interface MessageInterface
      *
      * @param string $name Case-insensitive header field name to add.
      * @param string|string[] $value Header value(s).
-     * @return self
+     * @return static
      * @throws \InvalidArgumentException for invalid header names or values.
      */
-    public function withAddedHeader($name, $value);
+    public function withAddedHeader(string $name, $value);
 
     /**
      * Return an instance without the specified header.
@@ -159,9 +161,9 @@ interface MessageInterface
      * the named header.
      *
      * @param string $name Case-insensitive header field name to remove.
-     * @return self
+     * @return static
      */
-    public function withoutHeader($name);
+    public function withoutHeader(string $name);
 
     /**
      * Gets the body of the message.
@@ -180,7 +182,7 @@ interface MessageInterface
      * new body stream.
      *
      * @param StreamInterface $body Body.
-     * @return self
+     * @return static
      * @throws \InvalidArgumentException When the body is not valid.
      */
     public function withBody(StreamInterface $body);

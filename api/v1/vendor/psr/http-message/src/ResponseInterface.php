@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Psr\Http\Message;
 
 /**
@@ -46,10 +48,10 @@ interface ResponseInterface extends MessageInterface
      * @param string $reasonPhrase The reason phrase to use with the
      *     provided status code; if none is provided, implementations MAY
      *     use the defaults as suggested in the HTTP specification.
-     * @return self
+     * @return static
      * @throws \InvalidArgumentException For invalid status code arguments.
      */
-    public function withStatus($code, $reasonPhrase = '');
+    public function withStatus(int $code, string $reasonPhrase = '');
 
     /**
      * Gets the response reason phrase associated with the status code.

@@ -33,13 +33,13 @@
  */
 class ApnsPHP_Push_Server extends ApnsPHP_Push
 {
-	const MAIN_LOOP_USLEEP = 200000; /**< @type integer Main loop sleep time in micro seconds. */
-	const SHM_SIZE = 524288; /**< @type integer Shared memory size in bytes useful to store message queues. */
-	const SHM_MESSAGES_QUEUE_KEY_START = 1000; /**< @type integer Message queue start identifier for messages. For every process 1 is added to this number. */
-	const SHM_ERROR_MESSAGES_QUEUE_KEY = 999; /**< @type integer Message queue identifier for not delivered messages. */
+	public const MAIN_LOOP_USLEEP = 200000; /**< @type integer Main loop sleep time in micro seconds. */
+	public const SHM_SIZE = 524288; /**< @type integer Shared memory size in bytes useful to store message queues. */
+	public const SHM_MESSAGES_QUEUE_KEY_START = 1000; /**< @type integer Message queue start identifier for messages. For every process 1 is added to this number. */
+	public const SHM_ERROR_MESSAGES_QUEUE_KEY = 999; /**< @type integer Message queue identifier for not delivered messages. */
 
 	protected $_nProcesses = 3; /**< @type integer The number of processes to start. */
-	protected $_aPids = array(); /**< @type array Array of process PIDs. */
+	protected $_aPids = []; /**< @type array Array of process PIDs. */
 	protected $_nParentPid; /**< @type integer The parent process id. */
 	protected $_nCurrentProcess; /**< @type integer Cardinal process number (0, 1, 2, ...). */
 	protected $_nRunningProcesses; /**< @type integer The number of running processes. */
@@ -75,11 +75,11 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 			);
 		}
 
-		register_shutdown_function(array($this, 'onShutdown'));
+		register_shutdown_function([$this, 'onShutdown']);
 
-		pcntl_signal(SIGCHLD, array($this, 'onChildExited'));
-		foreach(array(SIGTERM, SIGQUIT, SIGINT) as $nSignal) {
-			pcntl_signal($nSignal, array($this, 'onSignal'));
+		pcntl_signal(SIGCHLD, $this->onChildExited(...));
+		foreach([SIGTERM, SIGQUIT, SIGINT] as $nSignal) {
+			pcntl_signal($nSignal, $this->onSignal(...));
 		}
 	}
 
@@ -106,7 +106,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 * Waits until a forked process has exited and decreases the current running
 	 * process number.
 	 */
-	public function onChildExited()
+	public function onChildExited(): void
 	{
 		while (pcntl_waitpid(-1, $nStatus, WNOHANG) > 0) {
 			$this->_nRunningProcesses--;
@@ -119,7 +119,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 *
 	 * @param  $nSignal @type integer Signal number.
 	 */
-	public function onSignal($nSignal)
+	public function onSignal($nSignal): void
 	{
 		switch ($nSignal) {
 			case SIGTERM:
@@ -143,7 +143,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 * This is called using 'register_shutdown_function' pattern.
 	 * @see http://php.net/register_shutdown_function
 	 */
-	public function onShutdown()
+	public function onShutdown(): void
 	{
 		if (posix_getpid() == $this->_nParentPid) {
 			$this->_log('INFO: Parent shutdown, cleaning memory...');
@@ -157,7 +157,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 *
 	 * @param  $nProcesses @type integer Processes to start up.
 	 */
-	public function setProcesses($nProcesses)
+	public function setProcesses($nProcesses): void
 	{
 		$nProcesses = (int)$nProcesses;
 		if ($nProcesses <= 0) {
@@ -172,7 +172,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 * Every forked process is connected to Apple Push Notification Service on start
 	 * and enter on the main loop.
 	 */
-	public function start()
+	public function start(): void
 	{
 		for ($i = 0; $i < $this->_nProcesses; $i++) {
 			$this->_nCurrentProcess = $i;
@@ -206,7 +206,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 *
 	 * @param  $message @type ApnsPHP_Message The message.
 	 */
-	public function add(ApnsPHP_Message $message)
+	public function add(ApnsPHP_Message $message): void
 	{
 		static $n = 0;
 		if ($n >= $this->_nProcesses) {
@@ -232,7 +232,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	public function getQueue($bEmpty = true)
 	{
-		$aRet = array();
+		$aRet = [];
 		sem_acquire($this->_hSem);
 		for ($i = 0; $i < $this->_nProcesses; $i++) {
 			$aRet = array_merge($aRet, $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $i));
@@ -257,7 +257,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 		sem_acquire($this->_hSem);
 		$aRet = $this->_getQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY);
 		if ($bEmpty) {
-			$this->_setQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY, 0, array());
+			$this->_setQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY, 0, []);
 		}
 		sem_release($this->_hSem);
 		return $aRet;
@@ -313,7 +313,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	protected function _getQueue($nQueueKey, $nProcess = 0)
 	{
 		if (!shm_has_var($this->_hShm, $nQueueKey + $nProcess)) {
-			return array();
+			return [];
 		}
 		return shm_get_var($this->_hShm, $nQueueKey + $nProcess);
 	}
@@ -328,10 +328,10 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 *         The default value is an empty array, useful to empty the queue.
 	 * @return @type boolean True on success, false otherwise.
 	 */
-	protected function _setQueue($nQueueKey, $nProcess = 0, $aQueue = array())
+	protected function _setQueue($nQueueKey, $nProcess = 0, $aQueue = [])
 	{
 		if (!is_array($aQueue)) {
-			$aQueue = array();
+			$aQueue = [];
 		}
 		return shm_put_var($this->_hShm, $nQueueKey + $nProcess, $aQueue);
 	}

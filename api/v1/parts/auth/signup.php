@@ -32,7 +32,7 @@
 				if (($re->rowCount() > 0) || ($dl->rowCount() > 0) || ($kd->rowCount() > 0) || ($dlu->rowCount() > 0) || ($kdu->rowCount() > 0)){
 					$body = json_encode(['status' => false, 'msg' => "Die E-Mail-Adresse wird bereits verwendet!"]);
 				}else{
-					$code = rand (1000, 9999);
+					$code = random_int (1000, 9999);
 
 					$sms = sendSMS($request->getParsedBody()['telefon'], strval($code));
 
@@ -95,7 +95,7 @@
                     $body = json_encode(['status' => false, 'msg' => "Der Code konnte nicht verifiziert werden!"]);
                 }
 
-            } catch(PDOException $e){
+            } catch(PDOException){
                 $response->withStatus(401);
                 $body = json_encode(['status' => false, 'msg' => "Der Code konnte nicht verifiziert werden!"]);
             }

@@ -69,13 +69,13 @@
             
             $bewerbungen = $api->get("ressources/$wpUserSTAQQId/bewerbungen", [])->decode_response(); 
             
-            $angenommen = array();
-            $anderwaertig_vergeben = array();
-            $erhalten = array();
-            $erledigt = array();
+            $angenommen = [];
+            $anderwaertig_vergeben = [];
+            $erhalten = [];
+            $erledigt = [];
             
             foreach($bewerbungen as $item){
-                if (strtotime($item->arbeitsbeginn) > time()){
+                if (strtotime((string) $item->arbeitsbeginn) > time()){
                     if ($item->status == "beworben"){
                         if (intval($item->joborder_alle_ressourcen_vergeben)){
                             array_push($anderwaertig_vergeben, $item);
@@ -151,7 +151,7 @@
                                         
                                                 if ($item->publisher_type == "dienstleister"){
                                                     echo "<a href='{$item->dienstleister_website}' target='_blank'>{$item->dienstleister_firmenwortlaut_inkl_bewertung}</a>";
-                                                    $tmp_kd = $item->kunde_name_inkl_bewertung ? $item->kunde_name_inkl_bewertung : $item->kunde_name;
+                                                    $tmp_kd = $item->kunde_name_inkl_bewertung ?: $item->kunde_name;
                                                     if (intval($item->kunde_anzeigen)) echo " <br />sucht für ".$tmp_kd;
                                                 }else{
                                                     
@@ -170,10 +170,10 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->bewerbungen_von); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->bewerbungen_von); ?>">
                                             <?php echo $item->bewerbungen_von; ?> - <?php echo $item->bewerbungen_bis; ?>
                                         </td>
                                         <td class="joborder__actions">
@@ -264,7 +264,7 @@
                                         
                                                 if ($item->publisher_type == "dienstleister"){
                                                     echo "<a href='{$item->dienstleister_website}' target='_blank'>{$item->dienstleister_firmenwortlaut_inkl_bewertung}</a>";
-                                                    $tmp_kd = $item->kunde_name_inkl_bewertung ? $item->kunde_name_inkl_bewertung : $item->kunde_name;
+                                                    $tmp_kd = $item->kunde_name_inkl_bewertung ?: $item->kunde_name;
                                                     if (intval($item->kunde_anzeigen)) echo " <br />sucht für ".$tmp_kd;
                                                 }else{
                                                     
@@ -283,7 +283,7 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
                                         <td>
@@ -341,7 +341,7 @@
                                                 
                                                 if ($item->publisher_type == "dienstleister"){
                                                     echo "<a href='{$item->dienstleister_website}' target='_blank'>{$item->dienstleister_firmenwortlaut_inkl_bewertung}</a>";
-                                                    $tmp_kd = $item->kunde_name_inkl_bewertung ? $item->kunde_name_inkl_bewertung : $item->kunde_name;
+                                                    $tmp_kd = $item->kunde_name_inkl_bewertung ?: $item->kunde_name;
                                                     if (intval($item->kunde_anzeigen)) echo " <br />für ".$tmp_kd;
                                                 }else{
                                                     echo $item->kunde_name_inkl_bewertung;
@@ -352,7 +352,7 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
                                         <td>
@@ -408,7 +408,7 @@
                                                 
                                                 if ($item->publisher_type == "dienstleister"){
                                                     echo "<a href='{$item->dienstleister_website}' target='_blank'>{$item->dienstleister_firmenwortlaut_inkl_bewertung}</a>";
-                                                    $tmp_kd = $item->kunde_name_inkl_bewertung ? $item->kunde_name_inkl_bewertung : $item->kunde_name;
+                                                    $tmp_kd = $item->kunde_name_inkl_bewertung ?: $item->kunde_name;
                                                     if (intval($item->kunde_anzeigen)) echo " <br />für ".$tmp_kd;
                                                 }else{
                                                     echo $item->kunde_name_inkl_bewertung;
@@ -419,7 +419,7 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
                                         <td>
@@ -473,7 +473,7 @@
                                                 
                                                 if ($item->publisher_type == "dienstleister"){
                                                     echo "<a href='{$item->dienstleister_website}' target='_blank'>{$item->dienstleister_firmenwortlaut_inkl_bewertung}</a>";
-                                                    $tmp_kd = $item->kunde_name_inkl_bewertung ? $item->kunde_name_inkl_bewertung : $item->kunde_name;
+                                                    $tmp_kd = $item->kunde_name_inkl_bewertung ?: $item->kunde_name;
                                                     if (intval($item->kunde_anzeigen)) echo " <br />für ".$tmp_kd;
                                                 }else{
                                                     echo $item->kunde_name_inkl_bewertung;
@@ -484,7 +484,7 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
                                         <td>
@@ -565,7 +565,7 @@
                                                 
                                                 if ($item->publisher_type == "dienstleister"){
                                                     echo "<a href='{$item->dienstleister_website}' target='_blank'>{$item->dienstleister_firmenwortlaut_inkl_bewertung}</a>";
-                                                    $tmp_kd = $item->kunde_name_inkl_bewertung ? $item->kunde_name_inkl_bewertung : $item->kunde_name;
+                                                    $tmp_kd = $item->kunde_name_inkl_bewertung ?: $item->kunde_name;
                                                     if (intval($item->kunde_anzeigen)) echo " <br />für ".$tmp_kd;
                                                 }else{
                                                     echo $item->kunde_name_inkl_bewertung;
@@ -576,7 +576,7 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
                                         <td>
@@ -628,9 +628,9 @@
                 $delegation = ($dl->joborder_empfaenger_user == $wpUserSTAQQId) ? true : false;
             }
             
-            $offen = array();
-            $vergeben = array();
-            $erledigt = array();
+            $offen = [];
+            $vergeben = [];
+            $erledigt = [];
             
             foreach($joborders as $item){
 
@@ -704,10 +704,10 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->bewerbungen_von); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->bewerbungen_von); ?>">
                                             <?php echo $item->bewerbungen_von; ?> - <?php echo $item->bewerbungen_bis; ?>
                                         </td>
                                         <td>
@@ -794,10 +794,10 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->bewerbungen_von); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->bewerbungen_von); ?>">
                                             <?php echo $item->bewerbungen_von; ?> - <?php echo $item->bewerbungen_bis; ?>
                                         </td>
                                         <td>
@@ -875,10 +875,10 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->bewerbungen_von); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->bewerbungen_von); ?>">
                                             <?php echo $item->bewerbungen_von; ?> - <?php echo $item->bewerbungen_bis; ?>
                                         </td>
                                         <td>
@@ -986,10 +986,10 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->bewerbungen_von); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->bewerbungen_von); ?>">
                                             <?php echo $item->bewerbungen_von; ?> - <?php echo $item->bewerbungen_bis; ?>
                                         </td>
                                         <td>
@@ -1053,9 +1053,9 @@
                 $joborders = $api->get("kunden/$wpUserSTAQQKundeId/user/$wpUserSTAQQId/joborders", [])->decode_response();
             }
             
-            $offen = array();
-            $vergeben = array();
-            $erledigt = array();
+            $offen = [];
+            $vergeben = [];
+            $erledigt = [];
             
             
             
@@ -1120,10 +1120,10 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->bewerbungen_von); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->bewerbungen_von); ?>">
                                             <?php echo $item->bewerbungen_von; ?> - <?php echo $item->bewerbungen_bis; ?>
                                         </td>
                                         <td>
@@ -1198,10 +1198,10 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->bewerbungen_von); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->bewerbungen_von); ?>">
                                             <?php echo $item->bewerbungen_von; ?> - <?php echo $item->bewerbungen_bis; ?>
                                         </td>
                                         <td>
@@ -1276,10 +1276,10 @@
                                         <td>
                                             <?php echo $item->bezirke_name; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->arbeitsbeginn); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->arbeitsbeginn); ?>">
                                             <?php echo $item->arbeitsbeginn; ?> - <?php echo $item->arbeitsende; ?>
                                         </td>
-                                        <td data-order="<?php echo strtotime($item->bewerbungen_von); ?>">
+                                        <td data-order="<?php echo strtotime((string) $item->bewerbungen_von); ?>">
                                             <?php echo $item->bewerbungen_von; ?> - <?php echo $item->bewerbungen_bis; ?>
                                         </td>
                                         <td>

@@ -66,14 +66,14 @@
     $bewerbungsCheck = $api->get("joborders/$id/bewerbungsCheck/$wpUserSTAQQId", [])->decode_response();
     $dienstleister = $api->get("dienstleister", [])->decode_response();
 
-    $skills = array();
+    $skills = [];
     if ($joborder->skill_fuehrerschein == "1") array_push($skills, "Führerschein");
     if ($joborder->skill_pkw == "1") array_push($skills, "Eigener PKW");
     if ($joborder->skill_berufsabschluss == "1") array_push($skills, "Berufsabschluss");
     foreach($joborder->skills as $s){array_push($skills, $s->name . " (".$s->praedikat.")");}
-    $berufsfelder = array();
+    $berufsfelder = [];
     foreach($joborder->berufsfelder as $b){array_push($berufsfelder, $b->name);}
-    $berufsgruppen = array();
+    $berufsgruppen = [];
     foreach($joborder->berufsgruppen as $b){array_push($berufsgruppen, $b->name);}
     
     $dienstleister_auswahl = $joborder->dienstleister_auswahl;
@@ -115,7 +115,7 @@
 					<article class="gd gd--12 joborder-detail__bewerbungs-status">
 					<?php if ($joborder->anzahl_bewerbungen_einsatz_bestaetigt == $joborder->anzahl_ressourcen){ ?>
 						<h2>Die Ressourcen wurden vom Dienstleister für Sie ausgewählt:</h2>
-						<a style="float: right;" href="/app/joborders/ressourcen/?id=<?php echo hash($id); ?>" class="button">Ressourcen anzeigen</a>
+						<a style="float: right;" href="/app/joborders/ressourcen/?id=<?php echo hash((string) $id); ?>" class="button">Ressourcen anzeigen</a>
 					<?php }else{ ?>
 						<h2>Der Dienstleister sucht zurzeit nach passenden Ressourcen für Sie!</h2>
 					<?php } ?>
@@ -236,7 +236,7 @@
 
 											if($wpUserRole != "ressource"){
 												echo "(";
-												$dienstleister_auswahl_firmenwortlaute = array();
+												$dienstleister_auswahl_firmenwortlaute = [];
 												foreach($dienstleister_auswahl as $dl){array_push($dienstleister_auswahl_firmenwortlaute, $dl->firmenwortlaut);}
 												echo implode(", ", $dienstleister_auswahl_firmenwortlaute);
 												echo ")";

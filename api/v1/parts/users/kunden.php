@@ -128,7 +128,7 @@
 					$sth->bindParam(':id', $joborders[$i]['id'], PDO::PARAM_INT);
 					$sth->execute();
 					$joborders[$i]['dienstleister_auswahl'] = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-					$joborders[$i]['dienstleister_auswahl_firmenwortlaute'] = array();
+					$joborders[$i]['dienstleister_auswahl_firmenwortlaute'] = [];
 					foreach($joborders[$i]['dienstleister_auswahl'] as $dl){array_push($joborders[$i]['dienstleister_auswahl_firmenwortlaute'], $dl['firmenwortlaut']);}
 				}
 				
@@ -162,16 +162,7 @@
             $email = $request->getParsedBody()['email'];
             $passwort = $request->getParsedBody()['passwort'];
 
-            $user_info = array(
-                "user_pass"     => $passwort,
-                "user_login"    => 'kunde_'.$request->getParsedBody()['ansprechpartner_vorname'].'_'.$request->getParsedBody()['ansprechpartner_nachname'].'_'.time(),
-                "user_nicename" => "",
-                "user_email"    => $email,
-                "display_name"  => $request->getParsedBody()['ansprechpartner_titel'].' '.$request->getParsedBody()['ansprechpartner_vorname'].' '.$request->getParsedBody()['ansprechpartner_nachname'],
-                "first_name"    => $request->getParsedBody()['ansprechpartner_vorname'],
-                "last_name"     => $request->getParsedBody()['ansprechpartner_nachname'],
-                "role"          => "kunde"
-            );
+            $user_info = ["user_pass"     => $passwort, "user_login"    => 'kunde_'.$request->getParsedBody()['ansprechpartner_vorname'].'_'.$request->getParsedBody()['ansprechpartner_nachname'].'_'.time(), "user_nicename" => "", "user_email"    => $email, "display_name"  => $request->getParsedBody()['ansprechpartner_titel'].' '.$request->getParsedBody()['ansprechpartner_vorname'].' '.$request->getParsedBody()['ansprechpartner_nachname'], "first_name"    => $request->getParsedBody()['ansprechpartner_vorname'], "last_name"     => $request->getParsedBody()['ansprechpartner_nachname'], "role"          => "kunde"];
             
             if (!username_exists($email) && !email_exists($email)) {
 
@@ -221,14 +212,14 @@
                         $user_id = $db->lastInsertId();
                         add_user_meta($insert_user_result, 'staqq_id', $user_id);
                         
-                        foreach (json_decode($request->getParsedBody()['dienstleister']) as $f){
+                        foreach (json_decode((string) $request->getParsedBody()['dienstleister']) as $f){
                             $sth = $db->prepare("INSERT INTO relation_kunden_dienstleister (kunden_id, dienstleister_id) VALUES (:kunden_id, :dienstleister_id)");
                             $sth->bindParam(':kunden_id', $user_id, PDO::PARAM_INT);
                             $sth->bindParam(':dienstleister_id', $f, PDO::PARAM_INT);
                             $sth->execute();
                         }
 
-                        foreach (json_decode($request->getParsedBody()['arbeitsstaetten']) as $f){
+                        foreach (json_decode((string) $request->getParsedBody()['arbeitsstaetten']) as $f){
                             $sth = $db->prepare("INSERT INTO arbeitsstaetten (name, kunden_id) VALUES (:name, :kunden_id)");
                             $sth->bindParam(':name', $f, PDO::PARAM_STR);
                             $sth->bindParam(':kunden_id', $user_id, PDO::PARAM_INT);
@@ -271,15 +262,7 @@
                 $user_id = email_exists($email_old);
             }
 
-            $user_info = array(
-                "ID"            => $user_id,
-                "user_nicename" => "",
-                "user_email"    => $email,
-                "display_name"  => $request->getParsedBody()['ansprechpartner_titel'].' '.$request->getParsedBody()['ansprechpartner_vorname'].' '.$request->getParsedBody()['ansprechpartner_nachname'],
-                "first_name"    => $request->getParsedBody()['ansprechpartner_vorname'],
-                "last_name"     => $request->getParsedBody()['ansprechpartner_nachname'],
-                "role"          => "kunde"
-            );
+            $user_info = ["ID"            => $user_id, "user_nicename" => "", "user_email"    => $email, "display_name"  => $request->getParsedBody()['ansprechpartner_titel'].' '.$request->getParsedBody()['ansprechpartner_vorname'].' '.$request->getParsedBody()['ansprechpartner_nachname'], "first_name"    => $request->getParsedBody()['ansprechpartner_vorname'], "last_name"     => $request->getParsedBody()['ansprechpartner_nachname'], "role"          => "kunde"];
 
             if ((email_exists($email) && (!$updateEmail)) || ((!email_exists($email)) && $updateEmail)) {
 
@@ -325,7 +308,7 @@
                     $sth->bindParam(':kunden_id', $args['id'], PDO::PARAM_INT);
                     $sth->execute();
                     
-                    foreach (json_decode($request->getParsedBody()['dienstleister']) as $f){
+                    foreach (json_decode((string) $request->getParsedBody()['dienstleister']) as $f){
                         $sth = $db->prepare("INSERT INTO relation_kunden_dienstleister (kunden_id, dienstleister_id) VALUES (:kunden_id, :dienstleister_id)");
                         $sth->bindParam(':kunden_id', $args['id'], PDO::PARAM_INT);
                         $sth->bindParam(':dienstleister_id', $f, PDO::PARAM_INT);
@@ -337,7 +320,7 @@
                     $sth->bindParam(':kunden_id', $args['id'], PDO::PARAM_INT);
                     $sth->execute();
 
-                    foreach (json_decode($request->getParsedBody()['arbeitsstaetten']) as $f){
+                    foreach (json_decode((string) $request->getParsedBody()['arbeitsstaetten']) as $f){
                         $sth = $db->prepare("INSERT INTO arbeitsstaetten (name, kunden_id) VALUES (:name, :kunden_id)");
                         $sth->bindParam(':name', $f, PDO::PARAM_STR);
                         $sth->bindParam(':kunden_id', $args['id'], PDO::PARAM_INT);
@@ -356,10 +339,10 @@
 						
 						$html =  "Sehr geehrte(r) {$request->getParsedBody()['dl_anforderung_ansprechpartner_titel']} {$request->getParsedBody()['dl_anforderung_ansprechpartner_vorname']} {$request->getParsedBody()['dl_anforderung_ansprechpartner_nachname']}!";
 						$html .= "<br><br>";
-						$html .= nl2br($request->getParsedBody()['dl_anforderung_infotext']);
+						$html .= nl2br((string) $request->getParsedBody()['dl_anforderung_infotext']);
 						
 						include("../../wp-load.php");
-						$betreff = utf8_decode(get_option('dienstleister_einladen_betreff'));
+						$betreff = mb_convert_encoding(get_option('dienstleister_einladen_betreff'), 'ISO-8859-1');
 						
 						$ret = sendMail($request->getParsedBody()['dl_anforderung_ansprechpartner_email']. ", " . API_STAQQ_EMAIL, $betreff, $html, "Bcc: ".API_STAQQ_EMAIL."\r\n");
 					}else{
@@ -470,7 +453,7 @@
         $passwort_neu = $request->getParsedBody()['passwort_neu'];
         $passwort_alt = $request->getParsedBody()['passwort_alt'];
         
-        $res = wp_signon(array('user_login' => $email, 'user_password' => $passwort_alt, 'remember' => false));
+        $res = wp_signon(['user_login' => $email, 'user_password' => $passwort_alt, 'remember' => false]);
         
         if ($passwort_neu != "" && $passwort_alt != ""){
                         
@@ -561,7 +544,7 @@
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
 			
-			$anzahlen = array();
+			$anzahlen = [];
             $anzahlen['bewertungen']['offen'] = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0]['offen'];
 			
 			$sth = $db->prepare("
@@ -613,10 +596,10 @@
 			$html =  "Sehr geehrte(r) {$request->getParsedBody()['dl_anforderung_ansprechpartner_titel']} {$request->getParsedBody()['dl_anforderung_ansprechpartner_vorname']} {$request->getParsedBody()['dl_anforderung_ansprechpartner_nachname']}!";
 			
 			$html .= "<br><br>";
-			$html .= nl2br($request->getParsedBody()['dl_anforderung_infotext']);
+			$html .= nl2br((string) $request->getParsedBody()['dl_anforderung_infotext']);
 			
 			include("../../wp-load.php");
-			$betreff = utf8_decode(get_option('dienstleister_einladen_betreff'));
+			$betreff = mb_convert_encoding(get_option('dienstleister_einladen_betreff'), 'ISO-8859-1');
 
 			$ret = sendMail($request->getParsedBody()['dl_anforderung_ansprechpartner_email']. ", " . API_STAQQ_EMAIL, $betreff, $html, "Bcc: ".API_STAQQ_EMAIL."\r\n");
 			

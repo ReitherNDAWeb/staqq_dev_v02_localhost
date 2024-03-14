@@ -11,22 +11,19 @@
 
     if ($action === "save"){
 
-        $post_skills = array();        
+        $post_skills = [];        
         if (isset($_POST['skills']) && is_array($_POST['skills'])){
             
 			foreach ($_POST['skills'] as $b){
-				array_push($post_skills, array(
-                    'id' => $b,
-                    'praedikat' => $_POST['skills_praedikat_'.$b]
-                ));
+				array_push($post_skills, ['id' => $b, 'praedikat' => $_POST['skills_praedikat_'.$b]]);
             }
         }
         
         $response = $api->post("joborders", [
             'jobtitel' => $_POST['jobtitel'],
             'arbeitszeitmodell' => $_POST['arbeitszeitmodell'],
-            'arbeitsbeginn' => date('Y-m-d', strtotime($_POST['arbeitsbeginn'])),
-            'arbeitsende' => date('Y-m-d', strtotime($_POST['arbeitsende'])),
+            'arbeitsbeginn' => date('Y-m-d', strtotime((string) $_POST['arbeitsbeginn'])),
+            'arbeitsende' => date('Y-m-d', strtotime((string) $_POST['arbeitsende'])),
 
             'bezirke_id' => $_POST['bezirke'],
             'adresse_strasse_hn' => $_POST['adresse_strasse_hn'],
@@ -43,7 +40,7 @@
             'skill_berufsabschluss' => ($_POST['skill_berufsabschluss'] == "on") ? 1 : 0,
             'skill_pkw' => ($_POST['skill_pkw'] == "on") ? 1 : 0,
 
-            'taetigkeitsbeschreibung' => preg_replace( "/\r|\n/", "", nl2br($_POST['taetigkeitsbeschreibung'])),
+            'taetigkeitsbeschreibung' => preg_replace( "/\r|\n/", "", nl2br((string) $_POST['taetigkeitsbeschreibung'])),
 
             'kollektivvertrag' => $_POST['kollektivvertrag'],
             'brutto_bezug' => '€ ' . $_POST['brutto_bezug'],
@@ -53,8 +50,8 @@
             'beschaeftigungsarten_id' => $_POST['beschaeftigungsarten_id'],
             'beschaeftigungsausmasse_id' => $_POST['beschaeftigungsausmasse_id'],
 
-            'bewerbungen_von' => date('Y-m-d', strtotime($_POST['bewerbungen_von'])),
-            'bewerbungen_bis' => date('Y-m-d', strtotime($_POST['bewerbungen_bis'])),
+            'bewerbungen_von' => date('Y-m-d', strtotime((string) $_POST['bewerbungen_von'])),
+            'bewerbungen_bis' => date('Y-m-d', strtotime((string) $_POST['bewerbungen_bis'])),
             'anzahl_ressourcen' => $_POST['anzahl_ressourcen'],
 
             'casting' => ($_POST['casting'] == "on") ? 1 : 0,
@@ -87,7 +84,7 @@
 	}else{
 		$template = false;
 		$template_data = new stdClass();
-		$template_data->skills = array();
+		$template_data->skills = [];
 	}
 
     get_header();
@@ -219,7 +216,7 @@
                     <div class="berufswahl__items">
                         <?php
 							if ($template){
-								$template_data->berufsfelder_ids = array();
+								$template_data->berufsfelder_ids = [];
 								foreach ($template_data->berufsfelder as $b){array_push($template_data->berufsfelder_ids, $b->id);}
 							}
 													   
@@ -239,7 +236,7 @@
                     <div class="berufswahl__items">
                         <?php
 							if ($template){
-								$template_data->berufsgruppen_ids = array();
+								$template_data->berufsgruppen_ids = [];
 								foreach ($template_data->berufsgruppen as $b){array_push($template_data->berufsgruppen_ids, $b->id);}
 							}
 													   
@@ -262,7 +259,7 @@
                     <div class="berufswahl__items">
                         <?php
 							if ($template){
-								$template_data->berufsbezeichnungen_ids = array();
+								$template_data->berufsbezeichnungen_ids = [];
 								foreach ($template_data->berufsbezeichnungen as $b){array_push($template_data->berufsbezeichnungen_ids, $b->id);}
 							}
 												
@@ -337,7 +334,7 @@
                     <input type="text" name="kollektivvertrag" id="kollektivvertrag" placeholder="Kollektivvertrag (pflicht)" value="<?php echo $template_data->kollektivvertrag ?? ''; ?>" required>
                     <div  class="input-currency-wrapper">
                         <?php if (isset($template_data->brutto_bezug)) { ?>
-                            <input type="text" name="brutto_bezug" id="brutto_bezug" placeholder="Brutto-Bezug (pflicht)" value="<?php echo str_replace("€ ", "", $template_data->brutto_bezug); ?>">
+                            <input type="text" name="brutto_bezug" id="brutto_bezug" placeholder="Brutto-Bezug (pflicht)" value="<?php echo str_replace("€ ", "", (string) $template_data->brutto_bezug); ?>">
                         <?php } ?>
                     </div>
                     <div class="select-wrapper">
@@ -375,7 +372,7 @@
                 <article class="gd gd--6">
                     <input type="text" name="bewerbungen_von" id="bewerbungen_von" placeholder="Bewerbungen von (pflicht)" class="datepicker" value="<?php echo date('d.m.Y'); ?>" required>
                     <input type="text" name="bewerbungen_bis" id="bewerbungen_bis" placeholder="Bewerbungen bis (pflicht)" class="datepicker" required>
-                    <input type="text" name="anzahl_ressourcen" id="anzahl_ressourcen" value="1" placeholder="Anzahl der gesuchten Ressourcen (pflicht)" value="<?php echo isset($template_data->anzahl_ressourcen) ? $template_data->anzahl_ressourcen : ''; ?>" required>
+                    <input type="text" name="anzahl_ressourcen" id="anzahl_ressourcen" value="1" placeholder="Anzahl der gesuchten Ressourcen (pflicht)" value="<?php echo $template_data->anzahl_ressourcen ?? ''; ?>" required>
                     
                     <?php if (isset($template_data->casting)) { ?>
                         <input type="checkbox" name="casting" class="switchable" id="casting" data-label="Kunde wünscht ein Vorstellungsgespräch vor dem Einsatz" <?php echo ($template_data->casting) ? "checked" : ""; ?>>

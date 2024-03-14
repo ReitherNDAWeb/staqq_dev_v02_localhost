@@ -38,13 +38,14 @@
  */
 class ApnsPHP_Feedback extends ApnsPHP_Abstract
 {
-	const TIME_BINARY_SIZE = 4; /**< @type integer Timestamp binary size in bytes. */
-	const TOKEN_LENGTH_BINARY_SIZE = 2; /**< @type integer Token length binary size in bytes. */
+	public const TIME_BINARY_SIZE = 4; /**< @type integer Timestamp binary size in bytes. */
+	public const TOKEN_LENGTH_BINARY_SIZE = 2; /**< @type integer Token length binary size in bytes. */
 
-	protected $_aServiceURLs = array(
-		'tls://feedback.push.apple.com:2196', // Production environment
-		'tls://feedback.sandbox.push.apple.com:2196' // Sandbox environment
-	); /**< @type array Feedback URLs environments. */
+	protected $_aServiceURLs = [
+     'tls://feedback.push.apple.com:2196',
+     // Production environment
+     'tls://feedback.sandbox.push.apple.com:2196',
+ ]; /**< @type array Feedback URLs environments. */
 
 	protected $_aFeedback; /**< @type array Feedback container. */
 
@@ -67,7 +68,7 @@ class ApnsPHP_Feedback extends ApnsPHP_Abstract
 	{
 		$nFeedbackTupleLen = self::TIME_BINARY_SIZE + self::TOKEN_LENGTH_BINARY_SIZE + self::DEVICE_BINARY_SIZE;
 
-		$this->_aFeedback = array();
+		$this->_aFeedback = [];
 		$sBuffer = '';
 		while (!feof($this->_hSocket)) {
 			$this->_log('INFO: Reading...');
@@ -93,7 +94,7 @@ class ApnsPHP_Feedback extends ApnsPHP_Abstract
 				}
 			}
 
-			$read = array($this->_hSocket);
+			$read = [$this->_hSocket];
 			$null = NULL;
 			$nChangedStreams = stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
 			if ($nChangedStreams === false) {
@@ -112,6 +113,6 @@ class ApnsPHP_Feedback extends ApnsPHP_Abstract
 	 */
 	protected function _parseBinaryTuple($sBinaryTuple)
 	{
-		return unpack('Ntimestamp/ntokenLength/H*deviceToken', $sBinaryTuple);
+		return unpack('Ntimestamp/ntokenLength/H*deviceToken', (string) $sBinaryTuple);
 	}
 }

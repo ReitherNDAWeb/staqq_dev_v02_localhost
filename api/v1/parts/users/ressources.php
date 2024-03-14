@@ -86,42 +86,42 @@
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
             $arr = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-            $res['berufsfelder'] = array();
+            $res['berufsfelder'] = [];
             foreach($arr as $a){array_push($res['berufsfelder'], $a['id']);}
             
             $sth = $db->prepare("SELECT berufsgruppen.id FROM relation_ressources_berufsgruppen LEFT JOIN berufsgruppen ON berufsgruppen.id = relation_ressources_berufsgruppen.berufsgruppen_id WHERE relation_ressources_berufsgruppen.ressources_id=:id");
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
             $arr = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-            $res['berufsgruppen'] = array();
+            $res['berufsgruppen'] = [];
             foreach($arr as $a){array_push($res['berufsgruppen'], $a['id']);}
             
             $sth = $db->prepare("SELECT berufsbezeichnungen.id FROM relation_ressources_berufsbezeichnungen LEFT JOIN berufsbezeichnungen ON berufsbezeichnungen.id = relation_ressources_berufsbezeichnungen.berufsbezeichnungen_id WHERE relation_ressources_berufsbezeichnungen.ressources_id=:id");
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
             $arr = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-            $res['berufsbezeichnungen'] = array();
+            $res['berufsbezeichnungen'] = [];
             foreach($arr as $a){array_push($res['berufsbezeichnungen'], $a['id']);}
             
             $sth = $db->prepare("SELECT skills_items.id FROM relation_ressources_skills LEFT JOIN skills_items ON skills_items.id = relation_ressources_skills.skills_items_id WHERE relation_ressources_skills.ressources_id=:id");
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
             $arr = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-            $res['skills'] = array();
+            $res['skills'] = [];
             foreach($arr as $a){array_push($res['skills'], $a['id']);}
             
             $sth = $db->prepare("SELECT bezirke.id FROM relation_ressources_bezirke LEFT JOIN bezirke ON bezirke.id = relation_ressources_bezirke.bezirke_id WHERE relation_ressources_bezirke.ressources_id=:id");
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
             $arr = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-            $res['bezirke'] = array();
+            $res['bezirke'] = [];
             foreach($arr as $a){array_push($res['bezirke'], $a['id']);}
             
             $sth = $db->prepare("SELECT dienstleister_id FROM relation_ressources_dienstleister_blacklist WHERE ressources_id=:id");
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
             $arr = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
-            $res['dl_blacklist'] = array();
+            $res['dl_blacklist'] = [];
             foreach($arr as $a){array_push($res['dl_blacklist'], $a['dienstleister_id']);}
             
             $bezirke_ids = '(' . implode(',', array_map('intval', $res['bezirke'])) . ')';
@@ -160,7 +160,7 @@
             $joborders = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC));
             
             //$berufsfelder_ids = '(' . implode(',', array_map('intval', $res['berufsfelder'])) . ')';
-            $joborders_approved = array();
+            $joborders_approved = [];
             
             for($i=0;$i<count($joborders);$i++){
                 
@@ -173,7 +173,7 @@
                     berufsfelder ON berufsfelder.id = relation_joborders_berufsfelder.berufsfelder_id WHERE relation_joborders_berufsfelder.joborders_id=:id");
                         $sth->bindParam(':id', $joborders[$i]['id'], PDO::PARAM_INT);
                         $sth->execute();
-                        $joborders[$i]['berufsfelder'] = array();
+                        $joborders[$i]['berufsfelder'] = [];
                         foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $a){array_push($joborders[$i]['berufsfelder'], $a['id']);}
 						
 						$machtedBerufsfelder = 0;
@@ -194,7 +194,7 @@
                     berufsgruppen ON berufsgruppen.id = relation_joborders_berufsgruppen.berufsgruppen_id WHERE relation_joborders_berufsgruppen.joborders_id=:id");
                             $sth->bindParam(':id', $joborders[$i]['id'], PDO::PARAM_INT);
                             $sth->execute();
-                            $joborders[$i]['berufsgruppen'] = array();
+                            $joborders[$i]['berufsgruppen'] = [];
                             foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $a){array_push($joborders[$i]['berufsgruppen'], $a['id']);}
 
                             $machtedBerufsgruppen = 0;
@@ -216,7 +216,7 @@
                                 $sth->bindParam(':id', $joborders[$i]['id'], PDO::PARAM_INT);
                                 $sth->execute();
 
-                                $joborders[$i]['skills_muss'] = array();
+                                $joborders[$i]['skills_muss'] = [];
                                 foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $a){array_push($joborders[$i]['skills_muss'], $a['id']);}
 
                                 if (count(array_diff($joborders[$i]['skills_muss'], $res['skills'])) == 0){
@@ -249,7 +249,7 @@
 
 												$gesamt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 
-												$joborders[$i]['kunde_name_inkl_bewertung'] = ($gesamt['punkte']/$gesamt['anzahl']) ? ($gesamt['punkte']/$gesamt['anzahl']) : 0;
+												$joborders[$i]['kunde_name_inkl_bewertung'] = $gesamt['punkte']/$gesamt['anzahl'] ?: 0;
 
 												$rating = number_format($joborders[$i]['kunde_name_inkl_bewertung'], 2, ",", "");
 
@@ -273,7 +273,7 @@
 
 												$gesamt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 												$joborders[$i]['dienstleister_firmenwortlaut_inkl_bewertung'] = 
-												($gesamt['punkte']/$gesamt['anzahl']) ? ($gesamt['punkte']/$gesamt['anzahl']) : 0;
+												$gesamt['punkte']/$gesamt['anzahl'] ?: 0;
 												
 												$rating = number_format($joborders[$i]['dienstleister_firmenwortlaut_inkl_bewertung'], 2, ",", "");
 												
@@ -291,7 +291,7 @@
                 }
             }
             
-            $order = array();
+            $order = [];
             for($i=0;$i<count($joborders_approved);$i++){
                 $joborders_approved[$i]['score'] = getSTAQQScore($res['id'], $joborders_approved[$i]['id']);
                 $order[$i] = $joborders_approved[$i]['score']->score;
@@ -316,7 +316,7 @@
         
         try{
             
-            $anzahlen = array();
+            $anzahlen = [];
             
             $db = getDB();
             $sth = $db->prepare("
@@ -423,7 +423,7 @@
                     berufsfelder ON berufsfelder.id = relation_joborders_berufsfelder.berufsfelder_id WHERE relation_joborders_berufsfelder.joborders_id=:id");
                 $sth->bindParam(':id', $bewerbungen[$i]['joborders_id'], PDO::PARAM_INT);
                 $sth->execute();
-                $bewerbungen[$i]['berufsfelder'] = array();
+                $bewerbungen[$i]['berufsfelder'] = [];
                 foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $a){array_push($bewerbungen[$i]['berufsfelder'], $a['id']);}
 								
 				if ($bewerbungen[$i]['publisher_type'] == "kunde"){
@@ -438,7 +438,7 @@
 
 					$gesamt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 					
-					$bewerbungen[$i]['kunde_name_inkl_bewertung'] = ($gesamt['punkte']/$gesamt['anzahl']) ? ($gesamt['punkte']/$gesamt['anzahl']) : 0;
+					$bewerbungen[$i]['kunde_name_inkl_bewertung'] = $gesamt['punkte']/$gesamt['anzahl'] ?: 0;
 
 					$rating = number_format($bewerbungen[$i]['kunde_name_inkl_bewertung'], 2, ",", "");
 
@@ -475,7 +475,7 @@
 
 				$gesamt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 				$bewerbungen[$i]['dienstleister_firmenwortlaut_inkl_bewertung'] = 
-				($gesamt['punkte']/$gesamt['anzahl']) ? ($gesamt['punkte']/$gesamt['anzahl']) : 0;
+				$gesamt['punkte']/$gesamt['anzahl'] ?: 0;
 
 				$rating = number_format($bewerbungen[$i]['dienstleister_firmenwortlaut_inkl_bewertung'], 2, ",", "");
 
@@ -558,35 +558,11 @@
 				}
 			}
 			
-			fireNotification (array(
-				'receiver_type'	=> $dl_type, 
-				'receiver_id' 	=> $dl_id, 
-				'titel' 		=> 'Einsatz bestätigt',
-				'subtitle'		=> 'Einsatz bestätigt beim Job ' . $data['jobtitel'],
-				'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> hat den Einsatz für den Job <strong>{$data['jobtitel']}</strong> bestätigt!", 
-				'kategorie' 	=> 'joborder', 
-				'link_web' 		=> "/app/joborders/ressourcen/?id=" . hashId($data['joborders_id']), 
-				'link_mobile' 	=> "/dienstleister/joborders/{$data['joborders_id']}/ressources",
-				'send_web' 		=> true, 
-				'send_mobile' 	=> true,
-				'force' 		=> true
-			));
+			fireNotification (['receiver_type'	=> $dl_type, 'receiver_id' 	=> $dl_id, 'titel' 		=> 'Einsatz bestätigt', 'subtitle'		=> 'Einsatz bestätigt beim Job ' . $data['jobtitel'], 'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> hat den Einsatz für den Job <strong>{$data['jobtitel']}</strong> bestätigt!", 'kategorie' 	=> 'joborder', 'link_web' 		=> "/app/joborders/ressourcen/?id=" . hashId($data['joborders_id']), 'link_mobile' 	=> "/dienstleister/joborders/{$data['joborders_id']}/ressources", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);
 			
 			
 			if ($data['publisher_type'] == "kunde"){
-				fireNotification (array(
-					'receiver_type'	=> $data['creator_type'], 
-					'receiver_id' 	=> $data['creator_id'], 
-					'titel' 		=> 'Einsatz bestätigt',
-					'subtitle'		=> 'Einsatz bestätigt beim Job ' . $data['jobtitel'],
-					'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> hat den Einsatz für den Job <strong>{$data['jobtitel']}</strong> bestätigt!", 
-					'kategorie' 	=> 'joborder', 
-					'link_web' 		=> "/app/joborders/#vergeben", 
-					'link_mobile' 	=> "/kunde/joborders",
-					'send_web' 		=> true, 
-					'send_mobile' 	=> true,
-					'force' 		=> true
-				));
+				fireNotification (['receiver_type'	=> $data['creator_type'], 'receiver_id' 	=> $data['creator_id'], 'titel' 		=> 'Einsatz bestätigt', 'subtitle'		=> 'Einsatz bestätigt beim Job ' . $data['jobtitel'], 'nachricht' 	=> "<strong>{$ressource['vorname']} {$ressource['nachname']}</strong> hat den Einsatz für den Job <strong>{$data['jobtitel']}</strong> bestätigt!", 'kategorie' 	=> 'joborder', 'link_web' 		=> "/app/joborders/#vergeben", 'link_mobile' 	=> "/kunde/joborders", 'send_web' 		=> true, 'send_mobile' 	=> true, 'force' 		=> true]);
 			}
 			
 			
@@ -695,7 +671,7 @@
 					ressources.id=:ressources_id
 			");
 			
-			$job_alert = $request->getParsedBody()['job_alert'] ? $request->getParsedBody()['job_alert'] : 'instant';
+			$job_alert = $request->getParsedBody()['job_alert'] ?: 'instant';
 			
             $sth->bindParam(':ressources_id', $args['ressources_id'], PDO::PARAM_INT);
             $sth->bindParam(':push_bool', $request->getParsedBody()['push_bool'], PDO::PARAM_INT);
@@ -755,7 +731,7 @@
                     berufsfelder ON berufsfelder.id = relation_joborders_berufsfelder.berufsfelder_id WHERE relation_joborders_berufsfelder.joborders_id=:id");
                 $sth->bindParam(':id', $gemerkte[$i]['id'], PDO::PARAM_INT);
                 $sth->execute();
-                $gemerkte[$i]['berufsfelder'] = array();
+                $gemerkte[$i]['berufsfelder'] = [];
                 foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $a){array_push($gemerkte[$i]['berufsfelder'], $a['id']);}
 										
 				if ($gemerkte[$i]['publisher_type'] == "kunde"){
@@ -770,7 +746,7 @@
 
 					$gesamt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 					
-					$gemerkte[$i]['kunde_name_inkl_bewertung'] = ($gesamt['punkte']/$gesamt['anzahl']) ? ($gesamt['punkte']/$gesamt['anzahl']) : 0;
+					$gemerkte[$i]['kunde_name_inkl_bewertung'] = $gesamt['punkte']/$gesamt['anzahl'] ?: 0;
 
 					$rating = number_format($gemerkte[$i]['kunde_name_inkl_bewertung'], 2, ",", "");
 
@@ -788,7 +764,7 @@
 
 					$gesamt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 
-					$gemerkte[$i]['kunde_name_inkl_bewertung'] = ($gesamt['punkte']/$gesamt['anzahl']) ? ($gesamt['punkte']/$gesamt['anzahl']) : 0;
+					$gemerkte[$i]['kunde_name_inkl_bewertung'] = $gesamt['punkte']/$gesamt['anzahl'] ?: 0;
 
 					$rating = number_format($gemerkte[$i]['kunde_name_inkl_bewertung'], 2, ",", "");
 
@@ -812,7 +788,7 @@
 
 					$gesamt = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 					$gemerkte[$i]['dienstleister_firmenwortlaut_inkl_bewertung'] = 
-					($gesamt['punkte']/$gesamt['anzahl']) ? ($gesamt['punkte']/$gesamt['anzahl']) : 0;
+					$gesamt['punkte']/$gesamt['anzahl'] ?: 0;
 
 					$rating = number_format($gemerkte[$i]['dienstleister_firmenwortlaut_inkl_bewertung'], 2, ",", "");
 
@@ -844,16 +820,7 @@
             $email = $request->getParsedBody()['email'];
             $passwort = $request->getParsedBody()['passwort'];
 
-            $user_info = array(
-                "user_pass"     => $passwort,
-                "user_login"    => 'ressource_'.$request->getParsedBody()['vorname'].'_'.$request->getParsedBody()['nachname'].'_'.time(),
-                "user_nicename" => "",
-                "user_email"    => $email,
-                "display_name"  => $request->getParsedBody()['vorname'].' '.$request->getParsedBody()['nachname'],
-                "first_name"    => $request->getParsedBody()['vorname'],
-                "last_name"     => $request->getParsedBody()['nachname'],
-                "role"          => "ressource"
-            );
+            $user_info = ["user_pass"     => $passwort, "user_login"    => 'ressource_'.$request->getParsedBody()['vorname'].'_'.$request->getParsedBody()['nachname'].'_'.time(), "user_nicename" => "", "user_email"    => $email, "display_name"  => $request->getParsedBody()['vorname'].' '.$request->getParsedBody()['nachname'], "first_name"    => $request->getParsedBody()['vorname'], "last_name"     => $request->getParsedBody()['nachname'], "role"          => "ressource"];
             
             if (!username_exists($email) && !email_exists($email)) {
 
@@ -884,49 +851,49 @@
                         $user_id = $db->lastInsertId();
                         add_user_meta($insert_user_result, 'staqq_id', $user_id);
 
-                        foreach (json_decode($request->getParsedBody()['berufsfelder']) as $f){
+                        foreach (json_decode((string) $request->getParsedBody()['berufsfelder']) as $f){
                             $sth = $db->prepare("INSERT INTO relation_ressources_berufsfelder (ressources_id, berufsfelder_id) VALUES (:ressources_id, :berufsfelder_id)");
                             $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
                             $sth->bindParam(':berufsfelder_id', $f, PDO::PARAM_INT);
                             $sth->execute();
                         }
 
-                        foreach (json_decode($request->getParsedBody()['berufsgruppen']) as $b){
+                        foreach (json_decode((string) $request->getParsedBody()['berufsgruppen']) as $b){
                             $sth = $db->prepare("INSERT INTO relation_ressources_berufsgruppen (ressources_id, berufsgruppen_id) VALUES (:ressources_id, :berufsgruppen_id)");
                             $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
                             $sth->bindParam(':berufsgruppen_id', $b, PDO::PARAM_INT);
                             $sth->execute();
                         }
 
-                        foreach (json_decode($request->getParsedBody()['berufsbezeichnungen']) as $z){
+                        foreach (json_decode((string) $request->getParsedBody()['berufsbezeichnungen']) as $z){
                             $sth = $db->prepare("INSERT INTO relation_ressources_berufsbezeichnungen (ressources_id, berufsbezeichnungen_id) VALUES (:ressources_id, :berufsbezeichnungen_id)");
                             $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
                             $sth->bindParam(':berufsbezeichnungen_id', $z, PDO::PARAM_INT);
                             $sth->execute();
                         }
 
-                        foreach (json_decode($request->getParsedBody()['skills']) as $s){
+                        foreach (json_decode((string) $request->getParsedBody()['skills']) as $s){
                             $sth = $db->prepare("INSERT INTO relation_ressources_skills (ressources_id, skills_items_id) VALUES (:ressources_id, :skills_items_id)");
                             $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
                             $sth->bindParam(':skills_items_id', $s, PDO::PARAM_INT);
                             $sth->execute();
                         }
 
-                        foreach (json_decode($request->getParsedBody()['regionen']) as $r){
+                        foreach (json_decode((string) $request->getParsedBody()['regionen']) as $r){
                             $sth = $db->prepare("INSERT INTO relation_ressources_bezirke (ressources_id, bezirke_id) VALUES (:ressources_id, :bezirke_id)");
                             $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
                             $sth->bindParam(':bezirke_id', $r, PDO::PARAM_INT);
                             $sth->execute();
                         }
 
-                        foreach (json_decode($request->getParsedBody()['dl_gecastet']) as $c){
+                        foreach (json_decode((string) $request->getParsedBody()['dl_gecastet']) as $c){
                             $sth = $db->prepare("INSERT INTO castings (ressources_id, dienstleister_id, ressources_verify, dienstleister_verify) VALUES (:ressources_id, :dienstleister_id, 1, 0)");
                             $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
                             $sth->bindParam(':dienstleister_id', $c, PDO::PARAM_INT);
                             $sth->execute();
                         }
 
-                        foreach (json_decode($request->getParsedBody()['dl_blacklist']) as $l){
+                        foreach (json_decode((string) $request->getParsedBody()['dl_blacklist']) as $l){
                             $sth = $db->prepare("INSERT INTO relation_ressources_dienstleister_blacklist (ressources_id, dienstleister_id) VALUES (:ressources_id, :dienstleister_id)");
                             $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
                             $sth->bindParam(':dienstleister_id', $l, PDO::PARAM_INT);
@@ -970,15 +937,7 @@
                 $user_id = email_exists($email_old);
             }
 
-            $user_info = array(
-                "ID"            => $user_id,
-                "user_nicename" => "",
-                "user_email"    => $email,
-                "display_name"  => $request->getParsedBody()['vorname'].' '.$request->getParsedBody()['nachname'],
-                "first_name"    => $request->getParsedBody()['vorname'],
-                "last_name"     => $request->getParsedBody()['nachname'],
-                "role"          => "ressource"
-            );
+            $user_info = ["ID"            => $user_id, "user_nicename" => "", "user_email"    => $email, "display_name"  => $request->getParsedBody()['vorname'].' '.$request->getParsedBody()['nachname'], "first_name"    => $request->getParsedBody()['vorname'], "last_name"     => $request->getParsedBody()['nachname'], "role"          => "ressource"];
 
             if ((email_exists($email) && (!$updateEmail)) || ((!email_exists($email)) && $updateEmail)) {
 
@@ -1008,7 +967,7 @@
                     $sth->bindParam(':ressources_id', $args['id'], PDO::PARAM_INT);
                     $sth->execute();
                     
-                    foreach (json_decode($request->getParsedBody()['berufsfelder']) as $f){
+                    foreach (json_decode((string) $request->getParsedBody()['berufsfelder']) as $f){
                         $sth = $db->prepare("INSERT INTO relation_ressources_berufsfelder (ressources_id, berufsfelder_id) VALUES (:ressources_id, :berufsfelder_id)");
                         $sth->bindParam(':ressources_id', $args['id'], PDO::PARAM_INT);
                         $sth->bindParam(':berufsfelder_id', $f, PDO::PARAM_INT);
@@ -1019,7 +978,7 @@
                     $sth->bindParam(':ressources_id', $args['id'], PDO::PARAM_INT);
                     $sth->execute();
 
-                    foreach (json_decode($request->getParsedBody()['berufsgruppen']) as $b){
+                    foreach (json_decode((string) $request->getParsedBody()['berufsgruppen']) as $b){
                         $sth = $db->prepare("INSERT INTO relation_ressources_berufsgruppen (ressources_id, berufsgruppen_id) VALUES (:ressources_id, :berufsgruppen_id)");
                         $sth->bindParam(':ressources_id', $args['id'], PDO::PARAM_INT);
                         $sth->bindParam(':berufsgruppen_id', $b, PDO::PARAM_INT);
@@ -1030,7 +989,7 @@
                     $sth->bindParam(':ressources_id', $args['id'], PDO::PARAM_INT);
                     $sth->execute();
 
-                    foreach (json_decode($request->getParsedBody()['berufsbezeichnungen']) as $z){
+                    foreach (json_decode((string) $request->getParsedBody()['berufsbezeichnungen']) as $z){
                         $sth = $db->prepare("INSERT INTO relation_ressources_berufsbezeichnungen (ressources_id, berufsbezeichnungen_id) VALUES (:ressources_id, :berufsbezeichnungen_id)");
                         $sth->bindParam(':ressources_id', $args['id'], PDO::PARAM_INT);
                         $sth->bindParam(':berufsbezeichnungen_id', $z, PDO::PARAM_INT);
@@ -1041,7 +1000,7 @@
                     $sth->bindParam(':ressources_id', $args['id'], PDO::PARAM_INT);
                     $sth->execute();
 
-                    foreach (json_decode($request->getParsedBody()['skills']) as $s){
+                    foreach (json_decode((string) $request->getParsedBody()['skills']) as $s){
                         $sth = $db->prepare("INSERT INTO relation_ressources_skills (ressources_id, skills_items_id) VALUES (:ressources_id, :skills_items_id)");
                         $sth->bindParam(':ressources_id', $args['id'], PDO::PARAM_INT);
                         $sth->bindParam(':skills_items_id', $s, PDO::PARAM_INT);
@@ -1052,14 +1011,14 @@
                     $sth->bindParam(':ressources_id', $args['id'], PDO::PARAM_INT);
                     $sth->execute();
 
-                    foreach (json_decode($request->getParsedBody()['regionen']) as $r){
+                    foreach (json_decode((string) $request->getParsedBody()['regionen']) as $r){
                         $sth = $db->prepare("INSERT INTO relation_ressources_bezirke (ressources_id, bezirke_id) VALUES (:ressources_id, :bezirke_id)");
                         $sth->bindParam(':ressources_id', $args['id'], PDO::PARAM_INT);
                         $sth->bindParam(':bezirke_id', $r, PDO::PARAM_INT);
                         $sth->execute();
                     }
                     
-                    foreach (json_decode($request->getParsedBody()['dl_gecastet']) as $c){
+                    foreach (json_decode((string) $request->getParsedBody()['dl_gecastet']) as $c){
                         
                         $sth = $db->prepare("INSERT INTO castings (ressources_id, dienstleister_id, ressources_verify, dienstleister_verify) VALUES(:ressources_id, :dienstleister_id, 1, 0) ON DUPLICATE KEY UPDATE    
 ressources_verify=1");
@@ -1072,7 +1031,7 @@ ressources_verify=1");
                     $sth->bindParam(':ressources_id', $args['id'], PDO::PARAM_INT);
                     $sth->execute();
 
-                    foreach (json_decode($request->getParsedBody()['dl_blacklist']) as $l){
+                    foreach (json_decode((string) $request->getParsedBody()['dl_blacklist']) as $l){
                         $sth = $db->prepare("INSERT INTO relation_ressources_dienstleister_blacklist (ressources_id, dienstleister_id) VALUES (:ressources_id, :dienstleister_id)");
                         $sth->bindParam(':ressources_id', $args['id'], PDO::PARAM_INT);
                         $sth->bindParam(':dienstleister_id', $l, PDO::PARAM_INT);
@@ -1165,7 +1124,7 @@ ressources_verify=1");
         $passwort_neu = $request->getParsedBody()['passwort_neu'];
         $passwort_alt = $request->getParsedBody()['passwort_alt'];
         
-        $res = wp_signon(array('user_login' => $email, 'user_password' => $passwort_alt, 'remember' => false));
+        $res = wp_signon(['user_login' => $email, 'user_password' => $passwort_alt, 'remember' => false]);
         
         if ($passwort_neu != "" && $passwort_alt != ""){
                         
