@@ -275,7 +275,7 @@ class RestClient implements Iterator, ArrayAccess {
     global $api;
 
     $api = new RestClient([
-        'base_url' => "http://localhost.staqq/api/v1/",
+        'base_url' => "http://staqq.localhost/api/v1/",
         'format' => "json"
     ]);
 

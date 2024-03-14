@@ -1,24 +1,30 @@
 <?php
 
     $wpUser = wp_get_current_user();
-    $wpUserSTAQQId = get_user_meta($wpUser->ID, 'staqq_id')[0];
+    $wpUserSTAQQIdMeta = get_user_meta($wpUser->ID, 'staqq_id');
+    $wpUserSTAQQId = !empty($wpUserSTAQQIdMeta) ? $wpUserSTAQQIdMeta[0] : null;
+    //$wpUserSTAQQId = get_user_meta($wpUser->ID, 'staqq_id')[0];
+    $wpUserSTAQQUser = false;
 
- 	if (in_array("ressource", $wpUser->roles)) {
-		$wpUserRole = "ressource";
-        $wpUserSTAQQUser = true;
-	} else if (in_array("kunde", $wpUser->roles)) {
-		$wpUserRole = "kunde";
-        $wpUserSTAQQUser = true;
-	} else if (in_array("dienstleister", $wpUser->roles)) {
-		$wpUserRole = "dienstleister";
-        $wpUserSTAQQUser = true;
-	} else if (in_array("kunde_u", $wpUser->roles)) {
-		$wpUserRole = "kunde_user";
-        $wpUserSTAQQUser = true;
-	} else if (in_array("dienstleister_u", $wpUser->roles)) {
-		$wpUserRole = "dienstleister_user";
-        $wpUserSTAQQUser = true;
-	}
+    if ($wpUserSTAQQId !== null)
+    {
+        if (in_array("ressource", $wpUser->roles)) {
+            $wpUserRole = "ressource";
+            $wpUserSTAQQUser = true;
+        } else if (in_array("kunde", $wpUser->roles)) {
+            $wpUserRole = "kunde";
+            $wpUserSTAQQUser = true;
+        } else if (in_array("dienstleister", $wpUser->roles)) {
+            $wpUserRole = "dienstleister";
+            $wpUserSTAQQUser = true;
+        } else if (in_array("kunde_u", $wpUser->roles)) {
+            $wpUserRole = "kunde_user";
+            $wpUserSTAQQUser = true;
+        } else if (in_array("dienstleister_u", $wpUser->roles)) {
+            $wpUserRole = "dienstleister_user";
+            $wpUserSTAQQUser = true;
+        }
+    }
 
 ?>
 

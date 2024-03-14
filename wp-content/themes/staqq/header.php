@@ -37,62 +37,67 @@
     if ($wpUserState){
         
         $wpUser = wp_get_current_user();
-        $wpUserSTAQQId = get_user_meta($wpUser->ID, 'staqq_id')[0];
+        $wpUserSTAQQIdMeta = get_user_meta($wpUser->ID, 'staqq_id');
+        $wpUserSTAQQId = !empty($wpUserSTAQQIdMeta) ? $wpUserSTAQQIdMeta[0] : null;
+        //$wpUserSTAQQId = get_user_meta($wpUser->ID, 'staqq_id')[0];
         
-        if (in_array("ressource", $wpUser->roles)) {
-            $wpUserRole = "ressource";
-            $wpUserSTAQQUser = true;
-        } else if (in_array("kunde", $wpUser->roles)) {
-            $wpUserRole = "kunde";
-            $wpUserSTAQQUser = true;
-            $wpUserSTAQQKundeId = $wpUserSTAQQId;
-        } else if (in_array("dienstleister", $wpUser->roles)) {
-            $wpUserRole = "dienstleister";
-            $wpUserSTAQQUser = true;
-            $wpUserSTAQQDienstleisterId = $wpUserSTAQQId;
-        } else if (in_array("kunde_u", $wpUser->roles)) {
-            $wpUserRole = "kunde_user";
-            $wpUserSTAQQUser = true;
-            $b = $api->get("kunden/user/$wpUserSTAQQId/berechtigungen", [])->decode_response();
-            $userBerechtigungen = new stdClass();
-            $userBerechtigungen->berechtigung_joborders_schalten = filter_var($b->berechtigung_joborders_schalten, FILTER_VALIDATE_BOOLEAN);
-            $userBerechtigungen->berechtigung_einkauf = filter_var($b->berechtigung_einkauf, FILTER_VALIDATE_BOOLEAN);
-            $userBerechtigungen->berechtigung_auswertung = filter_var($b->berechtigung_auswertung, FILTER_VALIDATE_BOOLEAN);
-            $userBerechtigungen->einschraenkung_aktiv_von_bis = filter_var($b->einschraenkung_aktiv_von_bis, FILTER_VALIDATE_BOOLEAN);
-            $userBerechtigungen->aktiv_von = $b->aktiv_von;
-            $userBerechtigungen->aktiv_bis = $b->aktiv_bis;
-            $wpUserSTAQQKundeId = $b->kunden_id;
-            
-            if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_bis)))){
-                if ($_SERVER['REQUEST_URI'] != "/app/fehler/?e=1") {wp_redirect('app/fehler/?e=1'); exit;}
+        if ($wpUserSTAQQId !== null)
+        {
+            if (in_array("ressource", $wpUser->roles)) {
+                $wpUserRole = "ressource";
+                $wpUserSTAQQUser = true;
+            } else if (in_array("kunde", $wpUser->roles)) {
+                $wpUserRole = "kunde";
+                $wpUserSTAQQUser = true;
+                $wpUserSTAQQKundeId = $wpUserSTAQQId;
+            } else if (in_array("dienstleister", $wpUser->roles)) {
+                $wpUserRole = "dienstleister";
+                $wpUserSTAQQUser = true;
+                $wpUserSTAQQDienstleisterId = $wpUserSTAQQId;
+            } else if (in_array("kunde_u", $wpUser->roles)) {
+                $wpUserRole = "kunde_user";
+                $wpUserSTAQQUser = true;
+                $b = $api->get("kunden/user/$wpUserSTAQQId/berechtigungen", [])->decode_response();
+                $userBerechtigungen = new stdClass();
+                $userBerechtigungen->berechtigung_joborders_schalten = filter_var($b->berechtigung_joborders_schalten, FILTER_VALIDATE_BOOLEAN);
+                $userBerechtigungen->berechtigung_einkauf = filter_var($b->berechtigung_einkauf, FILTER_VALIDATE_BOOLEAN);
+                $userBerechtigungen->berechtigung_auswertung = filter_var($b->berechtigung_auswertung, FILTER_VALIDATE_BOOLEAN);
+                $userBerechtigungen->einschraenkung_aktiv_von_bis = filter_var($b->einschraenkung_aktiv_von_bis, FILTER_VALIDATE_BOOLEAN);
+                $userBerechtigungen->aktiv_von = $b->aktiv_von;
+                $userBerechtigungen->aktiv_bis = $b->aktiv_bis;
+                $wpUserSTAQQKundeId = $b->kunden_id;
+                
+                if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_bis)))){
+                    if ($_SERVER['REQUEST_URI'] != "/app/fehler/?e=1") {wp_redirect('app/fehler/?e=1'); exit;}
+                }
+            } else if (in_array("dienstleister_u", $wpUser->roles)) {
+                $wpUserRole = "dienstleister_user";
+                $wpUserSTAQQUser = true;
+                $b = $api->get("dienstleister/user/$wpUserSTAQQId/berechtigungen", [])->decode_response();
+                $userBerechtigungen = new stdClass();
+                $userBerechtigungen->berechtigung_joborders_schalten = filter_var($b->berechtigung_joborders_schalten, FILTER_VALIDATE_BOOLEAN);
+                $userBerechtigungen->berechtigung_einkauf = filter_var($b->berechtigung_einkauf, FILTER_VALIDATE_BOOLEAN);
+                $userBerechtigungen->berechtigung_auswertung = filter_var($b->berechtigung_auswertung, FILTER_VALIDATE_BOOLEAN);
+                $userBerechtigungen->einschraenkung_aktiv_von_bis = filter_var($b->einschraenkung_aktiv_von_bis, FILTER_VALIDATE_BOOLEAN);
+                $userBerechtigungen->aktiv_von = $b->aktiv_von;
+                $userBerechtigungen->aktiv_bis = $b->aktiv_bis;
+                $wpUserSTAQQDienstleisterId = $b->dienstleister_id;
+                
+                if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_bis)))){
+                    if ($_SERVER['REQUEST_URI'] != "/app/fehler/?e=1") {wp_redirect('app/fehler/?e=1'); exit;}
+                }
+            } else{
+                $wpuserRole = $wpUser->roles;
             }
-        } else if (in_array("dienstleister_u", $wpUser->roles)) {
-            $wpUserRole = "dienstleister_user";
-            $wpUserSTAQQUser = true;
-            $b = $api->get("dienstleister/user/$wpUserSTAQQId/berechtigungen", [])->decode_response();
-            $userBerechtigungen = new stdClass();
-            $userBerechtigungen->berechtigung_joborders_schalten = filter_var($b->berechtigung_joborders_schalten, FILTER_VALIDATE_BOOLEAN);
-            $userBerechtigungen->berechtigung_einkauf = filter_var($b->berechtigung_einkauf, FILTER_VALIDATE_BOOLEAN);
-            $userBerechtigungen->berechtigung_auswertung = filter_var($b->berechtigung_auswertung, FILTER_VALIDATE_BOOLEAN);
-            $userBerechtigungen->einschraenkung_aktiv_von_bis = filter_var($b->einschraenkung_aktiv_von_bis, FILTER_VALIDATE_BOOLEAN);
-            $userBerechtigungen->aktiv_von = $b->aktiv_von;
-            $userBerechtigungen->aktiv_bis = $b->aktiv_bis;
-            $wpUserSTAQQDienstleisterId = $b->dienstleister_id;
             
-            if ($userBerechtigungen->einschraenkung_aktiv_von_bis && (time() < strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_von)) || time() > strtotime(str_replace('.', '-', (string) $userBerechtigungen->aktiv_bis)))){
-                if ($_SERVER['REQUEST_URI'] != "/app/fehler/?e=1") {wp_redirect('app/fehler/?e=1'); exit;}
-            }
-        } else{
-            $wpuserRole = $wpUser->roles;
+            if ($wpUserSTAQQUser) show_admin_bar(false);
+            
+            
+            // Redeirect if wrong
+            
+            if (($wpUserRole == "dienstleister_user" || $wpUserRole == "kunde_user") && (!$userBerechtigungen->berechtigung_joborders_schalten) && ($_SERVER['REQUEST_URI'] == "/app/joborders/")) header('Location: /app/verwaltung/');
+            if (($wpUserRole == "dienstleister_user" || $wpUserRole == "kunde_user") && (!$userBerechtigungen->berechtigung_einkauf) && ($_SERVER['REQUEST_URI'] == "/app/verwaltung/")) header('Location: /app/stammdaten/');
         }
-        
-        if ($wpUserSTAQQUser) show_admin_bar(false);
-        
-        
-        // Redeirect if wrong
-        
-        if (($wpUserRole == "dienstleister_user" || $wpUserRole == "kunde_user") && (!$userBerechtigungen->berechtigung_joborders_schalten) && ($_SERVER['REQUEST_URI'] == "/app/joborders/")) header('Location: /app/verwaltung/');
-        if (($wpUserRole == "dienstleister_user" || $wpUserRole == "kunde_user") && (!$userBerechtigungen->berechtigung_einkauf) && ($_SERVER['REQUEST_URI'] == "/app/verwaltung/")) header('Location: /app/stammdaten/');
         
     }
 ?>
