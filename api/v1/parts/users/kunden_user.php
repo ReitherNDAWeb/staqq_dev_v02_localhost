@@ -150,7 +150,20 @@
             $email = $request->getParsedBody()['email'];
             $passwort = $request->getParsedBody()['passwort'];
 
+<<<<<<< HEAD
             $user_info = ["user_pass"     => $passwort, "user_login"    => 'kunde_u_'.$request->getParsedBody()['vorname'].'_'.$request->getParsedBody()['nachname'].'_'.time(), "user_nicename" => "", "user_email"    => $email, "display_name"  => $request->getParsedBody()['titel'].' '.$request->getParsedBody()['vorname'].' '.$request->getParsedBody()['nachname'], "first_name"    => $request->getParsedBody()['vorname'], "last_name"     => $request->getParsedBody()['nachname'], "role"          => "kunde_u"];
+=======
+            $user_info = array(
+                "user_pass"     => $passwort,
+                "user_login"    => 'kunde_u_'.$request->getParsedBody()['vorname'].'_'.$request->getParsedBody()['nachname'].'_'.time(),
+                "user_nicename" => "",
+                "user_email"    => $email,
+                "display_name"  => $request->getParsedBody()['titel'].' '.$request->getParsedBody()['vorname'].' '.$request->getParsedBody()['nachname'],
+                "first_name"    => $request->getParsedBody()['vorname'],
+                "last_name"     => $request->getParsedBody()['nachname'],
+                "role"          => "kunde_u"
+            );
+>>>>>>> 774de6a2a3f06dcfd52ab55cbef2f9fb8a241e6f
 
             if (!username_exists($email) && !email_exists($email)) {
 
@@ -547,7 +560,11 @@
             $sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
             $sth->execute();
 
+<<<<<<< HEAD
 			$anzahlen = [];
+=======
+			$anzahlen = array();
+>>>>>>> 774de6a2a3f06dcfd52ab55cbef2f9fb8a241e6f
 			$res = utf8_converter($sth->fetchAll(PDO::FETCH_ASSOC))[0];
             $anzahlen['bewertungen']['offen'] = $res['offen'];
 

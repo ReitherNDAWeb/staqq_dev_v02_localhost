@@ -29,9 +29,15 @@
             'dev_requirement' => false,
         ),
         'nikic/fast-route' => array(
+<<<<<<< HEAD
             'pretty_version' => 'v1.3.0',
             'version' => '1.3.0.0',
             'reference' => '181d480e08d9476e61381e04a71b34dc0432e812',
+=======
+            'pretty_version' => 'v1.0.1',
+            'version' => '1.0.1.0',
+            'reference' => '8ea928195fa9b907f0d6e48312d323c1a13cc2af',
+>>>>>>> 774de6a2a3f06dcfd52ab55cbef2f9fb8a241e6f
             'type' => 'library',
             'install_path' => __DIR__ . '/../nikic/fast-route',
             'aliases' => array(),
@@ -47,9 +53,15 @@
             'dev_requirement' => true,
         ),
         'pimple/pimple' => array(
+<<<<<<< HEAD
             'pretty_version' => 'v3.5.0',
             'version' => '3.5.0.0',
             'reference' => 'a94b3a4db7fb774b3d78dad2315ddc07629e1bed',
+=======
+            'pretty_version' => 'v3.0.2',
+            'version' => '3.0.2.0',
+            'reference' => 'a30f7d6e57565a2e1a316e1baf2a483f788b258a',
+>>>>>>> 774de6a2a3f06dcfd52ab55cbef2f9fb8a241e6f
             'type' => 'library',
             'install_path' => __DIR__ . '/../pimple/pimple',
             'aliases' => array(),
@@ -65,9 +77,15 @@
             'dev_requirement' => false,
         ),
         'psr/http-message' => array(
+<<<<<<< HEAD
             'pretty_version' => '1.1',
             'version' => '1.1.0.0',
             'reference' => 'cb6ce4845ce34a8ad9e68117c10ee90a29919eba',
+=======
+            'pretty_version' => '1.0',
+            'version' => '1.0.0.0',
+            'reference' => '85d63699f0dbedb190bbd4b0d2b9dc707ea4c298',
+>>>>>>> 774de6a2a3f06dcfd52ab55cbef2f9fb8a241e6f
             'type' => 'library',
             'install_path' => __DIR__ . '/../psr/http-message',
             'aliases' => array(),
