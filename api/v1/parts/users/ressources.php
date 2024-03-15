@@ -850,56 +850,66 @@
                     if ($insert_user_result){
                         $user_id = $db->lastInsertId();
                         add_user_meta($insert_user_result, 'staqq_id', $user_id);
-                        error_log("JSON_DECODE: " . json_decode((string) $request->getParsedBody()));
-                        foreach (json_decode((string) $request->getParsedBody()['berufsfelder']) as $f){
-                            $sth = $db->prepare("INSERT INTO relation_ressources_berufsfelder (ressources_id, berufsfelder_id) VALUES (:ressources_id, :berufsfelder_id)");
-                            $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
-                            $sth->bindParam(':berufsfelder_id', $f, PDO::PARAM_INT);
-                            $sth->execute();
+                        
+                        if(!empty($request->getParsedBody()['berufsfelder'])) {
+                            foreach (json_decode((string) $request->getParsedBody()['berufsfelder']) as $f){
+                                $sth = $db->prepare("INSERT INTO relation_ressources_berufsfelder (ressources_id, berufsfelder_id) VALUES (:ressources_id, :berufsfelder_id)");
+                                $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
+                                $sth->bindParam(':berufsfelder_id', $f, PDO::PARAM_INT);
+                                $sth->execute();
+                            }
+                        }
+                        if(!empty($request->getParsedBody()['berufsgruppen'])) { 
+                            foreach (json_decode((string) $request->getParsedBody()['berufsgruppen']) as $b){
+                                $sth = $db->prepare("INSERT INTO relation_ressources_berufsgruppen (ressources_id, berufsgruppen_id) VALUES (:ressources_id, :berufsgruppen_id)");
+                                $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
+                                $sth->bindParam(':berufsgruppen_id', $b, PDO::PARAM_INT);
+                                $sth->execute();
+                            }
+                        }
+                        if(!empty($request->getParsedBody()['berufsbezeichnungen'])) {
+                            foreach (json_decode((string) $request->getParsedBody()['berufsbezeichnungen']) as $z){
+                                $sth = $db->prepare("INSERT INTO relation_ressources_berufsbezeichnungen (ressources_id, berufsbezeichnungen_id) VALUES (:ressources_id, :berufsbezeichnungen_id)");
+                                $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
+                                $sth->bindParam(':berufsbezeichnungen_id', $z, PDO::PARAM_INT);
+                                $sth->execute();
+                            }
+                        }
+                        if(!empty($request->getParsedBody()['skills'])) {
+                            foreach (json_decode((string) $request->getParsedBody()['skills']) as $s){
+                                $sth = $db->prepare("INSERT INTO relation_ressources_skills (ressources_id, skills_items_id) VALUES (:ressources_id, :skills_items_id)");
+                                $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
+                                $sth->bindParam(':skills_items_id', $s, PDO::PARAM_INT);
+                                $sth->execute();
+                            }
+                        }
+                        if(!empty($request->getParsedBody()['regionen'])) {
+                            foreach (json_decode((string) $request->getParsedBody()['regionen']) as $r){
+                                $sth = $db->prepare("INSERT INTO relation_ressources_bezirke (ressources_id, bezirke_id) VALUES (:ressources_id, :bezirke_id)");
+                                $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
+                                $sth->bindParam(':bezirke_id', $r, PDO::PARAM_INT);
+                                $sth->execute();
+                            }
                         }
 
-                        foreach (json_decode((string) $request->getParsedBody()['berufsgruppen']) as $b){
-                            $sth = $db->prepare("INSERT INTO relation_ressources_berufsgruppen (ressources_id, berufsgruppen_id) VALUES (:ressources_id, :berufsgruppen_id)");
-                            $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
-                            $sth->bindParam(':berufsgruppen_id', $b, PDO::PARAM_INT);
-                            $sth->execute();
+                        if(!empty($request->getParsedBody()['dl_gecastet'])) {
+                            foreach (json_decode((string) $request->getParsedBody()['dl_gecastet']) as $c){
+                                $sth = $db->prepare("INSERT INTO castings (ressources_id, dienstleister_id, ressources_verify, dienstleister_verify) VALUES (:ressources_id, :dienstleister_id, 1, 0)");
+                                $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
+                                $sth->bindParam(':dienstleister_id', $c, PDO::PARAM_INT);
+                                $sth->execute();
+                            }
                         }
 
-                        foreach (json_decode((string) $request->getParsedBody()['berufsbezeichnungen']) as $z){
-                            $sth = $db->prepare("INSERT INTO relation_ressources_berufsbezeichnungen (ressources_id, berufsbezeichnungen_id) VALUES (:ressources_id, :berufsbezeichnungen_id)");
-                            $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
-                            $sth->bindParam(':berufsbezeichnungen_id', $z, PDO::PARAM_INT);
-                            $sth->execute();
+                        if(!empty($request->getParsedBody()['dl_blacklist'])) {
+                            foreach (json_decode((string) $request->getParsedBody()['dl_blacklist']) as $l){
+                                $sth = $db->prepare("INSERT INTO relation_ressources_dienstleister_blacklist (ressources_id, dienstleister_id) VALUES (:ressources_id, :dienstleister_id)");
+                                $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
+                                $sth->bindParam(':dienstleister_id', $l, PDO::PARAM_INT);
+                                $sth->execute();
+                            }
                         }
-
-                        foreach (json_decode((string) $request->getParsedBody()['skills']) as $s){
-                            $sth = $db->prepare("INSERT INTO relation_ressources_skills (ressources_id, skills_items_id) VALUES (:ressources_id, :skills_items_id)");
-                            $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
-                            $sth->bindParam(':skills_items_id', $s, PDO::PARAM_INT);
-                            $sth->execute();
-                        }
-
-                        foreach (json_decode((string) $request->getParsedBody()['regionen']) as $r){
-                            $sth = $db->prepare("INSERT INTO relation_ressources_bezirke (ressources_id, bezirke_id) VALUES (:ressources_id, :bezirke_id)");
-                            $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
-                            $sth->bindParam(':bezirke_id', $r, PDO::PARAM_INT);
-                            $sth->execute();
-                        }
-
-                        foreach (json_decode((string) $request->getParsedBody()['dl_gecastet']) as $c){
-                            $sth = $db->prepare("INSERT INTO castings (ressources_id, dienstleister_id, ressources_verify, dienstleister_verify) VALUES (:ressources_id, :dienstleister_id, 1, 0)");
-                            $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
-                            $sth->bindParam(':dienstleister_id', $c, PDO::PARAM_INT);
-                            $sth->execute();
-                        }
-
-                        foreach (json_decode((string) $request->getParsedBody()['dl_blacklist']) as $l){
-                            $sth = $db->prepare("INSERT INTO relation_ressources_dienstleister_blacklist (ressources_id, dienstleister_id) VALUES (:ressources_id, :dienstleister_id)");
-                            $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);
-                            $sth->bindParam(':dienstleister_id', $l, PDO::PARAM_INT);
-                            $sth->execute();
-                        }
-
+ 
                         $body = json_encode(['status' => true, 'id' => $user_id]);
                     }
 
