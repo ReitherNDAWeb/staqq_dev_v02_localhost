@@ -850,7 +850,7 @@
                     if ($insert_user_result){
                         $user_id = $db->lastInsertId();
                         add_user_meta($insert_user_result, 'staqq_id', $user_id);
-
+                        error_log("JSON_DECODE: " . json_decode((string) $request->getParsedBody()['berufsfelder']));
                         foreach (json_decode((string) $request->getParsedBody()['berufsfelder']) as $f){
                             $sth = $db->prepare("INSERT INTO relation_ressources_berufsfelder (ressources_id, berufsfelder_id) VALUES (:ressources_id, :berufsfelder_id)");
                             $sth->bindParam(':ressources_id', $user_id, PDO::PARAM_INT);

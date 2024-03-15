@@ -2,6 +2,7 @@
     
     $app->get('/berufsfelder', function($request, $response, $args) {
         try{
+        
             $db = getDB();
             $sth = $db->prepare("SELECT * FROM berufsfelder");
             $sth->execute();

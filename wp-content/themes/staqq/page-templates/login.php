@@ -64,7 +64,8 @@ if ( SITECOOKIEPATH != COOKIEPATH )
         </div>
     </seciton>
     
-    <?php if ($_GET['login'] == "failed"): ?>
+    <?php if (isset($_GET['login']) && $_GET['login'] == "failed"): ?>
+
     
     <div class="remodal-faild-login">
     	<h2>Die Anmeldung ist leider fehlgeschalgen!</h2>

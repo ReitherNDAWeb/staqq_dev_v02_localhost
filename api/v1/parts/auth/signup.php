@@ -34,9 +34,13 @@
 				}else{
 					$code = random_int (1000, 9999);
 
-					$sms = sendSMS($request->getParsedBody()['telefon'], strval($code));
 
-					if ($sms->recipients->items[0]->status == "sent"){
+					//SMS Versand deaktiviert für Testzwecke
+					//$sms = sendSMS($request->getParsedBody()['telefon'], strval($code));
+					error_log("Code: " . strval($code));
+					//if ($sms->recipients->items[0]->status == "sent")
+					if(true)
+					{
 
 						try{
 							$db = getDB();

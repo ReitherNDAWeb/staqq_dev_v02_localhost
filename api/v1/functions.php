@@ -76,7 +76,6 @@
           $postData .= $k . '='.$v.'&'; 
         }
         $postData = rtrim($postData, '&');
-
         $ch = curl_init();  
 
         curl_setopt($ch, CURLOPT_URL,$url);
@@ -84,7 +83,11 @@
         curl_setopt($ch, CURLOPT_VERBOSE, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: AccessKey live_tPRCIR0CP6I4b8jqvsu7xLnlq'));
         curl_setopt($ch, CURLOPT_HEADER, true); 
-        curl_setopt($ch, CURLOPT_POST, count($postData));
+		
+		//Änderung: Verwandlung in ein Array, damit count funktioniert
+		//curl_setopt($ch, CURLOPT_POST, count($postData));
+		$postDataArray = array($postData);
+			curl_setopt($ch, CURLOPT_POST, count($postDataArray));
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);    
 
         $response=curl_exec($ch);
