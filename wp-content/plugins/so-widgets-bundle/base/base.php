@@ -362,7 +362,6 @@ function siteorigin_loading_optimization_attributes( $attr, $widget, $instance, 
 	) {
 		if ( function_exists( 'wp_get_loading_optimization_attributes' ) ) {
 			// WP 6.3.
-			$attr['loading'] = 'lazy';
 			$attr = array_merge(
 				$attr,
 				wp_get_loading_optimization_attributes( 'img', $attr, 'wp_get_attachment_image' )
@@ -390,7 +389,7 @@ function siteorigin_widgets_links_get_title() {
 		wp_die( __( 'Invalid request.', 'so-widgets-bundle' ), 400 );
 	}
 	$postTitle = get_the_title( $_GET['postId'] );
-	echo ! empty( $postTitle ) ? esc_attr( $postTitle ) : __( '(No Title)', 'so-widgets-bundle' );
+	echo ! empty( $postTitle ) ? esc_attr( $postTitle ) : esc_html__( '(No Title)', 'so-widgets-bundle' );
 	die();
 }
 add_action( 'wp_ajax_so_widgets_links_get_title', 'siteorigin_widgets_links_get_title' );
@@ -410,7 +409,7 @@ add_action( 'wp_ajax_so_widgets_links_get_title', 'siteorigin_widgets_links_get_
  */
 function siteorigin_widgets_strip_escape_sequences( $value, $html = false ) {
 	// Remove escape sequences.
-	$value = preg_replace( '/\\\\u[0-9a-fA-F]{4}|\\\\x[0-9a-fA-F]{2}|\\\\[0-7]{3}|\p{C}+/u', '', $value );
+	$value = preg_replace( '/\\\\u[0-9a-fA-F]{4}|\\\\x[0-9a-fA-F]{2}|\\\\[0-7]{3}|[\p{C}&&[^\r\n]]+/u', '', $value );
 
 	// HTML entities.
 	if ( $html ) {
@@ -433,7 +432,6 @@ function siteorigin_widget_onclick( $onclick = null, $recursive = true ) {
 	}
 
 	$stripped_onclick = siteorigin_widgets_strip_escape_sequences( $onclick );
-
 	if ( $stripped_onclick !== $onclick ) {
 		// There was some escape sequences removed.
 		// To play it safe, return nothing.
@@ -442,16 +440,25 @@ function siteorigin_widget_onclick( $onclick = null, $recursive = true ) {
 
 	if ( apply_filters( 'siteorigin_widgets_onclick_disallowlist', true ) ) {
 		// It's possible for allowed functions to contain disallowed functions, so we need to loop through and remove.
-		$disallowed_functions = array( 'alert', 'eval', 'execScript', 'setTimeout', 'setInterval', 'function', 'document', 'Object', 'window', 'innerHTML', 'outerHTML', 'onload', 'onerror', 'onclick', 'storage', 'fetch', 'XMLHttpRequest', 'jQuery', '$.', 'prototype', '__proto__', 'constructor', 'decode', 'encode', 'atob', 'btoa', 'Promise', 'setImmediate', 'unescape', 'escape', 'captureEvents', 'proxy', 'Reflect', 'Array', 'String', 'Math', 'Date', 'property', 'Properties', 'Error', 'Map', 'Set', 'Generator', 'Web', 'dataview', 'Blob', 'URL', 'Text', 'Intl', 'JSON', 'RegExp', 'console', 'history', 'location', 'navigator', 'screen', 'worker', 'FinalizationRegistry', 'weak', 'top', 'self', 'open', 'parent', 'frame', 'import', 'fragment', 'globalThis', 'frames', 'import', 'this', 'escape', 'watch', 'element', 'file', 'db', 'url', 'worker', 'EventSource', 'join' );
+		$disallowed_functions = array( 'alert', 'eval', 'execScript', 'setTimeout', 'setInterval', 'function', 'document', 'Object', 'window', 'innerHTML', 'outerHTML', 'onload', 'onerror', 'onclick', 'storage', 'fetch', 'XMLHttpRequest', 'jQuery', '$.', 'prototype', '__proto__', 'constructor', 'decode', 'encode', 'atob', 'btoa', 'Promise', 'setImmediate', 'unescape', 'escape', 'captureEvents', 'proxy', 'Reflect', 'Array', 'String', 'Math', 'Date', 'property', 'Properties', 'Error', 'Map', 'Set', 'Generator', 'Web', 'dataview', 'Blob', 'javascript', 'Text', 'Intl', 'JSON', 'RegExp', 'console', 'history', 'location', 'navigator', 'screen', 'worker', 'FinalizationRegistry', 'weak', 'top', 'self', 'open', 'parent', 'frame', 'import', 'fragment', 'globalThis', 'frames', 'import', 'this', 'escape', 'watch', 'element', 'file', 'db', 'worker', 'EventSource', 'join', 'upper' );
 
 		if ( preg_match( '/\b(' . implode( '|', array_map( 'preg_quote', $disallowed_functions ) ) . ')\b/i', $onclick ) ) {
 			return;
 		}
 
+		// Case sensitive disallow.
+		$case_sensitive_disallow = array(
+			'URL',
+		);
+
+		if ( preg_match( '/\b(' . implode( '|', array_map( 'preg_quote', $case_sensitive_disallow ) ) . ')\b/', $onclick ) ) {
+			return;
+		}
 	}
 
 	if ( apply_filters( 'siteorigin_widgets_onclick_allowlist', true ) ) {
-		$onclick_parts = explode( ';', $onclick );
+		$onclick_parts = explode( ');', $onclick );
+
 		$adjusted_onclick = '';
 		$allowed_functions = array_flip( array(
 			'_km',
@@ -493,17 +500,29 @@ function siteorigin_widget_onclick( $onclick = null, $recursive = true ) {
 			'woopra',
 			'ym',
 			'ml_account', // MailerLite.
+			'calendly.initpopupwidget', // Calendly.
 		) );
 
 		// Remove anything not inside of an allowed function.
 		foreach ( $onclick_parts as $part ) {
+			$part = trim( $part );
+
+			// Allow Buttons to prevent the default action.
+			if (
+				$part === 'return false;' ||
+				$part === 'return;'
+			) {
+				$adjusted_onclick .= $part;
+				continue;
+			}
+
 			$function_name = substr( $part, 0, strpos( $part, '(' ) );
 			$function_name = strtolower( trim( $function_name ) );
 			if ( ! isset( $allowed_functions[ $function_name ] ) ) {
 				// Not an allowed function name, skip this part
 				continue;
 			}
-			$adjusted_onclick .= $part . ';';
+			$adjusted_onclick .= $part . ');';
 		}
 
 		$onclick = $adjusted_onclick;
@@ -522,4 +541,24 @@ function siteorigin_widget_onclick( $onclick = null, $recursive = true ) {
 	}
 
 	return wp_unslash( esc_js( sanitize_text_field( $onclick ) ) );
+}
+
+/**
+ * Ensure the tag is valid before output. If it's not, return the fallback.
+ *
+ * @param string $field The field to check in the 'design' array.
+ * @param string $fallback The fallback value if the field is empty or invalid.
+ * @param array $valid_tags An array containing valid tags.
+ * @return string A valid HTML tag for the widget.
+ */
+function siteorigin_widget_valid_tag( $tag, $fallback = null, $valid_tags = array() ) {
+	if ( empty( $valid_tags ) || ! is_array( $valid_tags ) ) {
+		$valid_tags = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p' );
+	}
+
+	if ( ! in_array( $tag, $valid_tags ) ) {
+		return $fallback;
+	}
+
+	return $tag;
 }

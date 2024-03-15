@@ -257,13 +257,17 @@ class RestClient implements Iterator, ArrayAccess {
     
     public function decode_response(){
         if(empty($this->decoded_response)){
+            // First, check if a response exists and is not empty
+            if(!$this->response || empty($this->response)) {
+                throw new RestClientException("No response received or the response is empty, cannot decode.");
+            }
+
             $format = $this->get_response_format();
             if(!array_key_exists($format, $this->options['decoders']))
                 throw new RestClientException("'" . $format . "' is not a supported ".
                     "format, register a decoder to handle this response.");
             
-            $this->decoded_response = call_user_func(
-                $this->options['decoders'][$format], $this->response);
+            $this->decoded_response = call_user_func($this->options['decoders'][$format], $this->response);
         }
         
         return $this->decoded_response;

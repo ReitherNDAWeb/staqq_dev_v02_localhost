@@ -20,7 +20,15 @@
 
     }else{
 
-    $berufsfelder = $api->get("berufsfelder", [])->decode_response();
+    
+    $response = $api->get("berufsfelder", []);
+        if ($response->response) {
+            $berufsfelder = $response->decode_response();
+        } else {
+            // Fehlerbehandlung hier, z.B. eine Fehlermeldung loggen oder anzeigen
+            error_log("Keine Antwort vom API-Endpunkt 'berufsfelder'");
+        }
+    //$berufsfelder = $api->get("berufsfelder", [])->decode_response();
     $berufsgruppen = $api->get("berufsgruppen", [])->decode_response();
     $berufsbezeichnungen = $api->get("berufsbezeichnungen", [])->decode_response();
     $skills = $api->get("skills/nested", [])->decode_response();
