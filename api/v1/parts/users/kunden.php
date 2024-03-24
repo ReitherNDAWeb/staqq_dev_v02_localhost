@@ -203,7 +203,9 @@
                     $sth->bindParam(':anzahl_joborders', $request->getParsedBody()['anzahl_joborders'], PDO::PARAM_INT);
                     $sth->bindParam(':registrations_id', $request->getParsedBody()['registrations_id'], PDO::PARAM_INT);
                     $sth->bindParam(':agb_accept', $request->getParsedBody()['agb_accept'], PDO::PARAM_INT);
-                    $sth->bindParam(':website', addhttp($request->getParsedBody()['website']), PDO::PARAM_STR);
+                    //$sth->bindParam(':website', addhttp($request->getParsedBody()['website']), PDO::PARAM_STR);
+                    $websiteWithHttp = addhttp($request->getParsedBody()['website']);
+                    $sth->bindParam(':website', $websiteWithHttp, PDO::PARAM_STR);
 
 
                     $sth->execute();
@@ -212,20 +214,23 @@
                         $user_id = $db->lastInsertId();
                         add_user_meta($insert_user_result, 'staqq_id', $user_id);
                         
-                        foreach (json_decode((string) $request->getParsedBody()['dienstleister']) as $f){
-                            $sth = $db->prepare("INSERT INTO relation_kunden_dienstleister (kunden_id, dienstleister_id) VALUES (:kunden_id, :dienstleister_id)");
-                            $sth->bindParam(':kunden_id', $user_id, PDO::PARAM_INT);
-                            $sth->bindParam(':dienstleister_id', $f, PDO::PARAM_INT);
-                            $sth->execute();
+                        if(!empty($request->getParsedBody()['dienstleister'])) {
+                            foreach (json_decode((string) $request->getParsedBody()['dienstleister']) as $f){
+                                $sth = $db->prepare("INSERT INTO relation_kunden_dienstleister (kunden_id, dienstleister_id) VALUES (:kunden_id, :dienstleister_id)");
+                                $sth->bindParam(':kunden_id', $user_id, PDO::PARAM_INT);
+                                $sth->bindParam(':dienstleister_id', $f, PDO::PARAM_INT);
+                                $sth->execute();
+                            }
                         }
 
-                        foreach (json_decode((string) $request->getParsedBody()['arbeitsstaetten']) as $f){
-                            $sth = $db->prepare("INSERT INTO arbeitsstaetten (name, kunden_id) VALUES (:name, :kunden_id)");
-                            $sth->bindParam(':name', $f, PDO::PARAM_STR);
-                            $sth->bindParam(':kunden_id', $user_id, PDO::PARAM_INT);
-                            $sth->execute();
+                        if(!empty($request->getParsedBody()['arbeitsstaetten'])) {
+                            foreach (json_decode((string) $request->getParsedBody()['arbeitsstaetten']) as $f){
+                                $sth = $db->prepare("INSERT INTO arbeitsstaetten (name, kunden_id) VALUES (:name, :kunden_id)");
+                                $sth->bindParam(':name', $f, PDO::PARAM_STR);
+                                $sth->bindParam(':kunden_id', $user_id, PDO::PARAM_INT);
+                                $sth->execute();
+                            }
                         }
-
                         $body = json_encode(['status' => true, 'id' => $user_id]);
                     }
 

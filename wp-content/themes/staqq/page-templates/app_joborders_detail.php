@@ -115,7 +115,10 @@
 					<article class="gd gd--12 joborder-detail__bewerbungs-status">
 					<?php if ($joborder->anzahl_bewerbungen_einsatz_bestaetigt == $joborder->anzahl_ressourcen){ ?>
 						<h2>Die Ressourcen wurden vom Dienstleister für Sie ausgewählt:</h2>
-						<a style="float: right;" href="/app/joborders/ressourcen/?id=<?php echo hash((string) $id); ?>" class="button">Ressourcen anzeigen</a>
+                        <!-- Geändert von $id zu hash('sha256', (string) $id)
+                        <a style="float: right;" href="/app/joborders/ressourcen/?id=<?php //echo hash((string) $id); ?>" class="button">Ressourcen anzeigen</a> -->
+                        //
+                        <a style="float: right;" href="/app/joborders/ressourcen/?id=<?php echo hash('sha256', (string) $id); ?>" class="button">Ressourcen anzeigen</a>
 					<?php }else{ ?>
 						<h2>Der Dienstleister sucht zurzeit nach passenden Ressourcen für Sie!</h2>
 					<?php } ?>

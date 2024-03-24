@@ -593,10 +593,26 @@
 				$tage = floor($diff / (60 * 60 * 24)) + 1;
 				if ($tage > 183) $tage = 183;
 
-				$berufsbezeichnungen_decoded = json_decode((string) $request->getParsedBody()['berufsbezeichnungen']);
-				$berufsgruppen_decoded = json_decode((string) $request->getParsedBody()['berufsgruppen']);
-				$bb = implode(",", $berufsbezeichnungen_decoded);
-
+				//Änderung, weil nicht sicher ob die Daten als Array oder String ankommen
+				//$berufsbezeichnungen_decoded = json_decode((string) $request->getParsedBody()['berufsbezeichnungen']);
+				//$berufsgruppen_decoded = json_decode((string) $request->getParsedBody()['berufsgruppen']);
+				$berufsbezeichnungen_decoded = json_decode((string) $request->getParsedBody()['berufsbezeichnungen'], true);
+				$berufsgruppen_decoded = json_decode((string) $request->getParsedBody()['berufsgruppen'], true);
+				//$bb = implode(",", $berufsbezeichnungen_decoded);
+				if (is_array($berufsbezeichnungen_decoded)) {
+					$bb = implode(",", $berufsbezeichnungen_decoded);
+				} else {
+					// Handle error or set a default value for $bb
+					$bb = ""; // Beispiel für eine Standardzuweisung
+				}
+				//error_log(print_r($request->getParsedBody(), true));
+				//error_log(print_r($berufsbezeichnungen_decoded, true));
+				
+				// Änderung Stellen Sie sicher, dass $berufsbezeichnungen_decoded als Array behandelt wird, falls es null ist
+				if (!is_array($berufsbezeichnungen_decoded)) {
+					//error_log("berufsbezeichnungen_decoded ist kein Array, oder leer");
+					$berufsbezeichnungen_decoded = []; // Setze es auf ein leeres Array, falls es nicht bereits ein Array ist
+				}
 				if(count($berufsbezeichnungen_decoded) > 0){
 					$sth = $db->prepare("SELECT berufsbezeichnungen.name, berufsbezeichnungen.verrechnungs_kategorien_id, verrechnungs_kategorien.preis, verrechnungs_kategorien.name AS verrechnungs_kategorien_name FROM berufsbezeichnungen LEFT JOIN verrechnungs_kategorien ON berufsbezeichnungen.verrechnungs_kategorien_id = verrechnungs_kategorien.id WHERE berufsbezeichnungen.id IN ($bb) ORDER BY berufsbezeichnungen.verrechnungs_kategorien_id ASC");
 					$sth->execute();
@@ -606,9 +622,35 @@
 				if (count($berufsbezeichnungen_decoded) > 0){
 					$kat = $berufsbezeichnungen[0];
 				}else{
-					$bg = implode(",", $berufsgruppen_decoded);
-					$sth = $db->prepare("SELECT berufsgruppen.name, berufsgruppen.verrechnungs_kategorien_id, verrechnungs_kategorien.preis, verrechnungs_kategorien.name AS verrechnungs_kategorien_name FROM berufsgruppen LEFT JOIN verrechnungs_kategorien ON berufsgruppen.verrechnungs_kategorien_id = verrechnungs_kategorien.id WHERE berufsgruppen.id IN ($bg) ORDER BY berufsgruppen.verrechnungs_kategorien_id ASC");
-					$sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
+					/*				
+						$bg = implode(",", $berufsgruppen_decoded);
+						$sth = $db->prepare("SELECT berufsgruppen.name, berufsgruppen.verrechnungs_kategorien_id, verrechnungs_kategorien.preis, verrechnungs_kategorien.name AS verrechnungs_kategorien_name FROM berufsgruppen LEFT JOIN verrechnungs_kategorien ON berufsgruppen.verrechnungs_kategorien_id = verrechnungs_kategorien.id WHERE berufsgruppen.id IN ($bg) ORDER BY berufsgruppen.verrechnungs_kategorien_id ASC");
+						$sth->bindParam(':id', $args['id'], PDO::PARAM_INT);
+						$sth->execute();
+						$kat = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
+						error_log(print_r($kat, true));
+					*/
+					//Block umgebaut, weil $sth->bindParam(':id', $args['id'], PDO::PARAM_INT); Probleme macht. :id wird in where nicht verwendet
+					
+					// Erstellen eines Arrays mit Platzhaltern
+					$placeholders = [];
+					foreach ($berufsgruppen_decoded as $index => $id) {
+						$placeholders[] = ':id' . $index;
+					}
+					// Erstellen des SQL-Statements mit dynamischen Platzhaltern
+					$sql = "SELECT berufsgruppen.name, berufsgruppen.verrechnungs_kategorien_id, verrechnungs_kategorien.preis, verrechnungs_kategorien.name AS verrechnungs_kategorien_name 
+					FROM berufsgruppen 
+					LEFT JOIN verrechnungs_kategorien ON berufsgruppen.verrechnungs_kategorien_id = verrechnungs_kategorien.id 
+					WHERE berufsgruppen.id IN (" . implode(', ', $placeholders) . ") 
+					ORDER BY berufsgruppen.verrechnungs_kategorien_id ASC";
+
+					$sth = $db->prepare($sql);
+
+					// Binden der tatsächlichen Werte an die Platzhalter
+					foreach ($berufsgruppen_decoded as $index => $id) {
+					$sth->bindValue(':id' . $index, $id, PDO::PARAM_INT);
+					}
+
 					$sth->execute();
 					$kat = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 				}

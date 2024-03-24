@@ -1057,7 +1057,7 @@
             $vergeben = [];
             $erledigt = [];
             
-            
+            //error_log("Joborders_Ausgabe: ".print_r($joborders, true));
             
             foreach($joborders as $item){
                 

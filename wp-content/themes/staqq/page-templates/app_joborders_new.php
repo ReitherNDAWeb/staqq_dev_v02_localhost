@@ -74,7 +74,12 @@
 
         ])->decode_response();
         
-        if ($response->status) wp_redirect('app/joborders'); exit;
+        //Änderung - hat falsch weitergeleitet 
+        //if ($response->status) wp_redirect('app/joborders'); exit;
+        if ($response->status) {
+            wp_redirect(home_url('/app/joborders'));
+            exit;
+        }
     }
 
 	if ($template === "true" && isset($_GET['id'])){
