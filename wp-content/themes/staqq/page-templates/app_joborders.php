@@ -16,7 +16,8 @@
         $response = $api->put("ressources/$rid/bewerbungen/$bid/einsatzBestaetigen", [])->decode_response();
         
         if ($response->status ?? false) {
-            wp_redirect('app/joborders/');
+            //wp_redirect('app/joborders/');
+            wp_redirect(home_url('/app/joborders'));
             exit;
         }
         
@@ -28,7 +29,8 @@
         ])->decode_response();
         
         if ($response->status ?? false) {
-            wp_redirect('app/joborders/');
+            //wp_redirect('app/joborders/');
+            wp_redirect(home_url('/app/joborders'));
             exit;
         }
         
@@ -40,7 +42,8 @@
         ])->decode_response();
         
         if ($response->status ?? false) {
-            wp_redirect('app/joborders/');
+            //wp_redirect('app/joborders/');
+            wp_redirect(home_url('/app/joborders'));
             exit;
         }
         
@@ -52,7 +55,8 @@
         ])->decode_response();
         
         if ($response->status ?? false) {
-            wp_redirect('app/joborders/');
+            wp_redirect(home_url('/app/joborders'));
+            //wp_redirect('app/joborders/');
             exit;
         }
         
