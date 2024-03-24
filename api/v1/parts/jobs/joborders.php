@@ -690,13 +690,13 @@
 				$sth->bindParam(':dienstleister_vorgegeben', $request->getParsedBody()['dienstleister_vorgegeben'], PDO::PARAM_INT);
 				$sth->bindParam(':dienstleister_single', $request->getParsedBody()['dienstleister_single'], PDO::PARAM_INT);
 				$sth->bindParam(':dienstleister_id', $request->getParsedBody()['dienstleister_id'], PDO::PARAM_INT);
-				$sth->bindParam(':creator_type', $request->getParsedBody()['creator_type'], PDO::PARAM_INT);
+				$sth->bindParam(':creator_type', $request->getParsedBody()['creator_type'], PDO::PARAM_STR);
 				$sth->bindParam(':creator_id', $request->getParsedBody()['creator_id'], PDO::PARAM_INT);
 				$sth->bindParam(':tage', $tage, PDO::PARAM_INT);
 				$sth->bindParam(':verrechnungs_kategorien_id', $verrechnungs_kategorien_id, PDO::PARAM_INT);
 				$sth->bindParam(':kosten', $gesamtkosten, PDO::PARAM_INT);
 				$sth->execute();
-
+				error_log(print_r($request->getParsedBody(), true));
 				$joborders_id = $db->lastInsertId();
 
 				$sth = $db->prepare("UPDATE $table SET anzahl_joborders = anzahl_joborders - 1 WHERE id = :id");
